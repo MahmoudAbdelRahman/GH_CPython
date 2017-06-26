@@ -1,0 +1,9 @@
+c:\users\gamma\documents\visual studio 2013\Projects\PythonInterface\PythonInterface\bin\PythonInterface.dll
+c:\users\gamma\documents\visual studio 2013\Projects\PythonInterface\PythonInterface\bin\PythonInterface.pdb
+c:\users\gamma\documents\visual studio 2013\Projects\PythonInterface\PythonInterface\obj\Debug64\PythonInterface.dll
+c:\users\gamma\documents\visual studio 2013\Projects\PythonInterface\PythonInterface\obj\Debug64\PythonInterface.pdb
+c:\users\gamma\documents\visual studio 2013\Projects\PythonInterface\PythonInterface\obj\Debug64\PythonInterface.PythonShell.resources
+c:\users\gamma\documents\visual studio 2013\Projects\PythonInterface\PythonInterface\obj\Debug64\PythonInterface.csproj.GenerateResource.Cache
+c:\users\gamma\documents\visual studio 2013\Projects\PythonInterface\PythonInterface\obj\Debug64\PythonInterface.Resources.SavedPythonFile.resources
+c:\users\gamma\documents\visual studio 2013\Projects\PythonInterface\PythonInterface\obj\Debug64\PythonInterface.Resources.Icons.resources
+c:\users\gamma\documents\visual studio 2013\Projects\PythonInterface\PythonInterface\obj\Debug64\PythonInterface.csprojResolveAssemblyReference.cache
