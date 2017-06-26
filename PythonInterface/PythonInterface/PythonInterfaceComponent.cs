@@ -22,7 +22,7 @@ namespace PythonInterface
         public PythonInterfaceComponent()
             : base("PythonInterface", "PyIn",
                 "a python IDE interface",
-                "ANT", "PythonInterFace")
+                "Maths", "Script")
         {
             Ps.Hide();
             Ps.Load += Ps_Load;
