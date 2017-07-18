@@ -76,7 +76,8 @@ namespace GH_CPython
         {
             output = "";
             string name = DateTime.Now.ToString("yyyyMMddhhmmssff");
-            System.IO.File.WriteAllText(@"C:\GH_CPython\" + name + ".py", PythonCanvas.Text);
+            string path = System.IO.Path.GetTempPath();
+            System.IO.File.WriteAllText(path + name + ".py", PythonCanvas.Text);
             try
             {
                 Process p = new Process();
@@ -84,21 +85,20 @@ namespace GH_CPython
                 p.StartInfo.RedirectStandardOutput = true;
                 p.StartInfo.RedirectStandardError = true;
                 p.StartInfo.FileName = "python.exe";
-                p.StartInfo.Arguments = @"C:\GH_CPython\" + name + ".py";
+                p.StartInfo.Arguments = path + name + ".py";
                 p.Start();
 
                 // To avoid deadlocks, always read the output stream first and then wait.
                 output += p.StandardOutput.ReadToEnd();
                 output += p.StandardError.ReadToEnd();
                 p.WaitForExit();
-
             }
             catch (Exception eex)
             {
                 output += eex.ToString();
             }
             console.Text = output;
-            System.IO.File.Delete(@"C:\GH_CPython\" + name + ".py");
+            System.IO.File.Delete(path + name + ".py");
 
             this.BringToFront();
         }

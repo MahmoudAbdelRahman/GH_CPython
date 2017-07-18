@@ -6,3 +6,4 @@ c:\users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\D
 c:\users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.csproj.GenerateResource.Cache
 c:\users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.dll
 c:\users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.pdb
+c:\users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.csprojResolveAssemblyReference.cache

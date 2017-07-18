@@ -8,11 +8,11 @@ using Rhino.PlugIns;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("GH_CPython")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Python interface plugin for Rhino-Grasshopper")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Mahmoud AbdelRahman")]
 [assembly: AssemblyProduct("GH_CPython")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyCopyright("Copyright ©  2017 Mahmoud AbdelRahman")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

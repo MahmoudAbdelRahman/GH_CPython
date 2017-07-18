@@ -74,7 +74,18 @@ namespace GH_CPython
         }
 
 
-
+        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+        {
+            writer.SetString("pythonCode", savedShellData);
+            return base.Write(writer);
+        }
+        public string retrievedData = "";
+        public override bool Read(GH_IO.Serialization.GH_IReader reader)
+        {
+            savedShellData = null;
+            reader.TryGetString("pythonCode", ref retrievedData);
+            return base.Read(reader);
+        }
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
@@ -148,8 +159,6 @@ namespace GH_CPython
             }
             public override Grasshopper.GUI.Canvas.GH_ObjectResponse RespondToMouseDoubleClick(Grasshopper.GUI.Canvas.GH_Canvas sender, Grasshopper.GUI.GH_CanvasMouseEvent e)
             {
-
-
                 if (!shellOpened)
                 {
                     shellOpened = true;
@@ -157,10 +166,18 @@ namespace GH_CPython
                     gg.Ps.TopMost = true;
                     pythonRect = gg.Ps.RectangleToClient(Grasshopper.Instances.ActiveCanvas.DisplayRectangle);
                     gg.Ps.Show();
-                    gg.Ps.PythonCanvas.Text = ChangedText;
+                    if(gg.retrievedData!="")
+                    {
+                        gg.Ps.PythonCanvas.Text = gg.retrievedData;
+
+                    }else
+                    {
+                        gg.Ps.PythonCanvas.Text = ChangedText;
+                    }
                     gg.Ps.FormClosed += (se, ev) =>
                         {
                             ChangedText = gg.Ps.PythonCanvas.Text;
+                            gg.savedShellData = ChangedText;
                             shellOpened = false;
                             Grasshopper.Instances.RedrawCanvas();
 
@@ -330,7 +347,7 @@ namespace GH_CPython
 
 
 
-            public static string ChangedText { get; set; }
+            public string ChangedText { get; set; }
 
             public Rectangle ButtonBounds2 { get; set; }
         }
@@ -368,5 +385,7 @@ namespace GH_CPython
         {
 
         }
+
+        public string savedShellData { get; set; }
     }
 }
