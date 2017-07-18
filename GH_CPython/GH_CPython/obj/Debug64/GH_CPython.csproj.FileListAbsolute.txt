@@ -1,0 +1,8 @@
+c:\users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\bin\GH_CPython.dll
+c:\users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\bin\GH_CPython.pdb
+c:\users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.Resources.Icons.resources
+c:\users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.PythonShell.resources
+c:\users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.Resources.SavedPythonFile.resources
+c:\users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.csproj.GenerateResource.Cache
+c:\users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.dll
+c:\users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.pdb
