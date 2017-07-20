@@ -75,7 +75,7 @@
             this.Test.TabIndex = 2;
             this.Test.Text = "Test";
             this.Test.UseVisualStyleBackColor = true;
-            this.Test.Click += new System.EventHandler(this.Test_Click);
+            //this.Test.Click += new System.EventHandler(this.Test_Click);
             // 
             // close
             // 
@@ -122,7 +122,7 @@
         #endregion
 
         public System.Windows.Forms.RichTextBox PythonCanvas;
-        private System.Windows.Forms.RichTextBox console;
+        public System.Windows.Forms.RichTextBox console;
         public System.Windows.Forms.Button Test;
         public System.Windows.Forms.Button close;
         public System.Windows.Forms.TextBox light;

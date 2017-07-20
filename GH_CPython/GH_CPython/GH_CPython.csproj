@@ -81,6 +81,7 @@
     <Reference Include="XamlBuildTask" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Globals.cs" />
     <Compile Include="PythonInterfaceComponent.cs" />
     <Compile Include="PythonInterfaceInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -109,10 +110,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PythonShell.resx">
       <DependentUpon>PythonShell.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SavedPythonFile.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SavedPythonFile.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -121,7 +124,10 @@
   <ItemGroup>
     <None Include="Resources\Shellinit.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="drafting.txt" />
+    <Content Include="TextFile1.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

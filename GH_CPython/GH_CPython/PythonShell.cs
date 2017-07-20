@@ -12,6 +12,7 @@ namespace GH_CPython
 {
     public partial class PythonShell : Form
     {
+        public List<string> PsinputData = new List<string>();
         public PythonShell()
         {
             InitializeComponent();
@@ -74,7 +75,7 @@ namespace GH_CPython
 
         private void Test_Click(object sender, EventArgs e)
         {
-            output = "";
+            /*output = "";
             string name = DateTime.Now.ToString("yyyyMMddhhmmssff");
             string path = System.IO.Path.GetTempPath();
             System.IO.File.WriteAllText(path + name + ".py", PythonCanvas.Text);
@@ -100,7 +101,7 @@ namespace GH_CPython
             console.Text = output;
             System.IO.File.Delete(path + name + ".py");
 
-            this.BringToFront();
+            this.BringToFront();*/
         }
 
 

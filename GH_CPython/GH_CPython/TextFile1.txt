@@ -1,0 +1,389 @@
+﻿using System;
+using System.Collections.Generic;
+
+using Grasshopper.Kernel;
+using Rhino.Geometry;
+using System.Windows;
+using Grasshopper.Kernel.Attributes;
+using Grasshopper.Kernel.Parameters;
+using Grasshopper.GUI.Canvas;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Diagnostics;
+
+namespace GH_CPython
+{
+    public class PythonInterfaceComponent : GH_Component, IGH_VariableParameterComponent
+    {
+        //private bool ShellOpend = false; 
+        string savedDAta = "";
+        string initShell;
+        PythonShell Ps = new PythonShell();
+        public List<string> inputsString = new List<string>();
+        public List<string> inputNames = new List<string>();
+        private static int dataOfAllTime = 0;
+        private string at = DateTime.Now.ToString("dddd MMMM yyyy hh:mm:ss ");
+        bool focused = false;
+        AttribCompo nec;
+        /// </summary>
+        public PythonInterfaceComponent()
+            : base("GH_CPython", "GH_CPython",
+                "a python IDE interface",
+                "Maths", "Script")
+        {
+            this.Params.ParameterNickNameChanged += Params_ParameterNickNameChanged;
+            inputsString.Add("None");
+            inputsString.Add("None");
+            inputNames.Add("x");
+            inputNames.Add("y");
+            nec = new AttribCompo(this);
+            nec.Changed += new ChangedEventHandler(nec_Changed);
+            string Name = System.Environment.UserName;
+            ChangedText = Resources.SavedPythonFile.Shellinit.Replace("##CreatedBy##", Name);
+            ChangedText = ChangedText.Replace("##at##", at);  
+        }
+
+        
+        
+        void nec_Changed(object sender, EventArgs e)
+        {
+            
+            MessageBox.Show("Hi Mahmoud How are things? ");
+        }
+
+        void Owner_ObjectChanged(IGH_DocumentObject sender, GH_ObjectChangedEventArgs e)
+        {
+            doAllThings();
+        }
+
+        void doAllThings()
+        {
+            /*if (nec.shellOpened)
+            {
+                nec.shellOpened = true;
+                this.Ps.TopMost = true;
+                pythonRect = this.Ps.RectangleToClient(Grasshopper.Instances.ActiveCanvas.DisplayRectangle);
+                this.Ps.Show();
+                this.Ps.console.Text = "Hi, How are you ? Are you ready to Change the world ?";
+
+
+                if (this.retrievedData != "")
+                {
+                    this.Ps.PythonCanvas.Text = this.retrievedData;
+
+                }
+                else
+                {
+                    this.Ps.PythonCanvas.Text = ChangedText;
+                }
+                this.Ps.FormClosed += (se, ev) =>
+                {
+                    ChangedText = this.Ps.PythonCanvas.Text;
+                    this.savedShellData = ChangedText;
+                    nec.shellOpened = false;
+                    Grasshopper.Instances.RedrawCanvas();
+
+                };
+                //this.Ps.PythonCanvas.TextChanged += (s, ev) => ChangedText = this.Ps.PythonCanvas.Text;
+                this.Ps.Move += (s, ev) =>
+                {
+                    pythonRect = this.Ps.RectangleToClient(Grasshopper.Instances.ActiveCanvas.DisplayRectangle);
+                    Grasshopper.Instances.RedrawCanvas();
+                };
+                this.Ps.Shown += (se, ev) => this.Ps.BringToFront();
+                this.Ps.BringToFront();
+                this.Ps.GotFocus += (se, ev) =>
+                {
+                    focused = true;
+                    this.Ps.light.BackColor = Color.LimeGreen;
+                    Grasshopper.Instances.RedrawCanvas();
+                };
+
+                this.Ps.LostFocus += (se, ev) =>
+                {
+                    focused = false;
+                    this.Ps.light.BackColor = Color.Gray;
+                    Grasshopper.Instances.RedrawCanvas();
+                };
+
+                this.Ps.Test.Click += (se, ev) =>
+                {
+
+                    try
+                    {
+                        this.ExpireSolution(true);
+                        MessageBox.Show(dataOfAllTime.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                    }
+                    output = "";
+                    string name = DateTime.Now.ToString("yyyyMMddhhmmssff");
+                    string path = System.IO.Path.GetTempPath();
+                    try
+                    {
+                        variablesAre = "";
+                        for (int i = 0; i < Globals.AllInputs.Count; i++)
+                        {
+                            variablesAre += Globals.AllInputsNames[i] + " = " + Globals.AllInputs[i] + " \n";
+                            //variablesAre += gg.inputNames[0] + " = " + gg.inputsString[0]+ "\n";
+                        }
+
+                        //MessageBox.Show(gg.inputNames[0]);
+                    }
+                    catch (Exception exep)
+                    {
+                        MessageBox.Show(exep.ToString());
+                    }
+
+                    System.IO.File.WriteAllText(path + name + ".py", variablesAre + this.Ps.PythonCanvas.Text);
+                    try
+                    {
+                        Process p = new Process();
+                        p.StartInfo.UseShellExecute = false;
+                        p.StartInfo.RedirectStandardOutput = true;
+                        p.StartInfo.RedirectStandardError = true;
+                        p.StartInfo.FileName = "python.exe";
+                        p.StartInfo.Arguments = path + name + ".py";
+                        p.Start();
+
+                        // To avoid deadlocks, always read the output stream first and then wait.
+                        output += p.StandardOutput.ReadToEnd();
+                        output += p.StandardError.ReadToEnd();
+                        p.WaitForExit();
+                    }
+                    catch (Exception eex)
+                    {
+                        output += eex.ToString();
+                    }
+                    this.Ps.console.Text = output;
+
+                    //System.IO.File.Delete(path + name + ".py");
+
+                    this.Ps.BringToFront();
+                };
+                this.Ps.close.Click += (se, ev) => this.Ps.Close();
+                Grasshopper.Instances.RedrawCanvas();
+
+            }
+
+            */
+        }
+        void Params_ParameterNickNameChanged(object sender, GH_ParamServerEventArgs e)
+        {
+            data = this.Params.Input[0].NickName;
+            this.Message = this.Params.Input[0].NickName;
+        }
+
+        void close_Click(object sender, EventArgs e)
+        {
+            Ps.Hide();
+        }
+        void PythonCanvas_TextChanged(object sender, EventArgs e)
+        {
+            initShell = Ps.PythonCanvas.Text;
+            savedDAta = Ps.PythonCanvas.Text;
+        }
+        void Ps_Load(object sender, EventArgs e)
+        {
+
+
+        }
+
+        void Ps_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
+        {
+
+        }
+
+        public override void CreateAttributes()
+        {
+            m_attributes = new AttribCompo(this);
+        }
+
+
+        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+        {
+            writer.SetString("pythonCode", savedShellData);
+            return base.Write(writer);
+        }
+        public string retrievedData = "";
+        public override bool Read(GH_IO.Serialization.GH_IReader reader)
+        {
+            savedShellData = null;
+            reader.TryGetString("pythonCode", ref retrievedData);
+            return base.Read(reader);
+        }
+        /// <summary>
+        /// Registers all the input parameters for this component.
+        /// </summary>
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        {
+            pManager.AddTextParameter("x", "x", "description", GH_ParamAccess.list);
+            pManager.AddTextParameter("y", "y", "description", GH_ParamAccess.list);
+
+        }
+
+        /// <summary>
+        /// Registers all the output parameters for this component.
+        /// </summary>
+        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        {
+            pManager.AddTextParameter("a", "a", "", GH_ParamAccess.item);
+            pManager.AddTextParameter("b", "b", "", GH_ParamAccess.item);
+        }
+        string data;
+        /// <summary>
+        /// This is the method that actually does the work.
+        /// </summary>
+        /// <param name="DA">The DA object can be used to retrieve data from input parameters and 
+        /// to store data in output parameters.</param>
+        /// 
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+
+            Globals.AllInputs.Clear();
+            Globals.AllInputsNames.Clear();
+
+            try
+            {
+                dataOfAllTime += 1;
+                for (int i = 0; i < this.Params.Input.Count; i++)
+                {
+                    string gg = "";
+                    List<string> temp = new List<string>(new string[] { "None" });
+                    //if (!DA.GetData(i, ref temp)) { }
+                    DA.GetDataList(i, temp);
+                    if (temp.Count == 2)
+                    { gg = temp[1]; }
+                    else if(temp.Count == 1)
+                    {
+                        Globals.AllInputsNames.Remove(i);
+                        Globals.AllInputs.Remove(i);
+                    }
+                    else
+                    {
+                        gg += "[";
+                        for (int g = 1; g < temp.Count; g++)
+                        {
+                            gg += temp[g];
+                            if (g < temp.Count - 1) gg += ",";
+                        }
+                        gg += "]";
+                    }
+
+                    string alpha = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
+                    bool startSearch = true;
+                    if (gg != "True" && gg != "False")
+                    {
+                        foreach (char c in gg)
+                        {
+                            foreach (char k in alpha)
+                            {
+                                if (startSearch)
+                                {
+                                    if (c == k)
+                                    {
+                                        gg = "\"" + gg + "\"";
+                                        startSearch = false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (Globals.AllInputsNames.ContainsKey(i))
+                    {
+                        Globals.AllInputsNames.Remove(i);
+                        Globals.AllInputs.Remove(i);
+                    }
+
+                    Globals.AllInputsNames.Add(i, Params.Input[i].NickName);
+                    Globals.AllInputs.Add(i, gg);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+
+        /// <summary>
+        /// Provides an Icon for every component that will be visible in the User Interface.
+        /// Icons need to be 24x24 pixels.
+        /// </summary>
+        protected override System.Drawing.Bitmap Icon
+        {
+            get
+            {
+                // You can add image files to your project resources and access them like this:
+                //return Resources.IconForThisComponent;
+                return Resources.Icons.Python_logo_241;
+            }
+        }
+
+        /// <summary>
+        /// Each component must have a unique Guid to identify it. 
+        /// It is vital this Guid doesn't change otherwise old ghx files 
+        /// that use the old ID will partially fail during loading.
+        /// </summary>
+        public override Guid ComponentGuid
+        {
+            get { return new Guid("{f7418245-81a4-4dbd-9b8f-c6ef68607efc}"); }
+        }
+
+
+        public string thisshell { get; set; }
+
+        public string pythonData { get; set; }
+
+        public bool CanInsertParameter(GH_ParameterSide side, int index)
+        {
+            return true;
+        }
+
+        public bool CanRemoveParameter(GH_ParameterSide side, int index)
+        {
+            return true;
+        }
+
+        public IGH_Param CreateParameter(GH_ParameterSide side, int index)
+        {
+            Param_GenericObject param = new Param_GenericObject();
+            param.Access = GH_ParamAccess.list;
+            param.Name = GH_ComponentParamServer.InventUniqueNickname("abcdefghijklmnopqrstuvwxyz", Params);
+            param.NickName = param.Name;
+            param.Description = "Param" + (Params.Input.Count + 1);
+            inputNames.Insert(index, param.Name);
+            return param;
+        }
+
+        public bool DestroyParameter(GH_ParameterSide side, int index)
+        {
+            return true;
+        }
+
+        public void VariableParameterMaintenance()
+        {
+
+        }
+
+        public string savedShellData { get; set; }
+
+        public string ChangedText { get; set; }
+
+        public string output { get; set; }
+
+        public string variablesAre { get; set; }
+
+        public Rectangle pythonRect { get; set; }
+
+        public GH_Canvas se { get; set; }
+
+        public Grasshopper.GUI.GH_CanvasMouseEvent ev { get; set; }
+
+        public Grasshopper.GUI.GH_CanvasMouseEvent rrre { get; set; }
+    }
+
+
+}
