@@ -18,6 +18,7 @@ namespace GH_CPython
             InitializeComponent();
         }
 
+        
         public void richTextBox1_TextChanged(object sender, EventArgs e)
         {
             this.CheckKeyword("import ", Color.Salmon, 0);

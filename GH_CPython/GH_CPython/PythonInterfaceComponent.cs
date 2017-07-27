@@ -1,4 +1,33 @@
-﻿using System;
+﻿/***
+    BSD 2-Clause License
+
+    Copyright (c) 2017, Mahmoud AbdelRahman
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this
+      list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+      this list of conditions and the following disclaimer in the documentation
+      and/or other materials provided with the distribution.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+ * */
+
+using System;
 using System.Collections.Generic;
 
 using Grasshopper.Kernel;
@@ -23,7 +52,8 @@ namespace GH_CPython
         public List<string> inputsString = new List<string>();
         public List<string> inputNames = new List<string>();
         private static int dataOfAllTime = 0;
-
+        Process p = new Process();
+        
 
         /// </summary>
         public PythonInterfaceComponent()
@@ -37,9 +67,14 @@ namespace GH_CPython
             inputsString.Add("None");
             inputNames.Add("x");
             inputNames.Add("y");
+
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.RedirectStandardError = true;
+            p.StartInfo.FileName = "python.exe";
+
+
         }
-
-
 
         void Params_ParameterNickNameChanged(object sender, GH_ParamServerEventArgs e)
         {
@@ -93,9 +128,7 @@ namespace GH_CPython
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("x", "x", "description", GH_ParamAccess.list);
-            pManager.AddTextParameter("y", "y", "description", GH_ParamAccess.list);
-
+            pManager.AddTextParameter("_input", "_input", "description",GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -103,8 +136,8 @@ namespace GH_CPython
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("a", "a", "", GH_ParamAccess.item);
-            pManager.AddTextParameter("b", "b", "", GH_ParamAccess.item);
+            pManager.AddTextParameter("output_", "output_", "", GH_ParamAccess.item);
+
         }
         string data;
         /// <summary>
@@ -113,27 +146,31 @@ namespace GH_CPython
         /// <param name="DA">The DA object can be used to retrieve data from input parameters and 
         /// to store data in output parameters.</param>
         /// 
+        
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
+            /*
             Globals.AllInputs.Clear();
             Globals.AllInputsNames.Clear();
-
+            
             try
             {
                 dataOfAllTime += 1;
                 for (int i = 0; i < this.Params.Input.Count; i++)
                 {
-                    string gg = "";
                     List<string> temp = new List<string>(new string[] { "None" });
+                    string gg = "";
                     //if (!DA.GetData(i, ref temp)) { }
-                    DA.GetDataList(i, temp);
+                    if (!DA.GetDataList(i, temp)) { return; }
                     if (temp.Count == 2)
-                    { gg = temp[1]; }
+                    { 
+                        gg = temp[1];
+                    }
                     else if (temp.Count == 1)
                     {
                         Globals.AllInputsNames.Remove(i);
                         Globals.AllInputs.Remove(i);
+                        inputsString.RemoveAt(i);
                     }
                     else
                     {
@@ -169,16 +206,60 @@ namespace GH_CPython
                     {
                         Globals.AllInputsNames.Remove(i);
                         Globals.AllInputs.Remove(i);
+                        inputsString.RemoveAt(i);
                     }
 
                     Globals.AllInputsNames.Add(i, Params.Input[i].NickName);
                     Globals.AllInputs.Add(i, gg);
+                    inputsString.Add(gg);
+                    
                 }
+
+                output = "";
+                string name = DateTime.Now.ToString("yyyyMMddhhmmssff");
+                string path = System.IO.Path.GetTempPath();
+                try
+                {
+                    variablesAre = "";
+                    for (int i = 0; i < Globals.AllInputs.Count; i++)
+                    {
+                        variablesAre += Globals.AllInputsNames[i] + " = " + Globals.AllInputs[i] + " \n";
+                    }
+
+                    //MessageBox.Show(inputNames[0]);
+                }
+                catch (Exception exep)
+                {
+                    MessageBox.Show(exep.ToString());
+                }
+
+                System.IO.File.WriteAllText(path + name + ".py", variablesAre + Ps.PythonCanvas.Text);
+                try
+                {
+                    p.StartInfo.Arguments = path + name + ".py";
+                    p.Start();
+
+                    // To avoid deadlocks, always read the output stream first and then wait.
+                    output += p.StandardOutput.ReadToEnd();
+                    output += p.StandardError.ReadToEnd();
+                    p.WaitForExit();
+                }
+                catch (Exception eex)
+                {
+                    output += eex.ToString();
+                }
+                Ps.console.Text = output;
+
+                //System.IO.File.Delete(path + name + ".py");
+
+                Ps.BringToFront();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
+             * 
+             * */
         }
 
         /// <summary>
@@ -212,22 +293,42 @@ namespace GH_CPython
             private string at = DateTime.Now.ToString("dddd MMMM yyyy hh:mm:ss ");
             bool focused = false;
 
-
+             Process p = new Process();
+                            
             public AttribCompo(IGH_Component PythonInterfaceComponent)
                 : base(PythonInterfaceComponent)
             {
                 string Name = System.Environment.UserName;
                 ChangedText = Resources.SavedPythonFile.Shellinit.Replace("##CreatedBy##", Name);
                 ChangedText = ChangedText.Replace("##at##", at);
+                
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.RedirectStandardError = true;
+                p.StartInfo.FileName = "python.exe";
+                Owner.ObjectChanged += Owner_ObjectChanged;
+                Owner.AttributesChanged += Owner_AttributesChanged;
+            }
+
+            void Owner_AttributesChanged(IGH_DocumentObject sender, GH_AttributesChangedEventArgs e)
+            {
+                //MessageBox.Show("Changed");
+            }
+
+            void Owner_ObjectChanged(IGH_DocumentObject sender, GH_ObjectChangedEventArgs e)
+            {
+               //MessageBox.Show("Changed");
             }
             public override Grasshopper.GUI.Canvas.GH_ObjectResponse RespondToMouseDoubleClick(Grasshopper.GUI.Canvas.GH_Canvas sender, Grasshopper.GUI.GH_CanvasMouseEvent e)
             {
+                
                 try
                 {
                 PythonInterfaceComponent gg = new PythonInterfaceComponent();
 
                 if (!shellOpened)
                 {
+                    gg.ExpireSolution(true);
                     shellOpened = true;
                     gg.Ps.TopMost = true;
                     pythonRect = gg.Ps.RectangleToClient(Grasshopper.Instances.ActiveCanvas.DisplayRectangle);
@@ -276,22 +377,69 @@ namespace GH_CPython
 
                     gg.Ps.Test.Click += (se, ev) =>
                     {
-                        gg.CollectData();
-                        gg.ExpireSolution(true);
-
                         output = "";
                         string name = DateTime.Now.ToString("yyyyMMddhhmmssff");
                         string path = System.IO.Path.GetTempPath();
                         try
                         {
                             variablesAre = "";
-                            for (int i = 0; i < Globals.AllInputs.Count; i++)
+                            int iForType = 1;
+                            float fForType = 1;
+                            double dForType = 1.00f;
+                            string sForType = "s";
+
+                            float f;
+                            double d;
+                            int into;
+
+                            for (int i = 0; i < Owner.Params.Input.Count; i++)
                             {
-                                variablesAre += Globals.AllInputsNames[i] + " = " + Globals.AllInputs[i] + " \n";
-                                //variablesAre += gg.inputNames[0] + " = " + gg.inputsString[0]+ "\n";
+                                string datahere = "";
+                                if(Owner.Params.Input[i].Access == GH_ParamAccess.list)
+                                {
+                                    string ghijk = Owner.Params.Input[i].VolatileData.DataDescription(false, false).Trim().Replace(System.Environment.NewLine, ",");
+                                    
+                                    string[] newstr = ghijk.Split(',');
+                                    if(float.TryParse(newstr[0], out f) || double.TryParse(newstr[0],out d) || int.TryParse(newstr[0], out into))
+                                    {
+                                        if (newstr.Length == 1)
+                                            datahere += ghijk;
+                                        else
+                                        datahere += "["+ghijk+"]";
+                                    }
+                                    else
+                                    {
+                                        if (newstr.Length == 1)
+                                            datahere += "\""+ ghijk + "\"";
+                                        else
+                                            datahere += "[\""+ghijk.Replace(",", "\",\"")+"\"]";
+                                    }
+                                }
+                                else if (Owner.Params.Input[i].Access == GH_ParamAccess.item)
+                                {
+                                    
+                                    string ghijk = Owner.Params.Input[i].VolatileData.DataDescription(false, false).Trim().Replace(System.Environment.NewLine, ",");
+                                    string[] newstr = ghijk.Split(',');
+                                    if (float.TryParse(newstr[0], out f) || double.TryParse(newstr[0], out d) || int.TryParse(newstr[0], out into))
+                                    {
+                                        if (newstr.Length == 1)
+                                            datahere += ghijk;
+                                        else
+                                            datahere += "[" + ghijk + "]";
+                                    }
+                                    else
+                                    {
+                                        if (newstr.Length == 1)
+                                            datahere += "\"" + ghijk + "\"";
+                                        else
+                                            datahere += "[\"" + ghijk.Replace(",", "\",\"") + "\"]";
+                                    }
+                                }
+
+
+                                variablesAre += Owner.Params.Input[i].NickName + " = " + datahere + " \n";
                             }
 
-                            //MessageBox.Show(gg.inputNames[0]);
                         }
                         catch (Exception exep)
                         {
@@ -301,11 +449,6 @@ namespace GH_CPython
                         System.IO.File.WriteAllText(path + name + ".py", variablesAre + gg.Ps.PythonCanvas.Text);
                         try
                         {
-                            Process p = new Process();
-                            p.StartInfo.UseShellExecute = false;
-                            p.StartInfo.RedirectStandardOutput = true;
-                            p.StartInfo.RedirectStandardError = true;
-                            p.StartInfo.FileName = "python.exe";
                             p.StartInfo.Arguments = path + name + ".py";
                             p.Start();
 
@@ -413,6 +556,15 @@ namespace GH_CPython
                         //graphics.DrawRectangle(p, rec0);
                     }
 
+                    StringFormat format = new StringFormat();
+                    format.Alignment = StringAlignment.Center;
+                    format.LineAlignment = StringAlignment.Center;
+                    format.Trimming = StringTrimming.EllipsisCharacter;
+
+
+                    Brush gg = new SolidBrush(Color.FromArgb(255, 50, 100, 150));
+                    graphics.DrawString(Owner.NickName, GH_FontServer.Standard, gg, new PointF(rec0.Left, rec0.Bottom + 5));
+
                     button.Dispose();
                 }
             }
@@ -500,8 +652,14 @@ namespace GH_CPython
         public IGH_Param CreateParameter(GH_ParameterSide side, int index)
         {
             Param_GenericObject param = new Param_GenericObject();
-            param.Access = GH_ParamAccess.list;
-            param.Name = GH_ComponentParamServer.InventUniqueNickname("abcdefghijklmnopqrstuvwxyz", Params);
+            
+            if(side == GH_ParameterSide.Input)
+            {
+                param.Name = GH_ComponentParamServer.InventUniqueNickname("xyzijklmnopqrstuvw", Params);
+            }else if(side == GH_ParameterSide.Output)
+            {
+                param.Name = GH_ComponentParamServer.InventUniqueNickname("abcdefghijklmnopqrstuvwxyz", Params);
+            }
             param.NickName = param.Name;
             param.Description = "Param" + (Params.Input.Count + 1);
             inputNames.Insert(index, param.Name);
@@ -519,6 +677,10 @@ namespace GH_CPython
         }
 
         public string savedShellData { get; set; }
+
+        public string variablesAre { get; set; }
+
+        public string output { get; set; }
     }
 
 

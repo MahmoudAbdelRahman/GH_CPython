@@ -39,10 +39,10 @@
             // PythonCanvas
             // 
             this.PythonCanvas.AcceptsTab = true;
-            this.PythonCanvas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.PythonCanvas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.PythonCanvas.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(36)))), ((int)(((byte)(63)))));
+            this.PythonCanvas.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(46)))), ((int)(((byte)(84)))));
             this.PythonCanvas.BulletIndent = 10;
             this.PythonCanvas.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.PythonCanvas.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
@@ -56,9 +56,11 @@
             // 
             // console
             // 
-            this.console.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.console.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.console.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.console.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.console.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.console.Location = new System.Drawing.Point(2, 419);
             this.console.Name = "console";
             this.console.ReadOnly = true;
@@ -75,7 +77,6 @@
             this.Test.TabIndex = 2;
             this.Test.Text = "Test";
             this.Test.UseVisualStyleBackColor = true;
-            //this.Test.Click += new System.EventHandler(this.Test_Click);
             // 
             // close
             // 
@@ -111,7 +112,7 @@
             this.MinimumSize = new System.Drawing.Size(310, 393);
             this.Name = "PythonShell";
             this.ShowInTaskbar = false;
-            this.Text = "Python Interface";
+            this.Text = "Gh_CPython";
             this.ResumeLayout(false);
             this.PerformLayout();
 
