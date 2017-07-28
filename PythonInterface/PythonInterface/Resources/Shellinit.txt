@@ -1,6 +1,0 @@
-# -*- coding: utf-8 -*-
-""" 
-Python Script
-Created on  ##at## 
-@author:  ##CreatedBy## 
-"""
