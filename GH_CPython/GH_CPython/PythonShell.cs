@@ -1,17 +1,30 @@
-﻿using System;
+﻿using ICSharpCode.TextEditor.Document;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+
+
 namespace GH_CPython
 {
+    public enum COLORS
+    {
+        WHITE,
+        DARK,
+        PYTHON,
+    }
+
     public partial class PythonShell : Form
     {
+
+        COLORS canColor = COLORS.DARK;
         public List<string> PsinputData = new List<string>();
         public PythonShell()
         {
@@ -21,21 +34,22 @@ namespace GH_CPython
         
         public void richTextBox1_TextChanged(object sender, EventArgs e)
         {
-            this.CheckKeyword("import ", Color.Salmon, 0);
-            this.CheckKeyword("from ", Color.Salmon, 0);
-            this.CheckKeyword(" as ", Color.Salmon, 0);
-            this.CheckKeyword(" in ", Color.Salmon, 0);
+            canColor = COLORS.WHITE;
+                this.CheckKeyword("import ", Color.Blue, 0);
+                this.CheckKeyword("from ", Color.Blue, 0);
+                this.CheckKeyword(" as ", Color.Blue, 0);
+                this.CheckKeyword(" in ", Color.Blue, 0);
 
-            this.CheckKeyword("print ", Color.Cyan, 0);
+                this.CheckKeyword("print ", Color.Red, 0);
 
-            this.CheckKeyword("def ", Color.YellowGreen, 0);
-            this.CheckKeyword("if ", Color.YellowGreen, 0);
-            this.CheckKeyword("for ", Color.YellowGreen, 0);
-            this.CheckKeyword("while ", Color.YellowGreen, 0);
-            this.CheckKeyword("if ", Color.YellowGreen, 0);
-            this.CheckKeyword("do ", Color.YellowGreen, 0);
-            this.CheckKeyword(" range", Color.YellowGreen, 0);
-            this.indent(":\n", 0);
+                this.CheckKeyword("def ", Color.Green, 0);
+                this.CheckKeyword("if ", Color.Green, 0);
+                this.CheckKeyword("for ", Color.Green, 0);
+                this.CheckKeyword("while ", Color.Green, 0);
+                this.CheckKeyword("if ", Color.Green, 0);
+                this.CheckKeyword("do ", Color.Green, 0);
+                this.CheckKeyword(" range", Color.Green, 0);
+                this.indent(":\n", 0);
 
         }
 
@@ -50,11 +64,13 @@ namespace GH_CPython
                 {
                     this.PythonCanvas.Select((index + startIndex), word.Length);
                     this.PythonCanvas.SelectionColor = color;
+                    this.PythonCanvas.SelectionFont = new Font(PythonCanvas.Font, FontStyle.Bold);
                     this.PythonCanvas.Select(selectStart, 0);
-                    this.PythonCanvas.SelectionColor = Color.White;
+                    this.PythonCanvas.SelectionColor = Color.Black;
                 }
             }
         }
+
 
         private void indent(string word, int startIndex)
         {
@@ -74,41 +90,25 @@ namespace GH_CPython
             }
         }
 
-        private void Test_Click(object sender, EventArgs e)
-        {
-            /*output = "";
-            string name = DateTime.Now.ToString("yyyyMMddhhmmssff");
-            string path = System.IO.Path.GetTempPath();
-            System.IO.File.WriteAllText(path + name + ".py", PythonCanvas.Text);
-            try
-            {
-                Process p = new Process();
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.RedirectStandardOutput = true;
-                p.StartInfo.RedirectStandardError = true;
-                p.StartInfo.FileName = "python.exe";
-                p.StartInfo.Arguments = path + name + ".py";
-                p.Start();
-
-                // To avoid deadlocks, always read the output stream first and then wait.
-                output += p.StandardOutput.ReadToEnd();
-                output += p.StandardError.ReadToEnd();
-                p.WaitForExit();
-            }
-            catch (Exception eex)
-            {
-                output += eex.ToString();
-            }
-            console.Text = output;
-            System.IO.File.Delete(path + name + ".py");
-
-            this.BringToFront();*/
-        }
-
 
         public string output { get; set; }
 
         public string theshell { get; set; }
 
+      
+        /*string dric = System.IO.Path.GetTempPath();
+        private void textEditorControl1_Load(object sender, EventArgs e)
+        {
+            File.WriteAllText(dric + @"\CPP-Mode.xshd", Resources.SavedPythonFile.hl);
+            FileSyntaxModeProvider fsmp = new FileSyntaxModeProvider(dric);
+            if (Directory.Exists(dric))
+            {
+                HighlightingManager.Manager.AddSyntaxModeFileProvider(fsmp);
+                textEditorControl1.SetHighlighting("Python");
+            }
+        }*/
+
     }
+
+
 }

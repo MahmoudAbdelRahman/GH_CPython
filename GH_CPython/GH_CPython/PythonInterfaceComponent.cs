@@ -39,6 +39,10 @@ using Grasshopper.GUI.Canvas;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
+using Grasshopper.Kernel.Data;
+using System.Text;
+using System.Xml.Linq;
+using System.Xml;
 
 namespace GH_CPython
 {
@@ -46,35 +50,239 @@ namespace GH_CPython
 
     public class PythonInterfaceComponent : GH_Component, IGH_VariableParameterComponent
     {
-        string savedDAta = "";
         string initShell;
-        PythonShell Ps = new PythonShell();
-        public List<string> inputsString = new List<string>();
-        public List<string> inputNames = new List<string>();
-        private static int dataOfAllTime = 0;
-        Process p = new Process();
-        
+        PythonShell Ps;
 
+        Process p = new Process();
+        string path = System.IO.Path.GetTempPath();
+        private string at;
+        bool focused = false;
+
+        XmlDocument doc = new XmlDocument();
+        /// <summary>
+        /// Constructor 
         /// </summary>
         public PythonInterfaceComponent()
             : base("GH_CPython", "GH_CPython",
                 "a python IDE interface",
                 "Maths", "Script")
         {
-            dataOfAllTime += 100;
             this.Params.ParameterNickNameChanged += Params_ParameterNickNameChanged;
-            inputsString.Add("None");
-            inputsString.Add("None");
-            inputNames.Add("x");
-            inputNames.Add("y");
 
+            Ps = new PythonShell();
+            Ps.TopMost = true;
+            thisIndex = Globals.index;
+            name = "PythonFileWritten_" + thisIndex.ToString();
+            at = DateTime.Now.ToString("dddd MMMM yyyy hh:mm:ss ");
+            Globals.fileName.Add(thisIndex, "_PythonExecutionOrder_" + thisIndex.ToString());
+            Globals.index += 1;
+            Globals.OpenThisShell.Add(thisIndex, false);
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.RedirectStandardError = true;
             p.StartInfo.FileName = "python.exe";
+            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.CreateNoWindow = true;
 
+
+          
+            string Name = System.Environment.UserName;
+            ChangedText = Resources.SavedPythonFile.Shellinit.Replace("##CreatedBy##", Name);
+            ChangedText = ChangedText.Replace("##at##", at);
+            
+            try
+            {
+
+                Ps.console.Text = "Hi, How are you ? Are you ready to Change the world ?";
+                if (retrievedData != "")
+                {
+                    Ps.PythonCanvas.Text = retrievedData;
+                }
+                else
+                {
+                    Ps.PythonCanvas.Text = ChangedText;
+                }
+                writeReadPythonFile(this);
+                Ps.FormClosing += Ps_FormClosing;
+
+                Ps.Test.Click += (se, ev) =>
+                   {
+                       writeReadPythonFile(this);
+
+                       ExpireSolution(true);
+                   };
+                Ps.close.Click += (se, ev) =>
+                    {
+                        ChangedText = Ps.PythonCanvas.Text;
+                        savedShellData = ChangedText;
+                        shellOpened = false;
+                        Ps.Hide();
+
+                        Globals.OpenThisShell[thisIndex] = false;
+                        Grasshopper.Instances.RedrawCanvas();
+                    };
+                Grasshopper.Instances.RedrawCanvas();
+
+            }
+            catch (Exception erx)
+            {
+                MessageBox.Show(erx.ToString());
+            }
+        }
+
+
+        private void writeReadPythonFile(PythonInterfaceComponent gg)
+        {
+            output = "";
+            //string name = DateTime.Now.ToString("yyyyMMddhhmmssff");
+            string name = "PythonFileWritten_" + thisIndex.ToString();
+            string path = System.IO.Path.GetTempPath();
+
+            try
+            {
+                variablesAre = "";
+
+                float f;
+                double d;
+                int into;
+
+
+                for (int i = 0; i < Params.Output.Count; i++)
+                {
+                    variablesAre += Params.Output[i].NickName + " = None\n";
+                }
+
+                for (int i = 0; i < Params.Input.Count; i++)
+                {
+                    string datahere = "";
+                    if (Params.Input[i].Access == GH_ParamAccess.list)
+                    {
+                        string thisInputString = Params.Input[i].VolatileData.DataDescription(false, false).Trim().Replace(System.Environment.NewLine, ",");
+
+                        string[] newstr = thisInputString.Split(',');
+                        if (float.TryParse(newstr[0], out f) || double.TryParse(newstr[0], out d) || int.TryParse(newstr[0], out into))
+                        {
+                            if (newstr.Length == 1)
+                                datahere += thisInputString;
+                            else
+                                datahere += "[" + thisInputString + "]";
+                        }
+                        else if (thisInputString.Contains("{") && thisInputString.Contains("}"))
+                        {
+                            datahere += thisInputString.Replace("{", "[").Replace("}", "]");
+                        }
+                        else
+                        {
+                            if (newstr.Length == 1)
+                                if(thisInputString =="True" || thisInputString == "False")
+                                {
+                                    datahere+= thisInputString;
+                                }else
+                                {
+                                    datahere += "\"" + thisInputString + "\"";
+                                }
+                            else
+                                datahere += "[\"" + thisInputString.Replace(",", "\",\"") + "\"]";
+                        }
+                    }
+                    else if (Params.Input[i].Access == GH_ParamAccess.item)
+                    {
+
+                        string thisInputString = Params.Input[i].VolatileData.DataDescription(false, false).Trim().Replace(System.Environment.NewLine, ",");
+                        string[] newstr = thisInputString.Split(',');
+                        if (float.TryParse(newstr[0], out f) || double.TryParse(newstr[0], out d) || int.TryParse(newstr[0], out into))
+                        {
+                            if (newstr.Length == 1)
+                                datahere += thisInputString;
+                            else
+                                datahere += "[" + thisInputString + "]";
+                        }
+                        else
+                        {
+                            if (newstr.Length == 1)
+                                if(thisInputString == "True" || thisInputString == "False")
+                                {
+                                    datahere +=  thisInputString ;
+                                }else
+                                {
+                                    datahere += "\"" + thisInputString + "\"";
+                                }
+                            else
+                                datahere += "[\"" + thisInputString.Replace(",", "\",\"") + "\"]";
+                        }
+                    }
+
+
+                    variablesAre += Params.Input[i].NickName + " = " + datahere + " \n";
+                }
+                foot = Resources.SavedPythonFile.savingFile;
+                string thisOutputData = "";
+
+      
+                for (int i = 0; i < Params.Output.Count; i++)
+                {
+                    if (i < Params.Output.Count - 1)
+                        thisOutputData += "\"" + Params.Output[i].NickName + "\":" + Params.Output[i].NickName + ", ";
+                    else
+                        thisOutputData += "\"" + Params.Output[i].NickName + "\":" + Params.Output[i].NickName;
+
+                }
+                foot = foot.Replace("##data##", thisOutputData);
+                foot = foot.Replace("##fileName##", path + "_PythonExecutionOrder_" + thisIndex.ToString() + ".xml");
+
+            }
+            catch (Exception exep)
+            {
+                MessageBox.Show(exep.ToString());
+            }
+            if (Globals.PythonString.ContainsKey(thisIndex))
+            {
+                Globals.PythonString.Remove(thisIndex);
+                Globals.PythonString.Add(thisIndex, variablesAre + gg.Ps.PythonCanvas.Text + "\n" + foot);
+                
+            }
+            else
+            {
+                Globals.PythonString.Add(thisIndex, variablesAre + gg.Ps.PythonCanvas.Text + "\n" + foot);
+            }
+
+            thisPythonString = variablesAre + gg.Ps.PythonCanvas.Text + "\n" + foot;
+
+            System.IO.File.WriteAllText(path + name + ".py", variablesAre + gg.Ps.PythonCanvas.Text + "\n" + foot);
+
+            try
+            {
+                p.StartInfo.Arguments = path + name + ".py";
+                p.Start();
+
+                //To avoid deadlocks, always read the output stream first and then wait.
+                output += p.StandardOutput.ReadToEnd();
+                output += p.StandardError.ReadToEnd();
+                p.WaitForExit();
+
+
+            }
+            catch (Exception eex)
+            {
+                output += eex.ToString();
+            }
+            gg.Ps.console.Text = output;
+            System.IO.File.Delete(path + name + ".py");
+            try
+            {
+                //ExpireSolution(true);
+            }
+            catch (Exception eex)
+            {
+                MessageBox.Show(eex.ToString());
+            }
+
+            //gg.Ps.BringToFront();
 
         }
+
+
 
         void Params_ParameterNickNameChanged(object sender, GH_ParamServerEventArgs e)
         {
@@ -86,20 +294,14 @@ namespace GH_CPython
         {
             Ps.Hide();
         }
-        void PythonCanvas_TextChanged(object sender, EventArgs e)
-        {
-            initShell = Ps.PythonCanvas.Text;
-            savedDAta = Ps.PythonCanvas.Text;
-        }
-        void Ps_Load(object sender, EventArgs e)
-        {
-
-
-        }
 
         void Ps_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
         {
+            e.Cancel = true;
+            Ps.Hide();
 
+            Globals.OpenThisShell[thisIndex] = false;
+            Grasshopper.Instances.RedrawCanvas();
         }
 
 
@@ -109,26 +311,14 @@ namespace GH_CPython
         }
 
 
-
-
-        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-        {
-            writer.SetString("pythonCode", savedShellData);
-            return base.Write(writer);
-        }
         public string retrievedData = "";
-        public override bool Read(GH_IO.Serialization.GH_IReader reader)
-        {
-            savedShellData = null;
-            reader.TryGetString("pythonCode", ref retrievedData);
-            return base.Read(reader);
-        }
+
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("_input", "_input", "description",GH_ParamAccess.list);
+            pManager.AddTextParameter("_input", "_input", "description", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -146,120 +336,60 @@ namespace GH_CPython
         /// <param name="DA">The DA object can be used to retrieve data from input parameters and 
         /// to store data in output parameters.</param>
         /// 
-        
+
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            /*
-            Globals.AllInputs.Clear();
-            Globals.AllInputsNames.Clear();
-            
             try
             {
-                dataOfAllTime += 1;
-                for (int i = 0; i < this.Params.Input.Count; i++)
+                if (Globals.OpenThisShell[thisIndex] == true)
                 {
-                    List<string> temp = new List<string>(new string[] { "None" });
-                    string gg = "";
-                    //if (!DA.GetData(i, ref temp)) { }
-                    if (!DA.GetDataList(i, temp)) { return; }
-                    if (temp.Count == 2)
-                    { 
-                        gg = temp[1];
-                    }
-                    else if (temp.Count == 1)
-                    {
-                        Globals.AllInputsNames.Remove(i);
-                        Globals.AllInputs.Remove(i);
-                        inputsString.RemoveAt(i);
-                    }
-                    else
-                    {
-                        gg += "[";
-                        for (int g = 1; g < temp.Count; g++)
-                        {
-                            gg += temp[g];
-                            if (g < temp.Count - 1) gg += ",";
-                        }
-                        gg += "]";
-                    }
-
-                    string alpha = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
-                    bool startSearch = true;
-                    if (gg != "True" && gg != "False")
-                    {
-                        foreach (char c in gg)
-                        {
-                            foreach (char k in alpha)
-                            {
-                                if (startSearch)
-                                {
-                                    if (c == k)
-                                    {
-                                        gg = "\"" + gg + "\"";
-                                        startSearch = false;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (Globals.AllInputsNames.ContainsKey(i))
-                    {
-                        Globals.AllInputsNames.Remove(i);
-                        Globals.AllInputs.Remove(i);
-                        inputsString.RemoveAt(i);
-                    }
-
-                    Globals.AllInputsNames.Add(i, Params.Input[i].NickName);
-                    Globals.AllInputs.Add(i, gg);
-                    inputsString.Add(gg);
-                    
+                    Ps.Show();
                 }
-
-                output = "";
-                string name = DateTime.Now.ToString("yyyyMMddhhmmssff");
-                string path = System.IO.Path.GetTempPath();
-                try
+                else
                 {
-                    variablesAre = "";
-                    for (int i = 0; i < Globals.AllInputs.Count; i++)
-                    {
-                        variablesAre += Globals.AllInputsNames[i] + " = " + Globals.AllInputs[i] + " \n";
-                    }
-
-                    //MessageBox.Show(inputNames[0]);
+                    Ps.Hide();
                 }
-                catch (Exception exep)
-                {
-                    MessageBox.Show(exep.ToString());
-                }
-
-                System.IO.File.WriteAllText(path + name + ".py", variablesAre + Ps.PythonCanvas.Text);
-                try
-                {
-                    p.StartInfo.Arguments = path + name + ".py";
-                    p.Start();
-
-                    // To avoid deadlocks, always read the output stream first and then wait.
-                    output += p.StandardOutput.ReadToEnd();
-                    output += p.StandardError.ReadToEnd();
-                    p.WaitForExit();
-                }
-                catch (Exception eex)
-                {
-                    output += eex.ToString();
-                }
-                Ps.console.Text = output;
-
-                //System.IO.File.Delete(path + name + ".py");
-
-                Ps.BringToFront();
             }
-            catch (Exception ex)
+            catch (Exception exc)
             {
-                MessageBox.Show(ex.ToString());
+                MessageBox.Show(exc.ToString());
             }
-             * 
-             * */
+            writeReadPythonFile(this);
+            System.IO.File.WriteAllText(path + name + ".py", thisPythonString);
+            try
+            {
+                p.StartInfo.Arguments = path + name + ".py";
+                p.Start();
+
+                // To avoid deadlocks, always read the output stream first and then wait.
+                output += p.StandardOutput.ReadToEnd();
+                output += p.StandardError.ReadToEnd();
+                p.WaitForExit();
+                System.IO.File.Delete(path + name + ".py");
+
+
+            }
+            catch (Exception eex)
+            {
+                output += eex.ToString();
+                MessageBox.Show("Error at the first Position");
+            }
+            Ps.console.Text = output;
+
+            doc.Load(path + "_PythonExecutionOrder_" + thisIndex.ToString() + ".xml");
+            try
+            {
+                for (int i3 = 0; i3 < Params.Output.Count; i3++)
+                {
+                    DA.SetData(i3, doc.DocumentElement.SelectSingleNode("/result/" + Params.Output[i3].Name).InnerText);
+                }
+                System.IO.File.Delete(path + "_PythonExecutionOrder_" + thisIndex.ToString() + ".xml");
+            }catch (Exception exf)
+            {
+                MessageBox.Show(exf.ToString());
+                MessageBox.Show("Error at the second Position");
+            }
+            
         }
 
         /// <summary>
@@ -287,204 +417,66 @@ namespace GH_CPython
         }
 
 
+
+
+
+        ////////////////////////////////////////////////////////////////////////////
+        //                  CUSTOME ATTRIBUTE COMPONENT 
+        ////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+        /// <summary>
+        /// CUSTOME ATTRIBUTE COMPONENT 
+        /// </summary>
         public class AttribCompo : GH_ComponentAttributes
         {
             bool shellOpened = false;
             private string at = DateTime.Now.ToString("dddd MMMM yyyy hh:mm:ss ");
-            bool focused = false;
 
-             Process p = new Process();
-                            
             public AttribCompo(IGH_Component PythonInterfaceComponent)
                 : base(PythonInterfaceComponent)
             {
                 string Name = System.Environment.UserName;
                 ChangedText = Resources.SavedPythonFile.Shellinit.Replace("##CreatedBy##", Name);
                 ChangedText = ChangedText.Replace("##at##", at);
-                
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.RedirectStandardOutput = true;
-                p.StartInfo.RedirectStandardError = true;
-                p.StartInfo.FileName = "python.exe";
-                Owner.ObjectChanged += Owner_ObjectChanged;
-                Owner.AttributesChanged += Owner_AttributesChanged;
+
+                thisIndex2 = Globals.index;
             }
 
-            void Owner_AttributesChanged(IGH_DocumentObject sender, GH_AttributesChangedEventArgs e)
-            {
-                //MessageBox.Show("Changed");
-            }
 
-            void Owner_ObjectChanged(IGH_DocumentObject sender, GH_ObjectChangedEventArgs e)
-            {
-               //MessageBox.Show("Changed");
-            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="sender"></param>
+            /// <param name="e"></param>
+            /// <returns></returns>
             public override Grasshopper.GUI.Canvas.GH_ObjectResponse RespondToMouseDoubleClick(Grasshopper.GUI.Canvas.GH_Canvas sender, Grasshopper.GUI.GH_CanvasMouseEvent e)
             {
-                
-                try
+                if (!Globals.OpenThisShell.ContainsKey(thisIndex2))
                 {
-                PythonInterfaceComponent gg = new PythonInterfaceComponent();
-
-                if (!shellOpened)
-                {
-                    gg.ExpireSolution(true);
+                    Globals.OpenThisShell.Add(thisIndex2, true);
                     shellOpened = true;
-                    gg.Ps.TopMost = true;
-                    pythonRect = gg.Ps.RectangleToClient(Grasshopper.Instances.ActiveCanvas.DisplayRectangle);
-                    gg.Ps.Show();
-                    gg.Ps.console.Text = "Hi, How are you ? Are you ready to Change the world ?";
-
-
-                    if (gg.retrievedData != "")
-                    {
-                        gg.Ps.PythonCanvas.Text = gg.retrievedData;
-
-                    }
-                    else
-                    {
-                        gg.Ps.PythonCanvas.Text = ChangedText;
-                    }
-                    gg.Ps.FormClosed += (se, ev) =>
-                    {
-                        ChangedText = gg.Ps.PythonCanvas.Text;
-                        gg.savedShellData = ChangedText;
-                        shellOpened = false;
-                        Grasshopper.Instances.RedrawCanvas();
-
-                    };
-                    //gg.Ps.PythonCanvas.TextChanged += (s, ev) => ChangedText = gg.Ps.PythonCanvas.Text;
-                    gg.Ps.Move += (s, ev) =>
-                    {
-                        pythonRect = gg.Ps.RectangleToClient(Grasshopper.Instances.ActiveCanvas.DisplayRectangle);
-                        Grasshopper.Instances.RedrawCanvas();
-                    };
-                    gg.Ps.Shown += (se, ev) => gg.Ps.BringToFront();
-                    gg.Ps.BringToFront();
-                    gg.Ps.GotFocus += (se, ev) =>
-                    {
-                        focused = true;
-                        gg.Ps.light.BackColor = Color.LimeGreen;
-                        Grasshopper.Instances.RedrawCanvas();
-                    };
-
-                    gg.Ps.LostFocus += (se, ev) =>
-                    {
-                        focused = false;
-                        gg.Ps.light.BackColor = Color.Gray;
-                        Grasshopper.Instances.RedrawCanvas();
-                    };
-
-                    gg.Ps.Test.Click += (se, ev) =>
-                    {
-                        output = "";
-                        string name = DateTime.Now.ToString("yyyyMMddhhmmssff");
-                        string path = System.IO.Path.GetTempPath();
-                        try
-                        {
-                            variablesAre = "";
-                            int iForType = 1;
-                            float fForType = 1;
-                            double dForType = 1.00f;
-                            string sForType = "s";
-
-                            float f;
-                            double d;
-                            int into;
-
-                            for (int i = 0; i < Owner.Params.Input.Count; i++)
-                            {
-                                string datahere = "";
-                                if(Owner.Params.Input[i].Access == GH_ParamAccess.list)
-                                {
-                                    string ghijk = Owner.Params.Input[i].VolatileData.DataDescription(false, false).Trim().Replace(System.Environment.NewLine, ",");
-                                    
-                                    string[] newstr = ghijk.Split(',');
-                                    if(float.TryParse(newstr[0], out f) || double.TryParse(newstr[0],out d) || int.TryParse(newstr[0], out into))
-                                    {
-                                        if (newstr.Length == 1)
-                                            datahere += ghijk;
-                                        else
-                                        datahere += "["+ghijk+"]";
-                                    }
-                                    else
-                                    {
-                                        if (newstr.Length == 1)
-                                            datahere += "\""+ ghijk + "\"";
-                                        else
-                                            datahere += "[\""+ghijk.Replace(",", "\",\"")+"\"]";
-                                    }
-                                }
-                                else if (Owner.Params.Input[i].Access == GH_ParamAccess.item)
-                                {
-                                    
-                                    string ghijk = Owner.Params.Input[i].VolatileData.DataDescription(false, false).Trim().Replace(System.Environment.NewLine, ",");
-                                    string[] newstr = ghijk.Split(',');
-                                    if (float.TryParse(newstr[0], out f) || double.TryParse(newstr[0], out d) || int.TryParse(newstr[0], out into))
-                                    {
-                                        if (newstr.Length == 1)
-                                            datahere += ghijk;
-                                        else
-                                            datahere += "[" + ghijk + "]";
-                                    }
-                                    else
-                                    {
-                                        if (newstr.Length == 1)
-                                            datahere += "\"" + ghijk + "\"";
-                                        else
-                                            datahere += "[\"" + ghijk.Replace(",", "\",\"") + "\"]";
-                                    }
-                                }
-
-
-                                variablesAre += Owner.Params.Input[i].NickName + " = " + datahere + " \n";
-                            }
-
-                        }
-                        catch (Exception exep)
-                        {
-                            MessageBox.Show(exep.ToString());
-                        }
-
-                        System.IO.File.WriteAllText(path + name + ".py", variablesAre + gg.Ps.PythonCanvas.Text);
-                        try
-                        {
-                            p.StartInfo.Arguments = path + name + ".py";
-                            p.Start();
-
-                            // To avoid deadlocks, always read the output stream first and then wait.
-                            output += p.StandardOutput.ReadToEnd();
-                            output += p.StandardError.ReadToEnd();
-                            p.WaitForExit();
-                        }
-                        catch (Exception eex)
-                        {
-                            output += eex.ToString();
-                        }
-                        gg.Ps.console.Text = output;
-
-                        System.IO.File.Delete(path + name + ".py");
-
-                        gg.Ps.BringToFront();
-                    };
-                    gg.Ps.close.Click += (se, ev) => gg.Ps.Close();
-                    Grasshopper.Instances.RedrawCanvas();
-
                 }
-
-               }catch(Exception erx)
+                else
                 {
-                    MessageBox.Show(erx.ToString());
+                    Globals.OpenThisShell[thisIndex2] = true;
+                    shellOpened = true;
                 }
-
+                Owner.ExpireSolution(true);
                 return Grasshopper.GUI.Canvas.GH_ObjectResponse.Handled;
             }
 
 
-
-
-
             System.Drawing.Rectangle rec0;
+
+            /// <summary>
+            /// LAYOUT DRAWING
+            /// </summary>
             protected override void Layout()
             {
                 base.Layout();
@@ -495,7 +487,6 @@ namespace GH_CPython
                 rec1.Y = rec0.Bottom - 5;
                 rec1.Height = 5;
                 rec1.Inflate(0, 0);
-
 
                 System.Drawing.Rectangle rec2 = rec0;
 
@@ -513,17 +504,27 @@ namespace GH_CPython
                 rec2.Height = 5;
                 rec2.Inflate(0, 0);
 
-
-
                 Bounds = rec0;
                 ButtonBounds = rec1;
                 ButtonBounds2 = rec2;
 
             }
+
             GH_Capsule button;
+
             GH_Capsule button2;
+
+            /// <summary>
+            /// VAR - BUTTON BOUNDS
+            /// </summary>
             private System.Drawing.Rectangle ButtonBounds { get; set; }
 
+            /// <summary>
+            /// RENDERING LAYOUT 
+            /// </summary>
+            /// <param name="canvas"></param>
+            /// <param name="graphics"></param>
+            /// <param name="channel"></param>
             protected override void Render(Grasshopper.GUI.Canvas.GH_Canvas canvas, System.Drawing.Graphics graphics, Grasshopper.GUI.Canvas.GH_CanvasChannel channel)
             {
                 base.Render(canvas, graphics, channel);
@@ -539,7 +540,7 @@ namespace GH_CPython
 
 
 
-                    if (shellOpened)
+                    if (Globals.OpenThisShell[thisIndex2] == true)
                     {
                         System.Drawing.Drawing2D.LinearGradientBrush lgb = new System.Drawing.Drawing2D.LinearGradientBrush(
                            rec0.Location,
@@ -569,7 +570,12 @@ namespace GH_CPython
                 }
             }
 
-
+            /// <summary>
+            /// CREATES ROUND RECTANGLE AROUND THE COMPONENT
+            /// </summary>
+            /// <param name="bounds"></param>
+            /// <param name="radius"></param>
+            /// <returns></returns>
             public static GraphicsPath RoundedRect(Rectangle bounds, int radius)
             {
                 int diameter = radius * 2;
@@ -600,7 +606,7 @@ namespace GH_CPython
                 path.AddArc(arc, 90, 90);
 
                 path.CloseFigure();
-
+                path.CloseFigure();
                 return path;
             }
 
@@ -620,10 +626,7 @@ namespace GH_CPython
                 return base.RespondToMouseDown(sender, e);
             }
 
-
             public System.Drawing.Rectangle pythonRect { get; set; }
-
-
 
             public string ChangedText { get; set; }
 
@@ -632,6 +635,10 @@ namespace GH_CPython
             public string output { get; set; }
 
             public string variablesAre { get; set; }
+
+            public string foot { get; set; }
+
+            public int thisIndex2 { get; set; }
         }
 
 
@@ -652,17 +659,22 @@ namespace GH_CPython
         public IGH_Param CreateParameter(GH_ParameterSide side, int index)
         {
             Param_GenericObject param = new Param_GenericObject();
-            
-            if(side == GH_ParameterSide.Input)
+
+            if (side == GH_ParameterSide.Input)
             {
-                param.Name = GH_ComponentParamServer.InventUniqueNickname("xyzijklmnopqrstuvw", Params);
-            }else if(side == GH_ParameterSide.Output)
-            {
-                param.Name = GH_ComponentParamServer.InventUniqueNickname("abcdefghijklmnopqrstuvwxyz", Params);
+                param.Name = GH_ComponentParamServer.InventUniqueNickname("xyzuvwst", Params);
+                param.Access = GH_ParamAccess.list;
+                param.NickName = param.Name;
             }
-            param.NickName = param.Name;
+            else if (side == GH_ParameterSide.Output)
+            {
+                param.Name = GH_ComponentParamServer.InventUniqueNickname("abcdefghijklmn", Params);
+                param.Access = GH_ParamAccess.item;
+                param.NickName = param.Name;
+            }
+
             param.Description = "Param" + (Params.Input.Count + 1);
-            inputNames.Insert(index, param.Name);
+
             return param;
         }
 
@@ -681,7 +693,17 @@ namespace GH_CPython
         public string variablesAre { get; set; }
 
         public string output { get; set; }
+
+        public int thisIndex { get; set; }
+
+        public string name { get; set; }
+
+        public string ChangedText { get; set; }
+
+        public bool shellOpened { get; set; }
+
+        public string foot { get; set; }
+
+        public string thisPythonString { get; set; }
     }
-
-
 }

@@ -36,6 +36,10 @@ namespace GH_CPython
 {
     public static class Globals
     {
+        public static int index = 0; 
+        public static Dictionary<int, string> fileName = new Dictionary<int, string>();
+        public static Dictionary<int, string> PythonString = new Dictionary<int, string>();
+        public static Dictionary<int, bool> OpenThisShell = new Dictionary<int, bool>();
 
         // INPUTS NAMES
         public static Dictionary<int, string> AllInputsNames = new Dictionary<int, string>();

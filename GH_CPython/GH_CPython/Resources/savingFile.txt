@@ -1,0 +1,14 @@
+
+
+
+import xml.etree.cElementTree as ET
+
+data = {##data##}
+
+root = ET.Element("result")
+
+for k, val in data.iteritems():
+    ET.SubElement(root,k).text = str(val)
+
+tree = ET.ElementTree(root)
+tree.write(r"##fileName##")

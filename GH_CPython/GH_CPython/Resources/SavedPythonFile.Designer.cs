@@ -8,11 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GH_CPython.Resources
-{
+namespace GH_CPython.Resources {
     using System;
-
-
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,63 +22,98 @@ namespace GH_CPython.Resources
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class SavedPythonFile
-    {
-
+    internal class SavedPythonFile {
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal SavedPythonFile()
-        {
+        internal SavedPythonFile() {
         }
-
+        
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager
-        {
-            get
-            {
-                if (object.ReferenceEquals(resourceMan, null))
-                {
+        internal static global::System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GH_CPython.Resources.SavedPythonFile", typeof(SavedPythonFile).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture
-        {
-            get
-            {
+        internal static global::System.Globalization.CultureInfo Culture {
+            get {
                 return resourceCulture;
             }
-            set
-            {
+            set {
                 resourceCulture = value;
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!-- syntaxdefinition for Python by Steve Dower --&gt;
+        ///
+        ///&lt;SyntaxDefinition name=&quot;Python&quot; extensions=&quot;.py&quot;&gt;
+        ///
+        ///    &lt;Environment&gt;
+        ///        &lt;Custom name=&quot;TypeReference&quot; bold=&quot;false&quot; italic=&quot;false&quot; color=&quot;#04ABAB&quot; /&gt;
+        ///        &lt;Custom name=&quot;UnknownEntity&quot; bold=&quot;false&quot; italic=&quot;false&quot; color=&quot;#AB0404&quot; /&gt;
+        ///    &lt;/Environment&gt;
+        ///
+        ///    &lt;Properties&gt;
+        ///        &lt;Property name=&quot;LineComment&quot; value=&quot;#&quot;/&gt;
+        ///    &lt;/Properties&gt;
+        ///
+        ///    &lt;Digits name=&quot;Digits&quot; bold=&quot;false&quot; italic=&quot;false&quot; color=&quot;DarkBlue&quot;/&gt;
+        ///
+        ///    &lt;RuleSets&gt;
+        ///        &lt;Rul [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string hl {
+            get {
+                return ResourceManager.GetString("hl", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
-        internal static string SavedPythonData
-        {
-            get
-            {
+        internal static string SavedPythonData {
+            get {
                 return ResourceManager.GetString("SavedPythonData", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string similar to import xml.etree.cElementTree as ET
+        ///
+        ///data = {##data##}
+        ///
+        ///root = ET.Element(&quot;root&quot;)
+        ///doc = ET.SubElement(root, &quot;doc&quot;)
+        ///
+        ///for k, val in data.iteritems():
+        ///    ET.SubElement(doc,&quot;data&quot; ,name=k).text = str(val)
+        ///
+        ///tree = ET.ElementTree(root)
+        ///tree.write(##fileName##).
+        /// </summary>
+        internal static string savingFile {
+            get {
+                return ResourceManager.GetString("savingFile", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to # -*- coding: utf-8 -*-
         ///&quot;&quot;&quot; 
@@ -88,10 +122,8 @@ namespace GH_CPython.Resources
         ///@author:  ##CreatedBy## 
         ///&quot;&quot;&quot;.
         /// </summary>
-        internal static string Shellinit
-        {
-            get
-            {
+        internal static string Shellinit {
+            get {
                 return ResourceManager.GetString("Shellinit", resourceCulture);
             }
         }
