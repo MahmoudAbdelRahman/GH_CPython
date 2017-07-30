@@ -5,7 +5,7 @@ Python interface IDE to implement python code from inside grasshopper
 -----------
 
 The Idea of this plugin is to provide a component simliar to GHPython, but instead of just running IronPython and basic python modules, it could run any other python module installed on your machine such as numpy and scipy .... etc. 
+![numpytesting](https://user-images.githubusercontent.com/6969514/28757043-236a2a28-757b-11e7-8896-91a661a17bc6.JPG)
 
-![pyinterface](https://user-images.githubusercontent.com/6969514/27545861-4dbfb0d6-5a91-11e7-81d7-2cd29c4993ed.JPG)
 
 ![emf](https://user-images.githubusercontent.com/6969514/28060261-ef1bbc9a-6626-11e7-8385-5ea5d2ca40d5.jpg)
