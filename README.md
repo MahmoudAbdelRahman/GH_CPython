@@ -1,7 +1,7 @@
 # GH_CPython
 Python interface IDE to implement python code from inside grasshopper
 
-![dodo](https://user-images.githubusercontent.com/6969514/28295489-2e80d048-6b61-11e7-8337-c541537ca0d4.JPG)
+![gowentgone](https://user-images.githubusercontent.com/6969514/28756153-1cd1bc92-7569-11e7-9ce2-75ca52090598.JPG)
 -----------
 
 The Idea of this plugin is to provide a component simliar to GHPython, but instead of just running IronPython and basic python modules, it could run any other python module installed on your machine such as numpy and scipy .... etc. 
