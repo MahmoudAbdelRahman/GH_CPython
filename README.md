@@ -1,11 +1,11 @@
 # GH_CPython
-Python interface IDE to implement python code from inside grasshopper
+CPython IDE for grasshopper. 
+
 
 ![gowentgone](https://user-images.githubusercontent.com/6969514/28756153-1cd1bc92-7569-11e7-9ce2-75ca52090598.JPG)
 -----------
 
-The Idea of this plugin is to provide a component simliar to GHPython, but instead of just running IronPython and basic python modules, it could run any other python module installed on your machine such as numpy and scipy .... etc. 
+The Idea of this plugin is to provide a component that implements CPython codes inside grasshopper.
+- It requires having Python2.7 installed in your machine "C:\Python27\"
+- You have to run Rhino as adminstrator at first. 
 ![numpytesting](https://user-images.githubusercontent.com/6969514/28757043-236a2a28-757b-11e7-8896-91a661a17bc6.JPG)
-
-
-![emf](https://user-images.githubusercontent.com/6969514/28060261-ef1bbc9a-6626-11e7-8385-5ea5d2ca40d5.jpg)
