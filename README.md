@@ -13,3 +13,10 @@ The following image shows CPython plugin(down right) , and the first implemented
 ![firstplugin](https://user-images.githubusercontent.com/6969514/28816126-f27d5a8c-76a3-11e7-8dd0-3d368657b862.JPG)
 
 ![plgn](https://user-images.githubusercontent.com/6969514/28817868-cb7993a0-76a9-11e7-9e06-fc059594cbbc.png)
+
+## What can and What can't it do?
+### It can: 
+1. add as many input and output variables as needed. 
+2. Change its name, NickName and discription.
+3. Change Icon (simply drag a 24x24 pixel image to the component).
+4. Save as user object. 
