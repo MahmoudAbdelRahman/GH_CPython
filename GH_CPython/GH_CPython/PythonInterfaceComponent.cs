@@ -25,7 +25,7 @@
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
- * */
+ ***/
 
 using System;
 using System.Collections.Generic;
@@ -48,18 +48,25 @@ using System.IO;
 namespace GH_CPython
 {
 
-
     public class PythonInterfaceComponent : GH_Component, IGH_VariableParameterComponent
     {
-        string initShell;
         PythonShell PythonIDE;
 
+
+
         Process RunningPythonProcess = new Process();
+
         string path = System.IO.Path.GetTempPath();
+
         private string at;
-        bool focused = false;
 
         XmlDocument doc = new XmlDocument();
+
+        public string retrievedData = "";
+
+        public string writtenText = "";
+
+
         /// <summary>
         /// Constructor 
         /// </summary>
@@ -68,8 +75,8 @@ namespace GH_CPython
                 "a python IDE interface",
                 "Maths", "Script")
         {
-            this.Params.ParameterNickNameChanged += Params_ParameterNickNameChanged;
 
+            
             PythonIDE = new PythonShell();
             PythonIDE.TopMost = true;
             thisIndex = Globals.index;
@@ -81,7 +88,6 @@ namespace GH_CPython
             Globals.OpenThisShell.Add(thisIndex, false);
 
 
-
             ///Initiate Python process options.
             ///Don't show Shell - Redirect Standard output - Redirect Standard error - Hide Shell
             RunningPythonProcess.StartInfo.UseShellExecute = false;
@@ -91,7 +97,7 @@ namespace GH_CPython
             RunningPythonProcess.StartInfo.UseShellExecute = false;
             //RunningPythonProcess.StartInfo.CreateNoWindow = true;
 
-
+            
 
             /// This adds Python folder to Windows Environment Paths variables.
             /// if it exists, set python as the process file name , else, set python folders and then set python as the process filename
@@ -117,12 +123,15 @@ namespace GH_CPython
               @author:  UserName 
               """
            */
-            at = DateTime.Now.ToString("dddd MMMM yyyy hh:mm:ss");
-            string Name = System.Environment.UserName;
-            InitialPythonText = Resources.SavedPythonFile.Shellinit.Replace("##CreatedBy##", Name);
-            InitialPythonText = InitialPythonText.Replace("##at##", at);
-            
 
+
+                at = DateTime.Now.ToString("dddd MMMM yyyy hh:mm:ss");
+                string Name = System.Environment.UserName;
+                InitialPythonText = Resources.SavedPythonFile.Shellinit.Replace("##CreatedBy##", Name);
+                InitialPythonText = InitialPythonText.Replace("##at##", at);
+
+            
+            
             
             try
             {
@@ -133,13 +142,22 @@ namespace GH_CPython
 
                 /// retrievedData are the data that are saved just after closing the Form (either by clicking x or close)
                 /// They are saved here and then retrieved just after reopening the form again.
-                if (retrievedData != "")
+                if (writtenText != "")
+                {
+                    PythonIDE.PythonCanvas.Text = writtenText;
+                    retrievedData = writtenText;
+                }
+                else if (retrievedData != "")
                 {
                     PythonIDE.PythonCanvas.Text = retrievedData;
+                    writtenText = retrievedData;
                 }
                 else
                 {
                     PythonIDE.PythonCanvas.Text = InitialPythonText;
+                    retrievedData = InitialPythonText;
+                    writtenText = InitialPythonText;
+
                 }
 
                 /// This function reads all the input data, then initiates it in python syntax
@@ -153,6 +171,7 @@ namespace GH_CPython
                 /// Handleing Test button click. 
                 PythonIDE.Test.Click += (se, ev) =>
                    {
+
                        //writeReadPythonFile(this);
                        ExpireSolution(true);
                    };
@@ -177,27 +196,40 @@ namespace GH_CPython
         }
 
 
-        private void writeReadPythonFile(PythonInterfaceComponent gg)
+
+
+        /// <summary>
+        /// This function is resposible for writing python files after
+        /// gathering all inputs and outputs in a python-syntax form.
+        /// </summary>
+        /// <param name="WinForm"></param>
+        private void writeReadPythonFile(PythonInterfaceComponent WinForm)
         {
 
-            //string name = DateTime.Now.ToString("yyyyMMddhhmmssff");
+            /// Section 1
+            /// Initiate temporary Python file name that will be executed as well as the temporary folder.
             string name = "PythonFileWritten_" + thisIndex.ToString();
             string path = System.IO.Path.GetTempPath();
 
             try
             {
-                variablesAre = "";
+                variablesAre = ""; // Collecting the input variables here.
 
-                float f;
-                double d;
-                int into;
-
-
+             /// Section 2
+             /// Add the output variables' names and initiate them as None. 
                 for (int i = 0; i < Params.Output.Count; i++)
                 {
                     variablesAre += Params.Output[i].NickName + " = None\n";
                 }
 
+
+                // These temporary variables  are used for parsing input data into float, double or int. 
+                float f;
+                double d;
+                int into;
+
+            /// Section 3. 
+            /// Collect input data names, and values then initiate them in a python syntax form as : "variableName = varibaleValue \n"
                 for (int i = 0; i < Params.Input.Count; i++)
                 {
                     string datahere = "";
@@ -288,50 +320,54 @@ namespace GH_CPython
             if (Globals.PythonString.ContainsKey(thisIndex))
             {
                 Globals.PythonString.Remove(thisIndex);
-                Globals.PythonString.Add(thisIndex, variablesAre + gg.PythonIDE.PythonCanvas.Text + "\n" + foot);
+                Globals.PythonString.Add(thisIndex, variablesAre + WinForm.PythonIDE.PythonCanvas.Text + "\n" + foot);
                 
             }
             else
             {
-                Globals.PythonString.Add(thisIndex, variablesAre + gg.PythonIDE.PythonCanvas.Text + "\n" + foot);
+                Globals.PythonString.Add(thisIndex, variablesAre + WinForm.PythonIDE.PythonCanvas.Text + "\n" + foot);
             }
 
-            thisPythonString = variablesAre + gg.PythonIDE.PythonCanvas.Text + "\n" + foot;
 
-            System.IO.File.WriteAllText(path + name + ".py", variablesAre + gg.PythonIDE.PythonCanvas.Text + "\n" + foot);
-            /*string output = "";
-
-            try
-            {
-                RunningPythonProcess.StartInfo.Arguments = path + name + ".py";
-                RunningPythonProcess.Start();
-
-                //To avoid deadlocks, always read the output stream first and then wait.
-                output += RunningPythonProcess.StandardOutput.ReadToEnd();
-                output += RunningPythonProcess.StandardError.ReadToEnd();
-                RunningPythonProcess.WaitForExit();
+            /// Section 4.
+            /// put all variables together alongwith the body of the python file text.
+            thisPythonString = variablesAre + WinForm.PythonIDE.PythonCanvas.Text + "\n" + foot;
 
 
-            }
-            catch (Exception eex)
-            {
-                output += eex.ToString();
-            }
-            gg.PythonIDE.console.Text = output;
-            System.IO.File.Delete(path + name + ".py");
-            try
-            {
-                //ExpireSolution(true);
-            }
-            catch (Exception eex)
-            {
-                MessageBox.Show(eex.ToString());
-            }
-
-            //gg.Ps.BringToFront();
-            */
+            /// Section 5.
+            /// Save all data as a python file that will be run when the component is expired. 
+            System.IO.File.WriteAllText(path + name + ".py", variablesAre + WinForm.PythonIDE.PythonCanvas.Text + "\n" + foot);
+            
         }
 
+        
+        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+        {
+            if (retrievedData != "")
+                writer.SetString("allSavedText", retrievedData);
+            else
+                writer.SetString("allSavedText", InitialPythonText);
+            return base.Write(writer);
+        }
+
+        public override bool Read(GH_IO.Serialization.GH_IReader reader)
+        {
+            if(reader.ItemExists("allSavedText"))
+            {
+                writtenText = reader.GetString("allSavedText");
+                PythonIDE.PythonCanvas.Text = writtenText;
+            }
+            
+            return base.Read(reader);
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         public static bool ExistsOnPath(string fileName)
         {
             return GetFullPath(fileName) != null;
@@ -352,11 +388,6 @@ namespace GH_CPython
             return null;
         }
 
-        void Params_ParameterNickNameChanged(object sender, GH_ParamServerEventArgs e)
-        {
-            data = this.Params.Input[0].NickName;
-            this.Message = this.Params.Input[0].NickName;
-        }
 
         void close_Click(object sender, EventArgs e)
         {
@@ -379,14 +410,13 @@ namespace GH_CPython
         }
 
 
-        public string retrievedData = "";
 
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("_input", "_input", "description", GH_ParamAccess.list,"dummyVariable");
+            pManager.AddTextParameter("_input", "_input", "DummyVariable called initiated as flase", GH_ParamAccess.list,"False");
         }
 
         /// <summary>
@@ -397,7 +427,7 @@ namespace GH_CPython
             pManager.AddTextParameter("output_", "output_", "", GH_ParamAccess.item);
 
         }
-        string data;
+
         /// <summary>
         /// This is the method that actually does the work.
         /// </summary>
@@ -407,6 +437,8 @@ namespace GH_CPython
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            PythonIDE.Text = this.NickName;
+            retrievedData = PythonIDE.PythonCanvas.Text;
             string output = "";
             try
             {
@@ -767,5 +799,6 @@ namespace GH_CPython
         public string foot { get; set; }
 
         public string thisPythonString { get; set; }
+
     }
 }

@@ -4,4 +4,5 @@ Python Script
 Created on  ##at## 
 @author:  ##CreatedBy## 
 """
-output_ = _input  #This is just a testing line, you can delete it if you wish - _input carries a dummy variable called dummyVariable, you can overwrite it if you wish
+#This is just a testing line, you can delete it if you wish - _input carries a dummy variable initiated as False boolean value
+output_ = _input  
