@@ -12,3 +12,4 @@ CPython IDE for grasshopper.
 The following image shows CPython plugin(down right) , and the first implemented plugin (top right) and the code ide (left)
 ![firstplugin](https://user-images.githubusercontent.com/6969514/28816126-f27d5a8c-76a3-11e7-8dd0-3d368657b862.JPG)
 
+![plgn](https://user-images.githubusercontent.com/6969514/28817868-cb7993a0-76a9-11e7-9e06-fc059594cbbc.png)
