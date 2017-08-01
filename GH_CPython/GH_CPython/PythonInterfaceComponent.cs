@@ -253,6 +253,10 @@ namespace GH_CPython
                         {
                             datahere += thisInputString.Replace("[", "[").Replace("]", "]");
                         }
+                        else if (thisInputString.Contains("(") && thisInputString.Contains(")"))
+                        {
+                            datahere += thisInputString.Replace("(", "(").Replace(")", ")");
+                        }
                         else
                         {
                             if (newstr.Length == 1)
@@ -340,18 +344,23 @@ namespace GH_CPython
             
         }
 
-        
+
+        int inputCount = 0;
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
             if (retrievedData != "")
                 writer.SetString("allSavedText", retrievedData);
             else
                 writer.SetString("allSavedText", InitialPythonText);
+
             return base.Write(writer);
         }
 
+
+
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
+            
             if(reader.ItemExists("allSavedText"))
             {
                 writtenText = reader.GetString("allSavedText");
@@ -373,6 +382,8 @@ namespace GH_CPython
             return GetFullPath(fileName) != null;
         }
 
+
+
         public static string GetFullPath(string fileName)
         {
             if (File.Exists(fileName))
@@ -389,10 +400,13 @@ namespace GH_CPython
         }
 
 
+
         void close_Click(object sender, EventArgs e)
         {
             PythonIDE.Hide();
         }
+
+
 
         void Ps_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
         {
@@ -402,6 +416,7 @@ namespace GH_CPython
             Globals.OpenThisShell[thisIndex] = false;
             Grasshopper.Instances.RedrawCanvas();
         }
+
 
 
         public override void CreateAttributes()
