@@ -1,3 +1,4 @@
+![python_logo-100](https://user-images.githubusercontent.com/6969514/28852793-2ad6ac70-772c-11e7-92d1-cd9087e3b661.png)
 # GH_CPython
 CPython IDE for grasshopper. 
 
