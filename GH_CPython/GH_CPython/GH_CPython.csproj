@@ -54,14 +54,11 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.TextEditor, Version=3.2.0.5505, Culture=neutral, PublicKeyToken=4d61825e8dd49f1a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Desktop\ICSharpCode.TextEditor.dll</HintPath>
-    </Reference>
     <Reference Include="IronPython, Version=2.7.0.40, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="RhinoCommon">
+    <Reference Include="RhinoCommon, Version=5.1.30000.16, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files\Rhinoceros 5 (64-bit)\System\RhinoCommon.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -89,7 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Globals.cs" />
-    <Compile Include="PythonInterfaceComponent.cs" />
+    <Compile Include="Gh_CPythonComponent.cs" />
     <Compile Include="PythonInterfaceInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PythonShell.cs">
@@ -126,17 +123,17 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.manifest" />
+    <None Include="app.manifest">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Resources\Python_logo-24.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shellinit.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="drafting.txt" />
     <None Include="Resources\TextFile1.txt" />
     <None Include="Resources\savingFile.txt" />
-    <Content Include="TextFile1.txt" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="RhinoHandlersLib">

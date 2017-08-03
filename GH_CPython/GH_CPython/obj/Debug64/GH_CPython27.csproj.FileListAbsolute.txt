@@ -1,0 +1,14 @@
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\bin\GH_CPython.dll
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\bin\GH_CPython.pdb
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\bin\ICSharpCode.TextEditor.dll
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\bin\RhinoCommon.dll
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\bin\RhinoCommon.xml
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\Interop.RhinoHandlersLib.dll
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython27.csproj.ResolveComReference.cache
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.Resources.Icons.resources
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.PythonShell.resources
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.Resources.SavedPythonFile.resources
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython27.csproj.GenerateResource.Cache
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.dll
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.pdb
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython27.csprojResolveAssemblyReference.cache

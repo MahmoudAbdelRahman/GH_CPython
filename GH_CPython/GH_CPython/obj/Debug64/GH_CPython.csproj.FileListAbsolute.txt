@@ -6,7 +6,6 @@ C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\obj\D
 C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.csproj.GenerateResource.Cache
 C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.dll
 C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.pdb
-C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\bin\ICSharpCode.TextEditor.dll
 C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\bin\RhinoCommon.dll
 C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\bin\RhinoCommon.xml
 C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\Interop.RhinoHandlersLib.dll
