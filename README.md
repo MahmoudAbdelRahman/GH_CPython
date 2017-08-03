@@ -27,3 +27,5 @@ The following image shows CPython plugin(down right) , and the first implemented
 ![02](https://user-images.githubusercontent.com/6969514/28823500-2ae2afc0-76be-11e7-80be-4a00164e721f.JPG)
 ![04](https://user-images.githubusercontent.com/6969514/28823504-349dce28-76be-11e7-810b-7ae71bf52cde.JPG)
 
+### GhPython Vs. Gh_CPython
+![speedtest](https://user-images.githubusercontent.com/6969514/28900506-f88cb34c-77f1-11e7-825d-d34d3c4d14b9.JPG)
