@@ -122,7 +122,7 @@ namespace GH_CPython
                 string Name = System.Environment.UserName;
                 InitialPythonText = Resources.SavedPythonFile.Shellinit.Replace("##CreatedBy##", Name);
                 InitialPythonText = InitialPythonText.Replace("##at##", at);
-
+                
             try
             {
                 /// Initiate Console data as follows
@@ -181,7 +181,8 @@ namespace GH_CPython
             }
             catch (Exception erx)
             {
-                MessageBox.Show(erx.ToString());
+                this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, erx.ToString());
+                //MessageBox.Show(erx.ToString());
             }
         }
 
@@ -227,6 +228,7 @@ namespace GH_CPython
                 for (int i = 0; i < Params.Input.Count; i++)
                 {
                     string datahere = "";
+
                     if (Params.Input[i].Access == GH_ParamAccess.list)
                     {
                         string thisInputString = Params.Input[i].VolatileData.DataDescription(false, false).Trim().Replace(System.Environment.NewLine, ",");
@@ -241,7 +243,11 @@ namespace GH_CPython
                         }
                         else if (thisInputString.Contains("{") && thisInputString.Contains("}"))
                         {
-                            datahere += thisInputString.Replace("{", "[").Replace("}", "]");
+                            datahere += thisInputString.Replace("{", "{").Replace("}", "}");
+                        }
+                        else if (thisInputString.Contains("{") && thisInputString.Contains("}") && thisInputString.Contains("\""))
+                        {
+                            datahere += thisInputString.Replace("{", "{").Replace("}", "}").Replace("\"", "'");
                         }
                         else if (thisInputString.Contains("[") && thisInputString.Contains("]"))
                         {
@@ -335,7 +341,7 @@ namespace GH_CPython
             /// Section 5.
             /// Save all data as a python file that will be run when the component is expired. 
             System.IO.File.WriteAllText(path + name + ".py", variablesAre + WinForm.PythonIDE.PythonCanvas.Text + "\n" + foot);
-           
+
 
 
             
@@ -346,25 +352,8 @@ namespace GH_CPython
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
 
-            try
-            {
-                this.Name = this.NickName;
+            AddNamesAndDescriptions();
 
-                for (int i = 0; i < this.Params.Input.Count; i++)
-                {
-                    this.Params.Input[i].Name = this.Params.Input[i].NickName;
-                }
-
-                for (int i = 0; i < this.Params.Output.Count; i++)
-                {
-                    this.Params.Output[i].Name = this.Params.Output[i].NickName;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-            
             try
             {
                 if (retrievedData != "")
@@ -466,6 +455,48 @@ namespace GH_CPython
 
         }
 
+        void AddNamesAndDescriptions()
+        {
+            Dictionary<string, string> args3 = new Dictionary<string, string>();
+            string[] args = PythonIDE.PythonCanvas.Text.Split(new string[] { "\"\"\"", "'''" }, System.StringSplitOptions.RemoveEmptyEntries);
+            foreach (var myString in args[1].Split(new string[] { Environment.NewLine, "\n" }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (myString.Contains("="))
+                {
+                    string[] thislinestring = myString.Split(new string[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
+                    args3.Add(thislinestring[0].Trim(), thislinestring[1]);
+                }
+            }
+
+
+            try
+            {
+                this.Name = this.NickName;
+
+                for (int i = 0; i < this.Params.Input.Count; i++)
+                {
+                    this.Params.Input[i].Name = this.Params.Input[i].NickName;
+                    try { this.Params.Input[i].Description = args3[this.Params.Input[i].NickName].Replace(@"\n", Environment.NewLine); }
+                    catch { }
+
+
+                }
+
+                for (int i = 0; i < this.Params.Output.Count; i++)
+                {
+                    this.Params.Output[i].Name = this.Params.Output[i].NickName;
+                    try { this.Params.Output[i].Description = args3[this.Params.Output[i].NickName]; }
+                    catch { }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+
+
         /// <summary>
         /// This is the method that actually does the work.
         /// </summary>
@@ -477,6 +508,8 @@ namespace GH_CPython
         {
             PythonIDE.Text = this.NickName;
             retrievedData = PythonIDE.PythonCanvas.Text;
+
+            AddNamesAndDescriptions();
             string output = "";
             try
             {

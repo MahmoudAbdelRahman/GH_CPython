@@ -79,7 +79,7 @@ namespace GH_CPython
                 this.CheckKeyword("do ", Color.Green, 0);
                 this.CheckKeyword(" range", Color.Green, 0);
                 this.indent(":\n", 0);
-                
+
 
 
         }
@@ -99,6 +99,42 @@ namespace GH_CPython
                     this.PythonCanvas.Select(selectStart, 0);
                     this.PythonCanvas.SelectionColor = Color.Black;
                 }
+            }
+        }
+
+
+        private void comments(string word, Color color, int startIndex)
+        {
+
+            if (this.PythonCanvas.Text.Contains(word))
+            {
+                string[] commentSeparated = this.PythonCanvas.Text.Split(new string[] { word }, System.StringSplitOptions.RemoveEmptyEntries);
+                try
+                {
+                    for (int i = 1; i < commentSeparated.Length; i += 2)
+                    {
+                        int nofStrings = commentSeparated[i].Length;
+                        if (this.PythonCanvas.Text.Contains(commentSeparated[i]))
+                        {
+                            int index = -1;
+                            int selectStart = this.PythonCanvas.SelectionStart;
+
+                            while ((index = this.PythonCanvas.Text.IndexOf(commentSeparated[i], (index + 1))) != -1)
+                            {
+                                this.PythonCanvas.Select((index + startIndex), nofStrings);
+                                this.PythonCanvas.SelectionFont = new Font(PythonCanvas.Font, FontStyle.Italic);
+                                this.PythonCanvas.SelectionColor = color;
+                                this.PythonCanvas.Select(selectStart, 0);
+                                this.PythonCanvas.SelectionColor = Color.Black;
+                            }
+                        }
+                    }
+                }catch(Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+                
+                
             }
         }
 
