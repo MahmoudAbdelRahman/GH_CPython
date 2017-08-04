@@ -10,4 +10,3 @@ C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\bin\R
 C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\bin\RhinoCommon.xml
 C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\Interop.RhinoHandlersLib.dll
 C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.csproj.ResolveComReference.cache
-C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.csprojResolveAssemblyReference.cache

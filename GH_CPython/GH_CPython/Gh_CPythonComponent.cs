@@ -80,6 +80,8 @@ namespace GH_CPython
             PythonIDE = new PythonShell();
             PythonIDE.TopMost = true;
 
+            PreviewExpired += Gh_CPythonComponent_PreviewExpired;
+
             thisIndex = Globals.index;
 
             name = "PythonFileWritten_" + thisIndex.ToString();
@@ -161,7 +163,7 @@ namespace GH_CPython
                 /// Handleing Test button click. 
                 PythonIDE.Test.Click += (se, ev) =>
                    {
-
+                       AddNamesAndDescriptions();
                        //writeReadPythonFile(this);
                        ExpireSolution(true);
                    };
@@ -171,7 +173,7 @@ namespace GH_CPython
                         InitialPythonText = PythonIDE.PythonCanvas.Text;
                         shellOpened = false;
                         PythonIDE.Hide();
-
+                        AddNamesAndDescriptions();
                         Globals.OpenThisShell[thisIndex] = false;
                         Grasshopper.Instances.RedrawCanvas();
                     };
@@ -188,10 +190,44 @@ namespace GH_CPython
 
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void Gh_CPythonComponent_PreviewExpired(IGH_DocumentObject sender, GH_PreviewExpiredEventArgs e)
+        {
+            try
+            {
+                if (Globals.OpenThisShell[thisIndex] == true)
+                {
+                    PythonIDE.Show();
+                }
+                else
+                {
+                    PythonIDE.Hide();
+                }
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show(exc.ToString());
+            }
+            AddNamesAndDescriptions();
+            Grasshopper.Instances.RedrawCanvas();
+
+        }
+
+
+  
+        /// <summary>
+        /// 
+        /// </summary>
         public override Grasshopper.Kernel.GH_Exposure Exposure
         {
             get { return GH_Exposure.secondary; }
         }
+
+
 
         /// <summary>
         /// This function is resposible for writing python files after
@@ -314,7 +350,7 @@ namespace GH_CPython
 
                 }
                 foot = foot.Replace("##data##", thisOutputData);
-                foot = foot.Replace("##fileName##", path + "_PythonExecutionOrder_" + thisIndex.ToString() + ".xml");
+                foot = foot.Replace("##fileName##", path.Replace(@"\", "/") + @"_PythonExecutionOrder_" + thisIndex.ToString() + @".xml");
 
             }
             catch (Exception exep)
@@ -348,7 +384,13 @@ namespace GH_CPython
         }
 
 
+
         int inputCount = 0;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <returns></returns>
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
 
@@ -369,7 +411,11 @@ namespace GH_CPython
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
             
@@ -395,7 +441,11 @@ namespace GH_CPython
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         public static string GetFullPath(string fileName)
         {
             if (File.Exists(fileName))
@@ -412,19 +462,28 @@ namespace GH_CPython
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void close_Click(object sender, EventArgs e)
         {
+            AddNamesAndDescriptions();
             PythonIDE.Hide();
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void Ps_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
         {
             e.Cancel = true;
             PythonIDE.Hide();
-
+            AddNamesAndDescriptions();
             Globals.OpenThisShell[thisIndex] = false;
             Grasshopper.Instances.RedrawCanvas();
         }
@@ -443,7 +502,7 @@ namespace GH_CPython
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("_input", "_input", "DummyVariable called initiated as flase", GH_ParamAccess.list,"False");
+            pManager.AddTextParameter("_input", "_input", "", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -511,24 +570,10 @@ namespace GH_CPython
 
             AddNamesAndDescriptions();
             string output = "";
-            try
-            {
-                if (Globals.OpenThisShell[thisIndex] == true)
-                {
-                    PythonIDE.Show();
-                }
-                else
-                {
-                    PythonIDE.Hide();
-                }
-            }
-            catch (Exception exc)
-            {
-                MessageBox.Show(exc.ToString());
-            }
+            
 
                 writeReadPythonFile(this);
-                System.IO.File.WriteAllText(path + name + ".py", thisPythonString);
+                System.IO.File.WriteAllText(@path + @name + @".py", thisPythonString);
                 try
                 {
                     RunningPythonProcess.StartInfo.Arguments = path + name + ".py";
@@ -538,18 +583,19 @@ namespace GH_CPython
                     output += RunningPythonProcess.StandardOutput.ReadToEnd();
                     output += RunningPythonProcess.StandardError.ReadToEnd();
                     RunningPythonProcess.WaitForExit();
-                    System.IO.File.Delete(path + name + ".py");
+                    System.IO.File.Delete(@path + @name + ".py");
 
 
                     PythonIDE.console.Text = output;
 
-                    doc.Load(path + "_PythonExecutionOrder_" + thisIndex.ToString() + ".xml");
+                    doc.Load(@path + @"_PythonExecutionOrder_" + thisIndex.ToString() + @".xml");
 
                     for (int i3 = 0; i3 < Params.Output.Count; i3++)
                     {
                         DA.SetData(i3, doc.DocumentElement.SelectSingleNode("/result/" + Params.Output[i3].NickName).InnerText);
                     }
                     System.IO.File.Delete(path + "_PythonExecutionOrder_" + thisIndex.ToString() + ".xml");
+                    RunningPythonProcess.Close();
                 }
                 catch (Exception exf)
                 {
@@ -582,9 +628,6 @@ namespace GH_CPython
         {
             get { return new Guid("{f7418245-81a4-4dbd-9b8f-c6ef68607efc}"); }
         }
-
-
-
 
 
         ////////////////////////////////////////////////////////////////////////////
@@ -624,20 +667,24 @@ namespace GH_CPython
             /// <returns></returns>
             public override Grasshopper.GUI.Canvas.GH_ObjectResponse RespondToMouseDoubleClick(Grasshopper.GUI.Canvas.GH_Canvas sender, Grasshopper.GUI.GH_CanvasMouseEvent e)
             {
+                
                 if (!Globals.OpenThisShell.ContainsKey(thisIndex2))
                 {
                     Globals.OpenThisShell.Add(thisIndex2, true);
                     shellOpened = true;
-                    Owner.ExpireSolution(true);
+                    Owner.ExpirePreview(false);
+                    //Owner.ExpireSolution(true);
 
                 }
                 else
                 {
                     Globals.OpenThisShell[thisIndex2] = true;
                     shellOpened = true;
-                    Owner.ExpireSolution(true);
+                    Owner.ExpirePreview(false);
+                    //Owner.ExpireSolution(true);
 
                 }
+                
                 return Grasshopper.GUI.Canvas.GH_ObjectResponse.Handled;
             }
 
