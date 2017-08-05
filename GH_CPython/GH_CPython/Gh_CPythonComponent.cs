@@ -100,18 +100,6 @@ namespace GH_CPython
             RunningPythonProcess.StartInfo.UseShellExecute = false;
             RunningPythonProcess.StartInfo.CreateNoWindow = true;
 
-
-            /// This adds Python folder to Windows Environment Paths variables.
-            /// if it exists, set python as the process file name , else, set python folders and then set python as the process filename
-            if (ExistsOnPath("python.exe"))
-            {
-                RunningPythonProcess.StartInfo.FileName = "python.exe";
-            }else
-            {
-                RunningPythonProcess.StartInfo.FileName = "python.exe";
-            }
-
-            
           /// Initiate Python IDE Editor text, it should be like so: - Change if you wish-
               //# -*- coding: utf-8 -*-
               //""" 
@@ -562,9 +550,12 @@ namespace GH_CPython
         /// <param name="DA">The DA object can be used to retrieve data from input parameters and 
         /// to store data in output parameters.</param>
         /// 
-
+        
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            bool ThereisProblem = false;
+
+            long t0 = DateTime.Now.Ticks;
             PythonIDE.Text = this.NickName;
             retrievedData = PythonIDE.PythonCanvas.Text;
 
@@ -576,33 +567,98 @@ namespace GH_CPython
                 System.IO.File.WriteAllText(@path + @name + @".py", thisPythonString);
                 try
                 {
-                    RunningPythonProcess.StartInfo.Arguments = path + name + ".py";
-                    RunningPythonProcess.Start();
-
-                    // To avoid deadlocks, always read the output stream first and then wait.
-                    output += RunningPythonProcess.StandardOutput.ReadToEnd();
-                    output += RunningPythonProcess.StandardError.ReadToEnd();
-                    RunningPythonProcess.WaitForExit();
-                    System.IO.File.Delete(@path + @name + ".py");
-
-
-                    PythonIDE.console.Text = output;
-
-                    doc.Load(@path + @"_PythonExecutionOrder_" + thisIndex.ToString() + @".xml");
-
-                    for (int i3 = 0; i3 < Params.Output.Count; i3++)
+                    //
+                    try
                     {
-                        DA.SetData(i3, doc.DocumentElement.SelectSingleNode("/result/" + Params.Output[i3].NickName).InnerText);
+                    RunningPythonProcess.StartInfo.FileName = @"C:\Python27\python.exe";
+                    RunningPythonProcess.StartInfo.Arguments = path + name + ".py";
+                    RunningPythonProcess.Start();  
+                    }catch
+                    {
+                        try
+                        {
+                            RunningPythonProcess.StartInfo.FileName = @"C:\Anaconda\python.exe";
+                            RunningPythonProcess.StartInfo.Arguments = path + name + ".py";
+                            RunningPythonProcess.Start();
+                        }catch
+                        {
+                            try
+                            {
+                                RunningPythonProcess.StartInfo.FileName = @"python.exe";
+                                RunningPythonProcess.StartInfo.Arguments = path + name + ".py";
+                                RunningPythonProcess.Start();
+                            }
+                            catch
+                            {
+                                try
+                                {
+                                    RunningPythonProcess.StartInfo.FileName = @"C:\Python34\python.exe";
+                                    RunningPythonProcess.StartInfo.Arguments = path + name + ".py";
+                                    RunningPythonProcess.Start();
+                                }catch
+                                {
+                                    try
+                                    {
+                                        RunningPythonProcess.StartInfo.FileName = @"C:\Program Files (x86)\Python27\python.exe";
+                                        RunningPythonProcess.StartInfo.Arguments = path + name + ".py";
+                                        RunningPythonProcess.Start();
+                                    }catch
+                                    {
+                                        try
+                                        {
+                                            RunningPythonProcess.StartInfo.FileName = @"C:\Program Files\Python27\python.exe";
+                                            RunningPythonProcess.StartInfo.Arguments = path + name + ".py";
+                                            RunningPythonProcess.Start();
+                                        }catch
+                                        {
+                                            
+                                            ThereisProblem = true;
+                                            output = "Please make sure that Python2.7 is installed in your C:\\Python27\\ directory or in C:\\Anaconda\\ Directory or in C:\\Program Files(x86)\\Python27\\ directory \n";
+                                            output += "It is preferred that you download one of the following python pundles: \n    - Anaconda  https://www.continuum.io/downloads \n    - Python(x,y)  https://python-xy.github.io/ ";
+                                            MessageBox.Show(output);
+                                        }
+                                    }
+                                }
+                                
+                            }
+
+                        }
+                        
                     }
-                    System.IO.File.Delete(path + "_PythonExecutionOrder_" + thisIndex.ToString() + ".xml");
-                    RunningPythonProcess.Close();
+                    if (!ThereisProblem)
+                    {
+
+                        // To avoid deadlocks, always read the output stream first and then wait.
+                        output += RunningPythonProcess.StandardOutput.ReadToEnd();
+                        output += RunningPythonProcess.StandardError.ReadToEnd();
+                        RunningPythonProcess.WaitForExit();
+                        System.IO.File.Delete(@path + @name + ".py");
+
+                        PythonIDE.console.Text = output;
+
+                        doc.Load(@path + @"_PythonExecutionOrder_" + thisIndex.ToString() + @".xml");
+
+                        for (int i3 = 0; i3 < Params.Output.Count; i3++)
+                        {
+                            DA.SetData(i3, doc.DocumentElement.SelectSingleNode("/result/" + Params.Output[i3].NickName).InnerText);
+                        }
+                        System.IO.File.Delete(path + "_PythonExecutionOrder_" + thisIndex.ToString() + ".xml");
+                        RunningPythonProcess.Close();
+                    }
                 }
                 catch (Exception exf)
                 {
-                    this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, output + "\n\n" + exf.ToString());
+                    PythonIDE.console.Text = output;
+                    this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, output);
                 }
+                PythonIDE.console.Text = output;
+                long t1 = (DateTime.Now.Ticks- t0)/1000;
+                if (output.Trim() == "")
+                {
+                    PythonIDE.console.Text = "Successful in "+t1.ToString()+" MilliSeconds, Good Job !!" ;
+                }
+                    
 
-            
         }
 
         /// <summary>
