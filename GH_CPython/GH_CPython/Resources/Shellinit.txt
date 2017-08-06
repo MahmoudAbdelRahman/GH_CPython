@@ -4,5 +4,3 @@ Python Script
 Created on  ##at## 
 @author:  ##CreatedBy## 
 """
-#This is just a testing line, you can delete it if you wish - _input carries a dummy variable initiated as False boolean value
-output_ = _input  
