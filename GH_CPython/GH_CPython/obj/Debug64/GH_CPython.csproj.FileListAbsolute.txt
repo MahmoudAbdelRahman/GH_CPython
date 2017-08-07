@@ -10,4 +10,8 @@ C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\bin\R
 C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\bin\RhinoCommon.xml
 C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\Interop.RhinoHandlersLib.dll
 C:\Users\gamma\Documents\Visual Studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.csproj.ResolveComReference.cache
-C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.csprojResolveAssemblyReference.cache
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\bin\ICSharpCode.TextEditor.dll
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Debug64\GH_CPython.Shell2.resources
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\bin\Shell2.resx
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\bin\Shell2.cs
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\bin\Shell2.Designer.cs

@@ -53,6 +53,7 @@ namespace GH_CPython
     {
         PythonShell PythonIDE;
 
+
         Process RunningPythonProcess = new Process();
 
         string path = System.IO.Path.GetTempPath();
@@ -78,7 +79,7 @@ namespace GH_CPython
                 "Maths", "Script")
         {
 
-            
+
             PythonIDE = new PythonShell();
             PythonIDE.TopMost = true;
 
@@ -202,6 +203,7 @@ namespace GH_CPython
                 this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, erx.ToString());
                 //MessageBox.Show(erx.ToString());
             }
+            AddNamesAndDescriptions();
         }
 
 
@@ -564,11 +566,22 @@ namespace GH_CPython
                     try { this.Params.Output[i].Description = args3[this.Params.Output[i].NickName]; }
                     catch { }
                 }
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
+            try
+            {
+                string descriptionOfPlugin = PythonIDE.PythonCanvas.Text.Split(new string[] { "[desc]" }, System.StringSplitOptions.RemoveEmptyEntries)[1].Split(new string[] { @"[\desc]" }, System.StringSplitOptions.RemoveEmptyEntries)[0];
+                this.Description = descriptionOfPlugin;
+            }catch
+            {
+
+            }
+
+            
         }
 
 

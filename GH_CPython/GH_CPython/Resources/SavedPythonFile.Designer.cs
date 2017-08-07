@@ -95,18 +95,26 @@ namespace GH_CPython.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to import xml.etree.cElementTree as ET
+        ///   Looks up a localized string similar to 
+        ///
+        ///
+        ///import xml.etree.cElementTree as ET
+        ///import sys
         ///
         ///data = {##data##}
         ///
-        ///root = ET.Element(&quot;root&quot;)
-        ///doc = ET.SubElement(root, &quot;doc&quot;)
+        ///root = ET.Element(&quot;result&quot;)
         ///
-        ///for k, val in data.iteritems():
-        ///    ET.SubElement(doc,&quot;data&quot; ,name=k).text = str(val)
+        ///if(sys.version_info[0]==2):
+        ///    for k, val in data.iteritems():
+        ///        ET.SubElement(root,k).text = str(val)
+        ///
+        ///elif(sys.version_info[0]==3):
+        ///    for k, val in data.items():
+        ///        ET.SubElement(root,k).text = str(val)
         ///
         ///tree = ET.ElementTree(root)
-        ///tree.write(##fileName##).
+        ///tree.write(r&quot;##fileName##&quot;).
         /// </summary>
         internal static string savingFile {
             get {
@@ -120,6 +128,18 @@ namespace GH_CPython.Resources {
         ///Python Script
         ///Created on  ##at## 
         ///@author:  ##CreatedBy## 
+        ///
+        ///[desc]
+        ///Description of the plugin Here
+        ///Write here any thing... 
+        ///[\desc]
+        ///
+        ///ARGUMENTS:
+        ///    _input = descripe your input here, \n this indicates a new line.
+        ///
+        ///RETURN:
+        ///    output_ = indicate your output description here. \n refers to a new line.
+        ///
         ///&quot;&quot;&quot;.
         /// </summary>
         internal static string Shellinit {

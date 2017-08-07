@@ -3,4 +3,16 @@
 Python Script
 Created on  ##at## 
 @author:  ##CreatedBy## 
+
+[desc]
+Description of the plugin Here
+Write here any thing... 
+[\desc]
+
+ARGUMENTS:
+    _input = descripe your input here, \n this indicates a new line.
+
+RETURN:
+    output_ = indicate your output description here. \n refers to a new line.
+
 """
