@@ -61,6 +61,7 @@
   <ItemGroup>
     <Reference Include="FastColoredTextBox">
       <HintPath>E:\FastColoredTextBox-master\FastColoredTextBox-master\Tester\bin\Debug\FastColoredTextBox.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="IronPython, Version=2.7.0.40, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL" />
     <Reference Include="PresentationCore" />

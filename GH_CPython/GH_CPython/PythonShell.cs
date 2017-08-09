@@ -60,10 +60,11 @@ namespace GH_CPython
         TextStyle BrownStyle = new TextStyle(Brushes.Brown, null, FontStyle.Italic);
         TextStyle MaroonStyle = new TextStyle(Brushes.Maroon, null, FontStyle.Regular);
         MarkerStyle SameWordsStyle = new MarkerStyle(new SolidBrush(Color.FromArgb(40, Color.Gray)));
+        TextStyle OrangeStyle = new TextStyle(Brushes.Orange, null, FontStyle.Regular);
 
 
 
-        public List<string> PsinputData = new List<string>();
+        //public List<string> PsinputData = new List<string>();
         public PythonShell()
         {
             InitializeComponent();
@@ -89,18 +90,17 @@ namespace GH_CPython
             CSharpSyntaxHighlight(e);
         }
 
-
+        string f = "\"\"\"";
         private void CSharpSyntaxHighlight(TextChangedEventArgs e)
         {
-            
-            string f = "\"\"\"";
             PythonCanvas.LeftBracket = '(';
             PythonCanvas.RightBracket = ')';
             PythonCanvas.LeftBracket2 = '\x0';
             PythonCanvas.RightBracket2 = '\x0';
             //clear style of changed range
-            e.ChangedRange.ClearStyle(BlueStyle, BoldStyle, GrayStyle, MagentaStyle, GreenStyle, BrownStyle);
+            e.ChangedRange.ClearStyle(BlueStyle, BoldStyle, GrayStyle, MagentaStyle, GreenStyle, BrownStyle, OrangeStyle);
 
+            e.ChangedRange.SetStyle(MagentaStyle, @"(?<=def)(.*)(?=\()");
             //string highlighting
             //e.ChangedRange.SetStyle(GreenStyle, "(" + f + @"[\s\S]*" + f + @")|('''[\s\S]*''')", RegexOptions.Singleline);
 
@@ -125,8 +125,8 @@ namespace GH_CPython
             e.ChangedRange.ClearFoldingMarkers();
             
             //set folding markers
-            e.ChangedRange.SetFoldingMarkers("{", "}");//allow to collapse brackets block
-            e.ChangedRange.SetFoldingMarkers(@"#region\b", @"#endregion\b");//allow to collapse #region blocks
+            //e.ChangedRange.SetFoldingMarkers("{", "}");//allow to collapse brackets block
+            //e.ChangedRange.SetFoldingMarkers(@"#region\b", @"#endregion\b");//allow to collapse #region blocks
             e.ChangedRange.SetFoldingMarkers(@"'''", @"'''");//allow to collapse comment block
             e.ChangedRange.SetFoldingMarkers(f, f);//allow to collapse comment block
         }

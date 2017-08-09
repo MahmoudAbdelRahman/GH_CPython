@@ -45,6 +45,7 @@ using System.Text;
 using System.Xml.Linq;
 using System.Xml;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace GH_CPython
 {
@@ -128,6 +129,7 @@ namespace GH_CPython
             RunningPythonProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             RunningPythonProcess.StartInfo.UseShellExecute = false;
             RunningPythonProcess.StartInfo.CreateNoWindow = true;
+
 
           /// Initiate Python IDE Editor text, it should be like so: - Change if you wish-
               //# -*- coding: utf-8 -*-
@@ -533,55 +535,53 @@ namespace GH_CPython
 
         }
 
+        static string commBlock = "\"\"\"";
+        Regex pattern = new Regex("(?<=" + commBlock + @")(.*)(?=" + commBlock + ")", RegexOptions.Singleline);
+        Regex pattern2 = new Regex(@"\w*\s*:.*");
+        Regex pattern3 = new Regex(@"(\w*\s*)(?=:)");
+        Regex pattern4 = new Regex(@"(?<=:)(.*)");
+        /// <summary>
+        /// This method mainly reads the documentation of each component, such as input and output descriptions. 
+        /// </summary>
         void AddNamesAndDescriptions()
         {
-            Dictionary<string, string> args3 = new Dictionary<string, string>();
-            string[] args = PythonIDE.PythonCanvas.Text.Split(new string[] { "\"\"\"", "'''" }, System.StringSplitOptions.RemoveEmptyEntries);
-            foreach (var myString in args[1].Split(new string[] { Environment.NewLine, "\n" }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                if (myString.Contains("="))
-                {
-                    string[] thislinestring = myString.Split(new string[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
-                    args3.Add(thislinestring[0].Trim(), thislinestring[1]);
-                }
-            }
-
-
+            
             try
             {
-                this.Name = this.NickName;
-
-                for (int i = 0; i < this.Params.Input.Count; i++)
-                {
-                    this.Params.Input[i].Name = this.Params.Input[i].NickName;
-                    try { this.Params.Input[i].Description = args3[this.Params.Input[i].NickName].Replace(@"\n", Environment.NewLine); }
-                    catch { }
-
-
-                }
-
-                for (int i = 0; i < this.Params.Output.Count; i++)
-                {
-                    this.Params.Output[i].Name = this.Params.Output[i].NickName;
-                    try { this.Params.Output[i].Description = args3[this.Params.Output[i].NickName]; }
-                    catch { }
-                }
-
-            }
-            catch (Exception ex)
+            string firstComment = pattern.Match(PythonIDE.PythonCanvas.Text).Value;
+            MatchCollection mm = pattern2.Matches(firstComment);
+            Dictionary<string, string> varsregx = new Dictionary<string, string>();
+            for(int i =0; i<mm.Count; i++)
             {
-                MessageBox.Show(ex.ToString());
+                string el1 = pattern3.Match(mm[i].Value).Value;
+                string el2 = pattern4.Match(mm[i].Value).Value;
+                varsregx.Add(el1.Trim(), el2.Trim());
+                //MessageBox.Show("Name: "+el1 + "\n Desc: " + el2);
             }
-            try
+
+            this.Name = this.NickName;
+
+            for (int i = 0; i < this.Params.Input.Count; i++)
             {
-                string descriptionOfPlugin = PythonIDE.PythonCanvas.Text.Split(new string[] { "[desc]" }, System.StringSplitOptions.RemoveEmptyEntries)[1].Split(new string[] { @"[\desc]" }, System.StringSplitOptions.RemoveEmptyEntries)[0];
-                this.Description = descriptionOfPlugin;
+                this.Params.Input[i].Name = this.Params.Input[i].NickName;
+                
+                try { this.Params.Input[i].Description = varsregx[this.Params.Input[i].NickName].Replace(@"\n", Environment.NewLine); }
+                catch { }
+            }
+
+            for (int i = 0; i < this.Params.Output.Count; i++)
+            {
+                this.Params.Output[i].Name = this.Params.Output[i].NickName;
+                try { this.Params.Output[i].Description = varsregx[this.Params.Output[i].NickName].Replace(@"\n", Environment.NewLine); }
+                catch { }
+            }
+
+
             }catch
             {
-
+                //MessageBox.Show("error");
             }
 
-            
         }
 
 
@@ -922,6 +922,7 @@ namespace GH_CPython
             {
                 param.Name = GH_ComponentParamServer.InventUniqueNickname("xyzuvwst", Params);
                 param.Access = GH_ParamAccess.list;
+                param.Optional = true;
                 param.NickName = param.Name;
             }
             else if (side == GH_ParameterSide.Output)
