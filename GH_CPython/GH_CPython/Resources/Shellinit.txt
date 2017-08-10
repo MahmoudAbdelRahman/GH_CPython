@@ -7,12 +7,22 @@ Created on  ##at##
 [desc]
 Description of the plugin Here
 Write here any thing... 
-[\desc]
+[/desc]
 
 ARGUMENTS:
-    _input = descripe your input here, \n this indicates a new line.
+----------
+<inp> 
+	_input :[required] - [type = int] - [default = None] 
+	Descripe your input here 
+	    * bullet point.
+		* bullet point
+</inp>
+<inp>
+	Other inputs go here ...
+</inp>
 
 RETURN:
-    output_ = indicate your output description here. \n refers to a new line.
+----------
+    output_ : indicate your output description here. \n refers to a new line.
 
 """

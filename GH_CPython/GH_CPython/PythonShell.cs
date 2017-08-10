@@ -101,6 +101,7 @@ namespace GH_CPython
             e.ChangedRange.ClearStyle(BlueStyle, BoldStyle, GrayStyle, MagentaStyle, GreenStyle, BrownStyle, OrangeStyle);
 
             e.ChangedRange.SetStyle(MagentaStyle, @"(?<=def)(.*)(?=\()");
+            //e.ChangedRange.SetStyle(OrangeStyle, @"(?<=" + f + @")(.*?)"+@"(?="+f+")",RegexOptions.Singleline);
             //string highlighting
             //e.ChangedRange.SetStyle(GreenStyle, "(" + f + @"[\s\S]*" + f + @")|('''[\s\S]*''')", RegexOptions.Singleline);
 
