@@ -15,6 +15,9 @@ The following image shows CPython plugin(down right) , and the first implemented
 
 ![plgn](https://user-images.githubusercontent.com/6969514/28817868-cb7993a0-76a9-11e7-9e06-fc059594cbbc.png)
 
+Add description, documentation to each input and output 
+![documentations](https://user-images.githubusercontent.com/6969514/29185199-d42dca46-7e08-11e7-89be-1e78e05fe14d.jpg)
+
 ## What can and What can't it do?
 ### It can: 
 1. Add as many input and output variables as needed. 
