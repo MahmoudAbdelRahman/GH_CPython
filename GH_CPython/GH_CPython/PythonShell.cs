@@ -101,32 +101,24 @@ namespace GH_CPython
             e.ChangedRange.ClearStyle(BlueStyle, BoldStyle, GrayStyle, MagentaStyle, GreenStyle, BrownStyle, OrangeStyle);
 
             e.ChangedRange.SetStyle(MagentaStyle, @"(?<=def)(.*)(?=\()");
-            //e.ChangedRange.SetStyle(OrangeStyle, @"(?<=" + f + @")(.*?)"+@"(?="+f+")",RegexOptions.Singleline);
-            //string highlighting
-            //e.ChangedRange.SetStyle(GreenStyle, "(" + f + @"[\s\S]*" + f + @")|('''[\s\S]*''')", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(GrayStyle, @"(\[desc\])(.*?)(\[\/desc\])",RegexOptions.Singleline);
 
             //comment highlighting
             e.ChangedRange.SetStyle(GreenStyle, @"#.*$", RegexOptions.Multiline);
 
-            //e.ChangedRange.SetStyle(GreenStyle, @"(/"+f+@"\w"+f+")", RegexOptions.Singleline);
-
-            //e.ChangedRange.SetStyle(GreenStyle, @"(/\*.*?\*/)|(/\*.*)", RegexOptions.Singleline);
-            //e.ChangedRange.SetStyle(GreenStyle, @"(/\*.*?\*/)|(.*\*/)", RegexOptions.Singleline | RegexOptions.RightToLeft);
-            //number highlighting
-            //e.ChangedRange.SetStyle(MagentaStyle, @"\b\d+[\.]?\d*([eE]\-?\d+)?[lLdDfF]?\b|\b0x[a-fA-F\d]+\b");
             //attribute highlighting
-            //e.ChangedRange.SetStyle(GrayStyle, @"^\s*(?<range>\[.+?\])\s*$", RegexOptions.Multiline);
+            e.ChangedRange.SetStyle(GrayStyle, @"^\s*(?<range>\[.+?\])\s*$", RegexOptions.Multiline);
             //class name highlighting
             e.ChangedRange.SetStyle(BoldStyle, @"\b(class|struct|enum|interface)\s+(?<range>\w+?)\b");
             //keyword highlighting
-            e.ChangedRange.SetStyle(BlueStyle, @"\b(print|import |from |in |do |if|import *|def|abstract|as|self|bool|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|do|double|else|enum|event|explicit|extern|false|finally|fixed|float|for|foreach|goto|if|implicit|in|int|interface|internal|is|lock|long|namespace|new|null|object|operator|override|params|private|protected|public|readonly|ref|return|sbyte|sealed|short|sizeof|stackalloc|static|string|struct|switch|this|throw|true|try|typeof|uint|ulong|unchecked|unsafe|ushort|using|virtual|void|volatile|while|add|alias|ascending|descending|dynamic|from|get|global|group|into|join|let|orderby|partial|remove|select|set|value|var|where|yield)\b|#region\b|#endregion\b");
+            e.ChangedRange.SetStyle(BlueStyle, @"\b(elif|except|print|import|and|not|from |in |do |if|import *|def|abstract|as|self|bool|byte|case|catch|char|checked|class|const|pass|decimal|default|delegate|do|double|else|enum|event|explicit|extern|false|finally|fixed|float|for|foreach|goto|if|implicit|in|int|interface|internal|is|lock|long|namespace|new|null|object|operator|override|params|private|protected|public|readonly|ref|return|sbyte|sealed|short|sizeof|stackalloc|static|string|struct|switch|this|throw|true|try|typeof|uint|ulong|unchecked|unsafe|ushort|using|virtual|void|volatile|while|add|alias|ascending|descending|dynamic|from|get|global|group|into|join|let|orderby|partial|remove|select|set|value|var|where|yield)\b|#region\b|#endregion\b");
             e.ChangedRange.SetStyle(MagentaStyle, @"\b(True|False|None)");
 
             //clear folding markers
             e.ChangedRange.ClearFoldingMarkers();
             
             //set folding markers
-            //e.ChangedRange.SetFoldingMarkers("{", "}");//allow to collapse brackets block
+            e.ChangedRange.SetFoldingMarkers("{", "}");//allow to collapse brackets block
             //e.ChangedRange.SetFoldingMarkers(@"#region\b", @"#endregion\b");//allow to collapse #region blocks
             e.ChangedRange.SetFoldingMarkers(@"'''", @"'''");//allow to collapse comment block
             e.ChangedRange.SetFoldingMarkers(f, f);//allow to collapse comment block

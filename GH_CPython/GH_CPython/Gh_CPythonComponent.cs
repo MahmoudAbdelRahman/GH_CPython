@@ -54,7 +54,7 @@ namespace GH_CPython
     {
         PythonShell PythonIDE;
 
-
+        
         Process RunningPythonProcess = new Process();
 
         string path = System.IO.Path.GetTempPath();
@@ -80,6 +80,46 @@ namespace GH_CPython
                 "Maths", "Script")
         {
 
+            if(!Directory.Exists(@"C:\GH_CPython\"))
+            {
+                Directory.CreateDirectory(@"C:\Gh_CPython\");
+                path = @"C:\Gh_CPython\";
+            }else
+            {
+                path = @"C:\Gh_CPython\";
+            }
+            if(!File.Exists(@"C:\GH_CPython\interpreter.dat"))
+            {
+                locatePython locPy = new locatePython();
+                locPy.ShowDialog();
+            }else
+            {
+               if(File.ReadAllText(@"C:\GH_CPython\interpreter.dat").Trim()!= String.Empty)
+               {
+                   StartFileName = File.ReadAllText(@"C:\GH_CPython\interpreter.dat");
+               }
+                else if (File.Exists(@"C:\Python27\python.exe")) { StartFileName = @"C:\Python27\python.exe"; }
+                else if (File.Exists(@"C:\Anaconda\python.exe")) { StartFileName = @"C:\Anaconda\python.exe"; }
+                else if (File.Exists(@"C:\Python34\python.exe")) { StartFileName = @"C:\Python34\python.exe"; }
+                else if (File.Exists(@"C:\Python35\python.exe")) { StartFileName = @"C:\Python35\python.exe"; }
+                else if (File.Exists(@"C:\Python36\python.exe")) { StartFileName = @"C:\Python36\python.exe"; }
+
+                else if (File.Exists(@"C:\Program Files (x86)\Python27\python.exe")) { StartFileName = @"C:\Program Files (x86)\Python27\python.exe"; }
+                else if (File.Exists(@"C:\Program Files (x86)\Python34\python.exe")) { StartFileName = @"C:\Program Files (x86)\Python34\python.exe"; }
+                else if (File.Exists(@"C:\Program Files (x86)\Python35\python.exe")) { StartFileName = @"C:\Program Files (x86)\Python35\python.exe"; }
+                else if (File.Exists(@"C:\Program Files (x86)\Python36\python.exe")) { StartFileName = @"C:\Program Files (x86)\Python36\python.exe"; }
+
+                else if (File.Exists(@"C:\Program Files\Python27\python.exe")) { StartFileName = @"C:\Program Files\Python27\python.exe"; }
+                else if (File.Exists(@"C:\Program Files\Python34\python.exe")) { StartFileName = @"C:\Program Files\Python34\python.exe"; }
+                else if (File.Exists(@"C:\Program Files\Python35\python.exe")) { StartFileName = @"C:\Program Files\Python35\python.exe"; }
+                else if (File.Exists(@"C:\Program Files\Python36\python.exe")) { StartFileName = @"C:\Program Files\Python36\python.exe"; }
+
+                else
+                {
+                    MessageBox.Show("Sorry, We can't find Python installed on your machine, If you have already installed it, would you contact Mahmoud Abdlerahman via this e-mail \n arch.mahmoud.ouf111@gmail.com\n Thanks.");
+                }
+
+            }
 
             PythonIDE = new PythonShell();
             PythonIDE.TopMost = true;
@@ -95,30 +135,6 @@ namespace GH_CPython
             Globals.fileName.Add(thisIndex, "_PythonExecutionOrder_" + thisIndex.ToString());
             Globals.index += 1;
             Globals.OpenThisShell.Add(thisIndex, false);
-
-
-            // Verify that Python is installed on the machine properly. 
-
-            if(File.Exists(@"C:\Python27\python.exe"))       { StartFileName = @"C:\Python27\python.exe"; }
-            else if (File.Exists(@"C:\Anaconda\python.exe")) { StartFileName = @"C:\Anaconda\python.exe"; }
-            else if (File.Exists(@"C:\Python34\python.exe")) { StartFileName = @"C:\Python34\python.exe"; }
-            else if (File.Exists(@"C:\Python35\python.exe")) { StartFileName = @"C:\Python35\python.exe"; }
-            else if (File.Exists(@"C:\Python36\python.exe")) { StartFileName = @"C:\Python36\python.exe"; }
-
-            else if (File.Exists(@"C:\Program Files (x86)\Python27\python.exe")) {StartFileName = @"C:\Program Files (x86)\Python27\python.exe"; }
-            else if (File.Exists(@"C:\Program Files (x86)\Python34\python.exe")) { StartFileName = @"C:\Program Files (x86)\Python34\python.exe"; }
-            else if (File.Exists(@"C:\Program Files (x86)\Python35\python.exe")) { StartFileName = @"C:\Program Files (x86)\Python35\python.exe"; }
-            else if (File.Exists(@"C:\Program Files (x86)\Python36\python.exe")) { StartFileName = @"C:\Program Files (x86)\Python36\python.exe"; }
-
-            else if (File.Exists(@"C:\Program Files\Python27\python.exe")){ StartFileName = @"C:\Program Files\Python27\python.exe"; }
-            else if (File.Exists(@"C:\Program Files\Python34\python.exe")) { StartFileName = @"C:\Program Files\Python34\python.exe"; }
-            else if (File.Exists(@"C:\Program Files\Python35\python.exe")) { StartFileName = @"C:\Program Files\Python35\python.exe"; }
-            else if (File.Exists(@"C:\Program Files\Python36\python.exe")) { StartFileName = @"C:\Program Files\Python36\python.exe"; }
-
-            else
-            {
-                MessageBox.Show("Sorry, We can't find Python installed on your machine, If you have already installed it, would you contact Mahmoud Abdlerahman via this e-mail \n arch.mahmoud.ouf111@gmail.com\n Thanks.");
-            }
 
 
             ///Initiate Python process options.
@@ -261,7 +277,7 @@ namespace GH_CPython
             /// Section 1
             /// Initiate temporary Python file name that will be executed as well as the temporary folder.
             string name = "PythonFileWritten_" + thisIndex.ToString();
-            string path = System.IO.Path.GetTempPath();
+           
             
             try
             {
@@ -320,7 +336,12 @@ namespace GH_CPython
                                 if(thisInputString =="True" || thisInputString == "False" || thisInputString == "None")
                                 {
                                     datahere+= thisInputString;
-                                }else
+                                }
+                                else if(thisInputString =="")
+                                {
+                                    datahere += "None";
+                                }
+                                else
                                 {
                                     datahere += "\"" + thisInputString + "\"";
                                 }
@@ -455,50 +476,6 @@ namespace GH_CPython
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        public static bool ExistsOnPath(string fileName)
-        {
-            return GetFullPath(fileName) != null;
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        public static string GetFullPath(string fileName)
-        {
-            if (File.Exists(fileName))
-                return Path.GetFullPath(fileName);
-
-            var values = Environment.GetEnvironmentVariable("PATH");
-            foreach (var path in values.Split(';'))
-            {
-                var fullPath = Path.Combine(path, fileName);
-                if (File.Exists(fullPath))
-                    return fullPath;
-            }
-            return null;
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void close_Click(object sender, EventArgs e)
-        {
-            AddNamesAndDescriptions();
-            PythonIDE.Hide();
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         void Ps_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
@@ -539,6 +516,8 @@ namespace GH_CPython
         static string commBlock = "\"\"\"";
         //Regex pattern = new Regex("(?<=" + commBlock + @"(.*)?!" + commBlock + @"(?=" + commBlock + ")", RegexOptions.Singleline);
         Regex getInputPatterns = new Regex(@"(?<=<inp>)(.*?)(?=<\/inp>)", RegexOptions.Singleline);
+        Regex getOutputPatterns = new Regex(@"(?<=<out>)(.*?)(?=<\/out>)", RegexOptions.Singleline);
+
         Regex getInputOptions = new Regex(@"(?<=\[)(\w*)(?=\])");
 
         Regex pattern2 = new Regex(@"\w*\s*:.*");
@@ -562,37 +541,39 @@ namespace GH_CPython
                 {
 
                 }
-            MatchCollection mm = getInputPatterns.Matches(firstComment);
+            MatchCollection inIn = getInputPatterns.Matches(firstComment);
+            MatchCollection ouOu = getOutputPatterns.Matches(firstComment);
+
             //MessageBox.Show(mm[0].Value);
-            Dictionary<string, string> varsregx = new Dictionary<string, string>();
+            Dictionary<string, string> inVarsRegx = new Dictionary<string, string>();
+            Dictionary<string, string> OutVarsRegx = new Dictionary<string, string>();
             Dictionary<string, string> optional = new Dictionary<string, string>();
-            for(int i =0; i<mm.Count; i++)
+            for(int i =0; i<inIn.Count; i++)
             {
-                string el1 = pattern3.Match(mm[i].Value).Value.Trim();
-                string el2 = pattern4.Match(mm[i].Value).Value;
+                string el1 = pattern3.Match(inIn[i].Value).Value.Trim();
+                string el2 = pattern4.Match(inIn[i].Value).Value;
                 
                 if (el2.Contains("[required]"))
                 {
-                    if (optional.ContainsKey(el1))
-                    {
-                        optional[el1] = "required";
-                    }else
-                    {
-                        optional.Add(el1, "required");
-                    }
+                    if (optional.ContainsKey(el1)) optional[el1] = "required" ;
+                    else optional.Add(el1, "required");
                 }
                 else
                 {
-                    if (optional.ContainsKey(el1))
-                    {
-                        optional[el1] = "optional";
-                    }else
-                    {
-                        optional.Add(el1, "optional");
-                    };
+                    if (optional.ContainsKey(el1)) optional[el1] = "optional";
+                    else optional.Add(el1, "optional");
                 }
 
-                varsregx.Add(el1.Trim(), el2.Trim());
+                inVarsRegx.Add(el1.Trim(), el2.Trim());
+                //MessageBox.Show("Name: "+el1 + "\n Desc: " + el2);
+            }
+
+            for (int i = 0; i < ouOu.Count; i++)
+            {
+                string el1 = pattern3.Match(ouOu[i].Value).Value.Trim();
+                string el2 = pattern4.Match(ouOu[i].Value).Value;
+
+                OutVarsRegx.Add(el1.Trim(), el2.Trim());
                 //MessageBox.Show("Name: "+el1 + "\n Desc: " + el2);
             }
             this.Name = this.NickName;
@@ -603,15 +584,11 @@ namespace GH_CPython
                 
                 try 
                 { 
-                    this.Params.Input[i].Description = varsregx[this.Params.Input[i].NickName].Replace(@"\n", Environment.NewLine);
-                    //MessageBox.Show(optional[Params.Input[i].NickName]); 
-                    if(optional[Params.Input[i].NickName] == "required")
-                    {
-                        Params.Input[i].Optional = false;
-                    }else
-                    {
-                        Params.Input[i].Optional = true;
-                    }
+                    this.Params.Input[i].Description = inVarsRegx[this.Params.Input[i].NickName].Replace(@"\n", Environment.NewLine);
+                    //MessageBox.Show(optional[Params.Input[i].NickName]);
+ 
+                    if(optional[Params.Input[i].NickName] == "required") Params.Input[i].Optional = false;
+                    else  Params.Input[i].Optional = true;
                 }
                 catch { }
             }
@@ -619,7 +596,7 @@ namespace GH_CPython
             for (int i = 0; i < this.Params.Output.Count; i++)
             {
                 this.Params.Output[i].Name = this.Params.Output[i].NickName;
-                try { this.Params.Output[i].Description = varsregx[this.Params.Output[i].NickName].Replace(@"\n", Environment.NewLine); }
+                try { this.Params.Output[i].Description = OutVarsRegx[this.Params.Output[i].NickName].Replace(@"\n", Environment.NewLine); }
                 catch { }
             }
 
@@ -637,8 +614,7 @@ namespace GH_CPython
         /// </summary>
         /// <param name="DA">The DA object can be used to retrieve data from input parameters and 
         /// to store data in output parameters.</param>
-        /// 
-        
+        ///   
         protected override void SolveInstance(IGH_DataAccess DA)
         {
 
@@ -935,7 +911,9 @@ namespace GH_CPython
                     System.Drawing.Rectangle rec = ButtonBounds;
                     if (rec.Contains((int)e.CanvasLocation.X, (int)e.CanvasLocation.Y))
                     {
-                        MessageBox.Show("Still under Development", "Refresh", MessageBoxButton.OK);
+                        //MessageBox.Show("Still under Development", "Refresh", MessageBoxButton.OK);
+                        locatePython gg = new locatePython();
+                        gg.ShowDialog();
                         System.Drawing.Graphics g = null;
                         button.Render(g, Color.Blue);
                         return GH_ObjectResponse.Handled;

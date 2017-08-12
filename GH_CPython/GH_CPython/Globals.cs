@@ -41,6 +41,7 @@ namespace GH_CPython
         public static Dictionary<int, string> PythonString = new Dictionary<int, string>();
         public static Dictionary<int, bool> OpenThisShell = new Dictionary<int, bool>();
 
+        public static string PythonSourceFile = "";
         // INPUTS NAMES
         public static Dictionary<int, string> AllInputsNames = new Dictionary<int, string>();
 
