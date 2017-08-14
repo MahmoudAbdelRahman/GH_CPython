@@ -57,7 +57,7 @@ namespace GH_CPython
         
         Process RunningPythonProcess = new Process();
 
-        string path = System.IO.Path.GetTempPath();
+        string path = @"C:\GH_CPython\";
 
         private string at;
 
@@ -82,14 +82,30 @@ namespace GH_CPython
 
             if(!Directory.Exists(@"C:\GH_CPython\"))
             {
-                Directory.CreateDirectory(@"C:\Gh_CPython\");
-                path = @"C:\Gh_CPython\";
+                Directory.CreateDirectory(@"C:\GH_CPython\");
+                path = @"C:\GH_CPython\";
             }else
             {
-                path = @"C:\Gh_CPython\";
+                path = @"C:\GH_CPython\";
             }
-            if(!File.Exists(@"C:\GH_CPython\interpreter.dat"))
+            if (!File.Exists(@"C:\GH_CPython\interpreter.dat"))
             {
+                if (File.Exists(@"C:\Python27\python.exe")) { defaultFileName = @"C:\Python27\python.exe"; }
+                else if (File.Exists(@"C:\Anaconda\python.exe")) { defaultFileName = @"C:\Anaconda\python.exe"; }
+                else if (File.Exists(@"C:\Python34\python.exe")) { defaultFileName = @"C:\Python34\python.exe"; }
+                else if (File.Exists(@"C:\Python35\python.exe")) { defaultFileName = @"C:\Python35\python.exe"; }
+                else if (File.Exists(@"C:\Python36\python.exe")) { defaultFileName = @"C:\Python36\python.exe"; }
+
+                else if (File.Exists(@"C:\Program Files (x86)\Python27\python.exe")) { defaultFileName = @"C:\Program Files (x86)\Python27\python.exe"; }
+                else if (File.Exists(@"C:\Program Files (x86)\Python34\python.exe")) { defaultFileName = @"C:\Program Files (x86)\Python34\python.exe"; }
+                else if (File.Exists(@"C:\Program Files (x86)\Python35\python.exe")) { defaultFileName = @"C:\Program Files (x86)\Python35\python.exe"; }
+                else if (File.Exists(@"C:\Program Files (x86)\Python36\python.exe")) { defaultFileName = @"C:\Program Files (x86)\Python36\python.exe"; }
+
+                else if (File.Exists(@"C:\Program Files\Python27\python.exe")) { defaultFileName = @"C:\Program Files\Python27\python.exe"; }
+                else if (File.Exists(@"C:\Program Files\Python34\python.exe")) { defaultFileName = @"C:\Program Files\Python34\python.exe"; }
+                else if (File.Exists(@"C:\Program Files\Python35\python.exe")) { defaultFileName = @"C:\Program Files\Python35\python.exe"; }
+                else if (File.Exists(@"C:\Program Files\Python36\python.exe")) { defaultFileName = @"C:\Program Files\Python36\python.exe"; }
+                File.WriteAllText(@"C:\GH_CPython\interpreter.dat", defaultFileName);
                 locatePython locPy = new locatePython();
                 locPy.ShowDialog();
             }else
@@ -98,22 +114,6 @@ namespace GH_CPython
                {
                    StartFileName = File.ReadAllText(@"C:\GH_CPython\interpreter.dat");
                }
-                else if (File.Exists(@"C:\Python27\python.exe")) { StartFileName = @"C:\Python27\python.exe"; }
-                else if (File.Exists(@"C:\Anaconda\python.exe")) { StartFileName = @"C:\Anaconda\python.exe"; }
-                else if (File.Exists(@"C:\Python34\python.exe")) { StartFileName = @"C:\Python34\python.exe"; }
-                else if (File.Exists(@"C:\Python35\python.exe")) { StartFileName = @"C:\Python35\python.exe"; }
-                else if (File.Exists(@"C:\Python36\python.exe")) { StartFileName = @"C:\Python36\python.exe"; }
-
-                else if (File.Exists(@"C:\Program Files (x86)\Python27\python.exe")) { StartFileName = @"C:\Program Files (x86)\Python27\python.exe"; }
-                else if (File.Exists(@"C:\Program Files (x86)\Python34\python.exe")) { StartFileName = @"C:\Program Files (x86)\Python34\python.exe"; }
-                else if (File.Exists(@"C:\Program Files (x86)\Python35\python.exe")) { StartFileName = @"C:\Program Files (x86)\Python35\python.exe"; }
-                else if (File.Exists(@"C:\Program Files (x86)\Python36\python.exe")) { StartFileName = @"C:\Program Files (x86)\Python36\python.exe"; }
-
-                else if (File.Exists(@"C:\Program Files\Python27\python.exe")) { StartFileName = @"C:\Program Files\Python27\python.exe"; }
-                else if (File.Exists(@"C:\Program Files\Python34\python.exe")) { StartFileName = @"C:\Program Files\Python34\python.exe"; }
-                else if (File.Exists(@"C:\Program Files\Python35\python.exe")) { StartFileName = @"C:\Program Files\Python35\python.exe"; }
-                else if (File.Exists(@"C:\Program Files\Python36\python.exe")) { StartFileName = @"C:\Program Files\Python36\python.exe"; }
-
                 else
                 {
                     MessageBox.Show("Sorry, We can't find Python installed on your machine, If you have already installed it, would you contact Mahmoud Abdlerahman via this e-mail \n arch.mahmoud.ouf111@gmail.com\n Thanks.");
@@ -501,7 +501,7 @@ namespace GH_CPython
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("_input", "_input", "", GH_ParamAccess.list);
+            pManager.AddTextParameter("_input", "_input", "", GH_ParamAccess.list, "None");
         }
 
         /// <summary>
@@ -654,11 +654,11 @@ namespace GH_CPython
                     output += RunningPythonProcess.StandardOutput.ReadToEnd();
                     output += RunningPythonProcess.StandardError.ReadToEnd();
                     RunningPythonProcess.WaitForExit();
-                    System.IO.File.Delete(@path + @name + ".py");
+                    System.IO.File.Delete(path + name + ".py");
 
                     PythonIDE.console.Text = output;
 
-                    doc.Load(@path + @"_PythonExecutionOrder_" + thisIndex.ToString() + @".xml");
+                    doc.Load(path + @"_PythonExecutionOrder_" + thisIndex.ToString() + @".xml");
 
                     for (int i3 = 0; i3 < Params.Output.Count; i3++)
                     {
@@ -674,7 +674,7 @@ namespace GH_CPython
                     this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, output);
                 }
                 PythonIDE.console.Text = output;
-                long t1 = (DateTime.Now.Ticks- t0)/1000;
+                long t1 = (DateTime.Now.Ticks- t0)/10000;
                 if (output.Trim() == "")
                 {
                     PythonIDE.console.Text = "Successful in "+t1.ToString()+" MilliSeconds, Good Job !!" ;
@@ -1002,5 +1002,7 @@ namespace GH_CPython
 
         public string thisPythonString { get; set; }
 
+
+        public string defaultFileName { get; set; }
     }
 }

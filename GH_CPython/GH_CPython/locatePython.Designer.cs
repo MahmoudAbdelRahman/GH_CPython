@@ -84,7 +84,7 @@
             // 
             this.textBox2.BackColor = System.Drawing.SystemColors.ControlLight;
             this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox2.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.textBox2.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.textBox2.Location = new System.Drawing.Point(10, 30);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(347, 13);

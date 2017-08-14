@@ -23,7 +23,7 @@ namespace GH_CPython
 
             // Displays an OpenFileDialog so the user can select a Cursor.
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Filter = "Python interpreter|*.exe";
+            openFileDialog1.Filter = "Python interpreter|Python.exe";
             openFileDialog1.Title = "Select Python interpreter";
 
             // Show the Dialog.
@@ -50,7 +50,9 @@ namespace GH_CPython
         {
             if(File.Exists(@"C:\GH_CPython\interpreter.dat"))
             {
-                this.textBox2.Text = File.ReadAllText(@"C:\GH_CPython\interpreter.dat");
+                string tt = File.ReadAllText(@"C:\GH_CPython\interpreter.dat");
+                this.textBox2.Text = tt;
+                this.textBox1.Text = tt;
             }else
             {
                 textBox2.Text = "None specified";
