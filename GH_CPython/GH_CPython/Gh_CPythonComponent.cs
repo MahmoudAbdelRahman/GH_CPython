@@ -54,7 +54,8 @@ namespace GH_CPython
     {
         PythonShell PythonIDE;
 
-        
+        GH_Document docUment;
+
         Process RunningPythonProcess = new Process();
 
         string path = @"C:\GH_CPython\";
@@ -80,11 +81,15 @@ namespace GH_CPython
                 "Maths", "Script")
         {
 
-            if(!Directory.Exists(@"C:\GH_CPython\"))
+            docUment = this.OnPingDocument();
+
+
+            if (!Directory.Exists(@"C:\GH_CPython\"))
             {
                 Directory.CreateDirectory(@"C:\GH_CPython\");
                 path = @"C:\GH_CPython\";
-            }else
+            }
+            else
             {
                 path = @"C:\GH_CPython\";
             }
@@ -108,12 +113,13 @@ namespace GH_CPython
                 File.WriteAllText(@"C:\GH_CPython\interpreter.dat", defaultFileName);
                 locatePython locPy = new locatePython();
                 locPy.ShowDialog();
-            }else
+            }
+            else
             {
-               if(File.ReadAllText(@"C:\GH_CPython\interpreter.dat").Trim()!= String.Empty)
-               {
-                   StartFileName = File.ReadAllText(@"C:\GH_CPython\interpreter.dat");
-               }
+                if (File.ReadAllText(@"C:\GH_CPython\interpreter.dat").Trim() != String.Empty)
+                {
+                    StartFileName = File.ReadAllText(@"C:\GH_CPython\interpreter.dat");
+                }
                 else
                 {
                     MessageBox.Show("Sorry, We can't find Python installed on your machine, If you have already installed it, would you contact Mahmoud Abdlerahman via this e-mail \n arch.mahmoud.ouf111@gmail.com\n Thanks.");
@@ -123,7 +129,7 @@ namespace GH_CPython
 
             PythonIDE = new PythonShell();
             PythonIDE.TopMost = true;
-
+            //PythonIDE.KeyDown += PythonIDE_KeyDown;
             PreviewExpired += Gh_CPythonComponent_PreviewExpired;
 
             thisIndex = Globals.index;
@@ -147,19 +153,19 @@ namespace GH_CPython
             RunningPythonProcess.StartInfo.CreateNoWindow = true;
 
 
-          /// Initiate Python IDE Editor text, it should be like so: - Change if you wish-
-              //# -*- coding: utf-8 -*-
-              //""" 
-              //Python Script
-              //Created on  Tuesday August 2017 12:22:25  
-              //@author:  UserName 
-              //"""
+            /// Initiate Python IDE Editor text, it should be like so: - Change if you wish-
+            //# -*- coding: utf-8 -*-
+            //""" 
+            //Python Script
+            //Created on  Tuesday August 2017 12:22:25  
+            //@author:  UserName 
+            //"""
 
-                at = DateTime.Now.ToString("dddd MMMM yyyy hh:mm:ss");
-                string Name = System.Environment.UserName;
-                InitialPythonText = Resources.SavedPythonFile.Shellinit.Replace("##CreatedBy##", Name);
-                InitialPythonText = InitialPythonText.Replace("##at##", at);
-                
+            at = DateTime.Now.ToString("dddd MMMM yyyy hh:mm:ss");
+            string Name = System.Environment.UserName;
+            InitialPythonText = Resources.SavedPythonFile.Shellinit.Replace("##CreatedBy##", Name);
+            InitialPythonText = InitialPythonText.Replace("##at##", at);
+
             try
             {
                 /// Initiate Console data as follows
@@ -197,21 +203,22 @@ namespace GH_CPython
 
                 /// Handleing Test button click. 
                 PythonIDE.Test.Click += (se, ev) =>
-                   {
-                       AddNamesAndDescriptions();
-                       //writeReadPythonFile(this);
-                       ExpireSolution(true);
-                   };
+                {
+                    AddNamesAndDescriptions();
+                    //writeReadPythonFile(this);
+                    ExpireSolution(true);
+                };
 
+                PythonIDE.PythonCanvas.KeyDown += PythonCanvas_KeyDown;
                 PythonIDE.close.Click += (se, ev) =>
-                    {
-                        InitialPythonText = PythonIDE.PythonCanvas.Text;
-                        shellOpened = false;
-                        PythonIDE.Hide();
-                        AddNamesAndDescriptions();
-                        Globals.OpenThisShell[thisIndex] = false;
-                        Grasshopper.Instances.RedrawCanvas();
-                    };
+                {
+                    InitialPythonText = PythonIDE.PythonCanvas.Text;
+                    shellOpened = false;
+                    PythonIDE.Hide();
+                    AddNamesAndDescriptions();
+                    Globals.OpenThisShell[thisIndex] = false;
+                    Grasshopper.Instances.RedrawCanvas();
+                };
 
                 Grasshopper.Instances.RedrawCanvas();
 
@@ -223,6 +230,17 @@ namespace GH_CPython
             }
             AddNamesAndDescriptions();
         }
+
+        void PythonCanvas_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.KeyCode == System.Windows.Forms.Keys.F5)
+            {
+                //MessageBox.Show("pressed");
+                AddNamesAndDescriptions();
+                ExpireSolution(true);
+            }
+        }
+
 
 
 
@@ -254,7 +272,7 @@ namespace GH_CPython
         }
 
 
-  
+
         /// <summary>
         /// 
         /// </summary>
@@ -265,6 +283,7 @@ namespace GH_CPython
 
 
 
+        Regex line = new Regex(@"Line\(.*\)", RegexOptions.Multiline);
         /// <summary>
         /// This function is resposible for writing python files after
         /// gathering all inputs and outputs in a python-syntax form.
@@ -273,18 +292,18 @@ namespace GH_CPython
         private void writeReadPythonFile(Gh_CPythonComponent WinForm)
         {
 
-            
+
             /// Section 1
             /// Initiate temporary Python file name that will be executed as well as the temporary folder.
             string name = "PythonFileWritten_" + thisIndex.ToString();
-           
-            
+
+
             try
             {
                 variablesAre = ""; // Collecting the input variables here.
 
-             /// Section 2
-             /// Add the output variables' names and initiate them as None. 
+                /// Section 2
+                /// Add the output variables' names and initiate them as None. 
                 for (int i = 0; i < Params.Output.Count; i++)
                 {
                     variablesAre += Params.Output[i].NickName + " = None\n";
@@ -296,8 +315,8 @@ namespace GH_CPython
                 double d;
                 int into;
 
-            /// Section 3. 
-            /// Collect input data names, and values then initiate them in a python syntax form as : "variableName = varibaleValue \n"
+                /// Section 3. 
+                /// Collect input data names, and values then initiate them in a python syntax form as : "variableName = varibaleValue \n"
                 for (int i = 0; i < Params.Input.Count; i++)
                 {
                     string datahere = "";
@@ -307,7 +326,21 @@ namespace GH_CPython
                         string thisInputString = Params.Input[i].VolatileData.DataDescription(false, false).Trim().Replace(System.Environment.NewLine, ",");
 
                         string[] newstr = thisInputString.Split(',');
-                        if (float.TryParse(newstr[0], out f) || double.TryParse(newstr[0], out d) || int.TryParse(newstr[0], out into) || newstr[0] == "True" || newstr[0] == "False")
+
+                        if (line.IsMatch(newstr[0]))
+                        {
+
+
+
+                            //docUment = this.OnPingDocument();
+                            //var dodo = docUment.FindComponent(Params.Input[i].Sources[0].InstanceGuid);// (Params.Input[i].Sources[0].InstanceGuid);//FindObject(Params.Input[i].Sources[0].InstanceGuid, false).;
+
+                            //MessageBox.Show(dodo.ToString());
+                            //datahere += "(\"" + Params.Input[i].Sources[0].InstanceGuid.ToString() + "\")";
+
+
+                        }
+                        else if (float.TryParse(newstr[0], out f) || double.TryParse(newstr[0], out d) || int.TryParse(newstr[0], out into) || newstr[0] == "True" || newstr[0] == "False")
                         {
                             if (newstr.Length == 1)
                                 datahere += thisInputString;
@@ -316,11 +349,11 @@ namespace GH_CPython
                         }
                         else if (thisInputString.Contains("{") && thisInputString.Contains("}"))
                         {
-                            datahere += thisInputString.Replace("{", "{").Replace("}", "}");
+                            datahere += thisInputString.Replace("{", "[").Replace("}", "]");
                         }
                         else if (thisInputString.Contains("{") && thisInputString.Contains("}") && thisInputString.Contains("\""))
                         {
-                            datahere += thisInputString.Replace("{", "{").Replace("}", "}").Replace("\"", "'");
+                            datahere += thisInputString.Replace("{", "[").Replace("}", "]").Replace("\"", "'");
                         }
                         else if (thisInputString.Contains("[") && thisInputString.Contains("]"))
                         {
@@ -333,11 +366,12 @@ namespace GH_CPython
                         else
                         {
                             if (newstr.Length == 1)
-                                if(thisInputString =="True" || thisInputString == "False" || thisInputString == "None")
+                            {
+                                if (thisInputString == "True" || thisInputString == "False" || thisInputString == "None")
                                 {
-                                    datahere+= thisInputString;
+                                    datahere += thisInputString;
                                 }
-                                else if(thisInputString =="")
+                                else if (thisInputString == "")
                                 {
                                     datahere += "None";
                                 }
@@ -345,8 +379,11 @@ namespace GH_CPython
                                 {
                                     datahere += "\"" + thisInputString + "\"";
                                 }
+                            }
                             else
+                            {
                                 datahere += "[\"" + thisInputString.Replace(",", "\",\"") + "\"]";
+                            }
                         }
                     }
                     else if (Params.Input[i].Access == GH_ParamAccess.item)
@@ -364,10 +401,11 @@ namespace GH_CPython
                         else
                         {
                             if (newstr.Length == 1)
-                                if(thisInputString == "True" || thisInputString == "False")
+                                if (thisInputString == "True" || thisInputString == "False")
                                 {
-                                    datahere +=  thisInputString ;
-                                }else
+                                    datahere += thisInputString;
+                                }
+                                else
                                 {
                                     datahere += "\"" + thisInputString + "\"";
                                 }
@@ -382,7 +420,7 @@ namespace GH_CPython
                 foot = Resources.SavedPythonFile.savingFile;
                 string thisOutputData = "";
 
-      
+
                 for (int i = 0; i < Params.Output.Count; i++)
                 {
                     if (i < Params.Output.Count - 1)
@@ -403,7 +441,7 @@ namespace GH_CPython
             {
                 Globals.PythonString.Remove(thisIndex);
                 Globals.PythonString.Add(thisIndex, variablesAre + WinForm.PythonIDE.PythonCanvas.Text + "\n" + foot);
-                
+
             }
             else
             {
@@ -422,7 +460,7 @@ namespace GH_CPython
 
 
 
-            
+
         }
 
 
@@ -445,7 +483,7 @@ namespace GH_CPython
                     writer.SetString("allSavedText", retrievedData);
                 else
                     writer.SetString("allSavedText", InitialPythonText);*/
-                }
+            }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
@@ -461,13 +499,13 @@ namespace GH_CPython
         /// <returns></returns>
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
-            
-            if(reader.ItemExists("allSavedText"))
+
+            if (reader.ItemExists("allSavedText"))
             {
                 writtenText = reader.GetString("allSavedText");
                 PythonIDE.PythonCanvas.Text = writtenText;
             }
-            
+
             return base.Read(reader);
         }
 
@@ -509,7 +547,7 @@ namespace GH_CPython
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("output_", "output_", "", GH_ParamAccess.item);
+            pManager.AddGenericParameter("output_", "output_", "", GH_ParamAccess.item);
 
         }
 
@@ -529,78 +567,110 @@ namespace GH_CPython
         /// </summary>
         void AddNamesAndDescriptions()
         {
-            
+
             try
             {
-            string firstComment = PythonIDE.PythonCanvas.Text.Split(new string[] { commBlock },StringSplitOptions.RemoveEmptyEntries)[1];
+                string firstComment = PythonIDE.PythonCanvas.Text.Split(new string[] { commBlock }, StringSplitOptions.RemoveEmptyEntries)[1];
                 try
                 {
                     string ComponentDesc = firstComment.Split(new string[] { @"[desc]" }, StringSplitOptions.RemoveEmptyEntries)[1].Split(new string[] { "[/desc]" }, StringSplitOptions.RemoveEmptyEntries)[0];
                     this.Description = ComponentDesc;
-                }catch
-                {
-
-                }
-            MatchCollection inIn = getInputPatterns.Matches(firstComment);
-            MatchCollection ouOu = getOutputPatterns.Matches(firstComment);
-
-            //MessageBox.Show(mm[0].Value);
-            Dictionary<string, string> inVarsRegx = new Dictionary<string, string>();
-            Dictionary<string, string> OutVarsRegx = new Dictionary<string, string>();
-            Dictionary<string, string> optional = new Dictionary<string, string>();
-            for(int i =0; i<inIn.Count; i++)
-            {
-                string el1 = pattern3.Match(inIn[i].Value).Value.Trim();
-                string el2 = pattern4.Match(inIn[i].Value).Value;
-                
-                if (el2.Contains("[required]"))
-                {
-                    if (optional.ContainsKey(el1)) optional[el1] = "required" ;
-                    else optional.Add(el1, "required");
-                }
-                else
-                {
-                    if (optional.ContainsKey(el1)) optional[el1] = "optional";
-                    else optional.Add(el1, "optional");
-                }
-
-                inVarsRegx.Add(el1.Trim(), el2.Trim());
-                //MessageBox.Show("Name: "+el1 + "\n Desc: " + el2);
-            }
-
-            for (int i = 0; i < ouOu.Count; i++)
-            {
-                string el1 = pattern3.Match(ouOu[i].Value).Value.Trim();
-                string el2 = pattern4.Match(ouOu[i].Value).Value;
-
-                OutVarsRegx.Add(el1.Trim(), el2.Trim());
-                //MessageBox.Show("Name: "+el1 + "\n Desc: " + el2);
-            }
-            this.Name = this.NickName;
-
-            for (int i = 0; i < this.Params.Input.Count; i++)
-            {
-                this.Params.Input[i].Name = this.Params.Input[i].NickName;
-                
-                try 
-                { 
-                    this.Params.Input[i].Description = inVarsRegx[this.Params.Input[i].NickName].Replace(@"\n", Environment.NewLine);
-                    //MessageBox.Show(optional[Params.Input[i].NickName]);
- 
-                    if(optional[Params.Input[i].NickName] == "required") Params.Input[i].Optional = false;
-                    else  Params.Input[i].Optional = true;
                 }
                 catch { }
-            }
 
-            for (int i = 0; i < this.Params.Output.Count; i++)
-            {
-                this.Params.Output[i].Name = this.Params.Output[i].NickName;
-                try { this.Params.Output[i].Description = OutVarsRegx[this.Params.Output[i].NickName].Replace(@"\n", Environment.NewLine); }
+                try
+                {
+                    string ComponentName = firstComment.Split(new string[] { @"[name]" }, StringSplitOptions.RemoveEmptyEntries)[1].Split(new string[] { "[/name]" }, StringSplitOptions.RemoveEmptyEntries)[0];
+                    this.Name = ComponentName;
+                    this.NickName = ComponentName;
+                }
                 catch { }
-            }
 
-            }catch
+                try
+                {
+                    string ComponentMessage = firstComment.Split(new string[] { @"[message]" }, StringSplitOptions.RemoveEmptyEntries)[1].Split(new string[] { "[/message]" }, StringSplitOptions.RemoveEmptyEntries)[0];
+                    this.Message = ComponentMessage;
+
+                }
+                catch { }
+
+                try
+                {
+                    string ComponentCategory = firstComment.Split(new string[] { @"[category]" }, StringSplitOptions.RemoveEmptyEntries)[1].Split(new string[] { "[/category]" }, StringSplitOptions.RemoveEmptyEntries)[0];
+                    this.Category = ComponentCategory;
+
+                }
+                catch { }
+
+                try
+                {
+                    string ComponentSubCategory = firstComment.Split(new string[] { @"[subcategory]" }, StringSplitOptions.RemoveEmptyEntries)[1].Split(new string[] { "[/subcategory]" }, StringSplitOptions.RemoveEmptyEntries)[0];
+                    this.SubCategory = ComponentSubCategory;
+
+                }
+                catch { }
+
+                MatchCollection inIn = getInputPatterns.Matches(firstComment);
+                MatchCollection ouOu = getOutputPatterns.Matches(firstComment);
+
+                //MessageBox.Show(mm[0].Value);
+                Dictionary<string, string> inVarsRegx = new Dictionary<string, string>();
+                Dictionary<string, string> OutVarsRegx = new Dictionary<string, string>();
+                Dictionary<string, string> optional = new Dictionary<string, string>();
+                for (int i = 0; i < inIn.Count; i++)
+                {
+                    string el1 = pattern3.Match(inIn[i].Value).Value.Trim();
+                    string el2 = pattern4.Match(inIn[i].Value).Value;
+
+                    if (el2.Contains("[required]"))
+                    {
+                        if (optional.ContainsKey(el1)) optional[el1] = "required";
+                        else optional.Add(el1, "required");
+                    }
+                    else
+                    {
+                        if (optional.ContainsKey(el1)) optional[el1] = "optional";
+                        else optional.Add(el1, "optional");
+                    }
+
+                    inVarsRegx.Add(el1.Trim(), el2.Trim());
+                    //MessageBox.Show("Name: "+el1 + "\n Desc: " + el2);
+                }
+
+                for (int i = 0; i < ouOu.Count; i++)
+                {
+                    string el1 = pattern3.Match(ouOu[i].Value).Value.Trim();
+                    string el2 = pattern4.Match(ouOu[i].Value).Value;
+
+                    OutVarsRegx.Add(el1.Trim(), el2.Trim());
+                    //MessageBox.Show("Name: "+el1 + "\n Desc: " + el2);
+                }
+                this.Name = this.NickName;
+
+                for (int i = 0; i < this.Params.Input.Count; i++)
+                {
+                    this.Params.Input[i].Name = this.Params.Input[i].NickName;
+
+                    try
+                    {
+                        this.Params.Input[i].Description = inVarsRegx[this.Params.Input[i].NickName].Replace(@"\n", Environment.NewLine);
+                        //MessageBox.Show(optional[Params.Input[i].NickName]);
+
+                        if (optional[Params.Input[i].NickName] == "required") Params.Input[i].Optional = false;
+                        else Params.Input[i].Optional = true;
+                    }
+                    catch { }
+                }
+
+                for (int i = 0; i < this.Params.Output.Count; i++)
+                {
+                    this.Params.Output[i].Name = this.Params.Output[i].NickName;
+                    try { this.Params.Output[i].Description = OutVarsRegx[this.Params.Output[i].NickName].Replace(@"\n", Environment.NewLine); }
+                    catch { }
+                }
+
+            }
+            catch
             {
                 //MessageBox.Show("error");
             }
@@ -608,6 +678,7 @@ namespace GH_CPython
         }
 
 
+        Regex matchLine = new Regex(@"(?<=Line\().*(?=\))");
 
         /// <summary>
         /// This is the method that actually does the work.
@@ -618,15 +689,17 @@ namespace GH_CPython
         protected override void SolveInstance(IGH_DataAccess DA)
         {
 
+
             try
             {
-                for(int i =0; i<Params.Input.Count; i++)
+                for (int i = 0; i < Params.Input.Count; i++)
                 {
                     if (Params.Input[i].Optional == false && Params.Input[i].VolatileData.DataDescription(false, false) == null)
                         return;
                 }
-                
-            }catch
+
+            }
+            catch
             {
 
             }
@@ -639,49 +712,71 @@ namespace GH_CPython
 
             AddNamesAndDescriptions();
             string output = "";
-            
 
-                writeReadPythonFile(this);
-                System.IO.File.WriteAllText(@path + @name + @".py", thisPythonString);
-                try
-                {
 
-                    RunningPythonProcess.StartInfo.FileName = @StartFileName;
-                    RunningPythonProcess.StartInfo.Arguments = path + name + ".py";
-                    RunningPythonProcess.Start();
-        
-                    // To avoid deadlocks, always read the output stream first and then wait.
-                    output += RunningPythonProcess.StandardOutput.ReadToEnd();
-                    output += RunningPythonProcess.StandardError.ReadToEnd();
-                    RunningPythonProcess.WaitForExit();
-                    System.IO.File.Delete(path + name + ".py");
+            writeReadPythonFile(this);
+            System.IO.File.WriteAllText(@path + @name + @".py", thisPythonString);
+            try
+            {
 
-                    PythonIDE.console.Text = output;
+                RunningPythonProcess.StartInfo.FileName = @StartFileName;
+                RunningPythonProcess.StartInfo.Arguments = path + name + ".py";
+                RunningPythonProcess.Start();
 
-                    doc.Load(path + @"_PythonExecutionOrder_" + thisIndex.ToString() + @".xml");
+                // To avoid deadlocks, always read the output stream first and then wait.
+                output += RunningPythonProcess.StandardOutput.ReadToEnd();
+                output += RunningPythonProcess.StandardError.ReadToEnd();
+                RunningPythonProcess.WaitForExit();
+                System.IO.File.Delete(path + name + ".py");
 
-                    for (int i3 = 0; i3 < Params.Output.Count; i3++)
-                    {
-                        DA.SetData(i3, doc.DocumentElement.SelectSingleNode("/result/" + Params.Output[i3].NickName).InnerText);
-                    }
-                    System.IO.File.Delete(path + "_PythonExecutionOrder_" + thisIndex.ToString() + ".xml");
-                    RunningPythonProcess.Close();
-                    
-                }
-                catch (Exception exf)
-                {
-                    PythonIDE.console.Text = output;
-                    this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, output);
-                }
                 PythonIDE.console.Text = output;
-                long t1 = (DateTime.Now.Ticks- t0)/10000;
-                if (output.Trim() == "")
-                {
-                    PythonIDE.console.Text = "Successful in "+t1.ToString()+" MilliSeconds, Good Job !!" ;
-                }
-                    
 
+                doc.Load(path + @"_PythonExecutionOrder_" + thisIndex.ToString() + @".xml");
+
+                for (int i3 = 0; i3 < Params.Output.Count; i3++)
+                {
+
+                    DA.SetData(i3, getOutPutData(doc.DocumentElement.SelectSingleNode("/result/" + Params.Output[i3].NickName).InnerText));
+                 
+                }
+                System.IO.File.Delete(path + "_PythonExecutionOrder_" + thisIndex.ToString() + ".xml");
+                RunningPythonProcess.Close();
+
+            }
+            catch (Exception exf)
+            {
+                PythonIDE.console.Text = output;
+                this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, output);
+            }
+            PythonIDE.console.Text = output;
+            long t1 = (DateTime.Now.Ticks - t0) / 10000;
+            if (output.Trim() == "")
+            {
+                PythonIDE.console.Text = "Successful in " + t1.ToString() + " MilliSeconds";
+            }
+
+
+           
         }
+
+        private object getOutPutData(string p)
+        {
+            if (matchLine.Match(p).Value != "")
+            {
+
+                var numbers = matchLine.Match(p).Value.Split(',');
+                Line lx = new Line(double.Parse(numbers[0]), double.Parse(numbers[1]), double.Parse(numbers[2]),
+                                   double.Parse(numbers[3]), double.Parse(numbers[4]), double.Parse(numbers[5]));
+                return lx; 
+
+
+            }
+            else
+            {
+                return p;
+            }
+        }
+
 
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
@@ -745,7 +840,7 @@ namespace GH_CPython
             /// <returns></returns>
             public override Grasshopper.GUI.Canvas.GH_ObjectResponse RespondToMouseDoubleClick(Grasshopper.GUI.Canvas.GH_Canvas sender, Grasshopper.GUI.GH_CanvasMouseEvent e)
             {
-                
+
                 if (!Globals.OpenThisShell.ContainsKey(thisIndex2))
                 {
                     Globals.OpenThisShell.Add(thisIndex2, true);
@@ -762,7 +857,7 @@ namespace GH_CPython
                     //Owner.ExpireSolution(true);
 
                 }
-                
+
                 return Grasshopper.GUI.Canvas.GH_ObjectResponse.Handled;
             }
 
@@ -858,7 +953,7 @@ namespace GH_CPython
 
 
                     Brush gg = new SolidBrush(Color.FromArgb(255, 50, 100, 150));
-                    graphics.DrawString(Owner.NickName, GH_FontServer.Standard, gg, new PointF(rec0.Left, rec0.Bottom + 5));
+                    graphics.DrawString(Owner.NickName, GH_FontServer.Standard, gg, new PointF(rec0.Left, rec0.Top - 15));
 
                     button.Dispose();
                 }
@@ -966,7 +1061,8 @@ namespace GH_CPython
             else if (side == GH_ParameterSide.Output)
             {
                 param.Name = GH_ComponentParamServer.InventUniqueNickname("abcdefghijklmn", Params);
-                param.Access = GH_ParamAccess.item;
+
+                param.Access = GH_ParamAccess.list;
                 param.NickName = param.Name;
             }
 
@@ -982,8 +1078,8 @@ namespace GH_CPython
 
         public void VariableParameterMaintenance()
         {
-            
-            
+
+
         }
 
         public string variablesAre { get; set; }
