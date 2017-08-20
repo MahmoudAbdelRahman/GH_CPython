@@ -54,22 +54,21 @@ namespace GH_CPython
     {
         PythonShell PythonIDE;
 
-        PythonFileControl pythonFileControl = new PythonFileControl();
-
         GH_Document docUment;
 
         Process RunningPythonProcess = new Process();
-
-        XmlDocument doc = new XmlDocument();
-        
 
         string path = @"C:\GH_CPython\";
 
         private string at;
 
+        XmlDocument doc = new XmlDocument();
+
         public string retrievedData = "";
 
         public string writtenText = "";
+
+        bool firstTime = true;
 
         string StartFileName = "python.exe";
 
@@ -226,7 +225,7 @@ namespace GH_CPython
             }
             catch (Exception erx)
             {
-                //this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, erx.ToString());
+                this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, erx.ToString());
                 //MessageBox.Show(erx.ToString());
             }
             AddNamesAndDescriptions();
@@ -281,6 +280,203 @@ namespace GH_CPython
         {
             get { return GH_Exposure.secondary; }
         }
+
+
+
+        Regex line = new Regex(@"Line\(.*\)", RegexOptions.Multiline);
+        /// <summary>
+        /// This function is resposible for writing python files after
+        /// gathering all inputs and outputs in a python-syntax form.
+        /// </summary>
+        /// <param name="WinForm"></param>
+        private void writeReadPythonFile(Gh_CPythonComponent WinForm, IGH_DataAccess DA)
+        {
+
+
+            /// Section 1
+            /// Initiate temporary Python file name that will be executed as well as the temporary folder.
+            string name = "PythonFileWritten_" + thisIndex.ToString();
+
+            try
+            {
+                variablesAre = ""; // Collecting the input variables here.
+
+                /// Section 2
+                /// Add the output variables' names and initiate them as None. 
+                for (int i = 0; i < Params.Output.Count; i++)
+                {
+                    variablesAre += Params.Output[i].NickName + " = None\n";
+                }
+
+
+                // These temporary variables  are used for parsing input data into float, double or int. 
+                float f;
+                double d;
+                int into;
+
+                /// Section 3. 
+                /// Collect input data names, and values then initiate them in a python syntax form as : "variableName = varibaleValue \n"
+                for (int i = 0; i < Params.Input.Count; i++)
+                {
+
+                    string datahere = "";
+
+                    // GET input type at first
+                    
+                    if (Params.Input[i].Type.ToString() == "Grasshopper.Kernel.Types.GH_String")
+                    {
+                        if (Params.Input[i].Access == GH_ParamAccess.list)
+                        {
+                            string thisInputString = Params.Input[i].VolatileData.DataDescription(false, false).Trim().Replace(System.Environment.NewLine, ",");
+
+                            string[] newstr = thisInputString.Split(',');
+
+                            if (float.TryParse(newstr[0], out f) || double.TryParse(newstr[0], out d) || int.TryParse(newstr[0], out into) || newstr[0] == "True" || newstr[0] == "False")
+                            {
+                                if (newstr.Length == 1)
+                                    datahere += thisInputString;
+                                else
+                                    datahere += "[" + thisInputString + "]";
+                            }
+                            else if (thisInputString.Contains("{") && thisInputString.Contains("}"))
+                            {
+                                datahere += thisInputString.Replace("{", "[").Replace("}", "]");
+                            }
+                            else if (thisInputString.Contains("{") && thisInputString.Contains("}") && thisInputString.Contains("\""))
+                            {
+                                datahere += thisInputString.Replace("{", "[").Replace("}", "]").Replace("\"", "'");
+                            }
+                            else if (thisInputString.Contains("[") && thisInputString.Contains("]"))
+                            {
+                                datahere += thisInputString.Replace("[", "[").Replace("]", "]");
+                            }
+                            else if (thisInputString.Contains("(") && thisInputString.Contains(")"))
+                            {
+                                datahere += thisInputString.Replace("(", "(").Replace(")", ")");
+                            }
+                            else
+                            {
+                                if (newstr.Length == 1)
+                                {
+                                    if (thisInputString == "True" || thisInputString == "False" || thisInputString == "None")
+                                    {
+                                        datahere += thisInputString;
+                                    }
+                                    else if (thisInputString == "")
+                                    {
+                                        datahere += "None";
+                                    }
+                                    else
+                                    {
+                                        datahere += "\"" + thisInputString + "\"";
+                                    }
+                                }
+                                else
+                                {
+                                    datahere += "[\"" + thisInputString.Replace(",", "\",\"") + "\"]";
+                                }
+                            }
+                        }
+                        else if (Params.Input[i].Access == GH_ParamAccess.item)
+                        {
+
+                            string thisInputString = Params.Input[i].VolatileData.DataDescription(false, false).Trim().Replace(System.Environment.NewLine, ",");
+                            string[] newstr = thisInputString.Split(',');
+
+                                if (float.TryParse(newstr[0], out f) || double.TryParse(newstr[0], out d) || int.TryParse(newstr[0], out into))
+                                {
+                                    if (newstr.Length == 1)
+                                        datahere += thisInputString;
+                                    else
+                                        datahere += "[" + thisInputString + "]";
+                                }
+                                else
+                                {
+                                    if (newstr.Length == 1)
+                                        if (thisInputString == "True" || thisInputString == "False")
+                                        {
+                                            datahere += thisInputString;
+                                        }
+                                        else
+                                        {
+                                            datahere += "\"" + thisInputString + "\"";
+                                        }
+                                    else
+                                        datahere += "[\"" + thisInputString.Replace(",", "\",\"") + "\"]";
+                                }
+                        }
+
+                    }
+                    else 
+                    {
+                        try
+                        {
+                            if(Params.Input[i].Sources[0].Type.ToString() == "Grasshopper.Kernel.Types.GH_Line")
+                            {
+                                Rhino.Geometry.Line inputLine = Rhino.Geometry.Line.Unset;
+                                DA.GetData(i, ref inputLine);
+                                    MessageBox.Show(inputLine.FromX.ToString());
+                                    datahere += "gCPy.Line(0. , 0., 0., 1., 1., 1.)";
+                                
+                            }
+                        }
+                        catch (Exception typeExeption)
+                        {
+                            MessageBox.Show(typeExeption.ToString());
+                            datahere += "None";
+                        }
+                        
+                    }
+                        variablesAre += Params.Input[i].NickName + " = " + datahere + " \n";
+                    
+                }
+                foot = Resources.SavedPythonFile.savingFile;
+                string thisOutputData = "";
+
+
+                for (int i = 0; i < Params.Output.Count; i++)
+                {
+                    if (i < Params.Output.Count - 1)
+                        thisOutputData += "\"" + Params.Output[i].NickName + "\":" + Params.Output[i].NickName + ", ";
+                    else
+                        thisOutputData += "\"" + Params.Output[i].NickName + "\":" + Params.Output[i].NickName;
+
+                }
+                foot = foot.Replace("##data##", thisOutputData);
+                foot = foot.Replace("##fileName##", path.Replace(@"\", "/") + @"_PythonExecutionOrder_" + thisIndex.ToString() + @".xml");
+
+            }
+            catch (Exception exep)
+            {
+                MessageBox.Show(exep.ToString());
+            }
+            if (Globals.PythonString.ContainsKey(thisIndex))
+            {
+                Globals.PythonString.Remove(thisIndex);
+                Globals.PythonString.Add(thisIndex, variablesAre + WinForm.PythonIDE.PythonCanvas.Text + "\n" + foot);
+
+            }
+            else
+            {
+                Globals.PythonString.Add(thisIndex, variablesAre + WinForm.PythonIDE.PythonCanvas.Text + "\n" + foot);
+            }
+
+
+            /// Section 4.
+            /// put all variables together alongwith the body of the python file text.
+            thisPythonString = variablesAre + WinForm.PythonIDE.PythonCanvas.Text + "\n" + foot;
+
+
+            /// Section 5.
+            /// Save all data as a python file that will be run when the component is expired. 
+            System.IO.File.WriteAllText(path + name + ".py", variablesAre + WinForm.PythonIDE.PythonCanvas.Text + "\n" + foot);
+
+
+
+
+        }
+
+
 
         int inputCount = 0;
         /// <summary>
@@ -357,7 +553,7 @@ namespace GH_CPython
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("_input", "_input", "", GH_ParamAccess.list);
-
+            
         }
 
         /// <summary>
@@ -508,27 +704,34 @@ namespace GH_CPython
         {
 
 
+            try
+            {
+                for (int i = 0; i < Params.Input.Count; i++)
+                {
+                    if (Params.Input[i].Optional == false && Params.Input[i].VolatileData.DataDescription(false, false) == null)
+                        return;
+                }
+
+            }
+            catch
+            {
+
+            }
+
+            bool ThereisProblem = false;
+
             long t0 = DateTime.Now.Ticks;
             PythonIDE.Text = this.NickName;
             retrievedData = PythonIDE.PythonCanvas.Text;
-            try { AddNamesAndDescriptions(); }
-            catch { }
 
+            AddNamesAndDescriptions();
             string output = "";
 
 
-            //writeReadPythonFile(this, DA);
-           
-            
-            //System.IO.File.WriteAllText(@path + @name + @".py", thisPythonString);
+            writeReadPythonFile(this, DA);
+            System.IO.File.WriteAllText(@path + @name + @".py", thisPythonString);
             try
             {
-
-                    pythonFileControl.writeReadPythonFile(this,
-                                                            PythonIDE,
-                                                            DA,
-                                                            thisIndex,
-                                                            path);
 
                 RunningPythonProcess.StartInfo.FileName = @StartFileName;
                 RunningPythonProcess.StartInfo.Arguments = path + name + ".py";
@@ -550,8 +753,8 @@ namespace GH_CPython
                     DA.SetData(i3, getOutPutData(doc.DocumentElement.SelectSingleNode("/result/" + Params.Output[i3].NickName).InnerText));
 
                 }
-                RunningPythonProcess.Close();
                 System.IO.File.Delete(path + "_PythonExecutionOrder_" + thisIndex.ToString() + ".xml");
+                RunningPythonProcess.Close();
 
             }
             catch (Exception exf)
@@ -566,11 +769,8 @@ namespace GH_CPython
                 PythonIDE.console.Text = "Successful in " + t1.ToString() + " MilliSeconds";
             }
 
-            try
-            {
-                System.IO.File.Delete(path + "_PythonExecutionOrder_" + thisIndex.ToString() + ".xml");
-            }
-            catch { }
+
+
         }
 
 
@@ -587,6 +787,8 @@ namespace GH_CPython
                 Line lx = new Line(double.Parse(numbers[0]), double.Parse(numbers[1]), double.Parse(numbers[2]),
                                    double.Parse(numbers[3]), double.Parse(numbers[4]), double.Parse(numbers[5]));
                 return lx;
+
+
             }
             else if (matchPoint.Match(p).Value != "")
             {

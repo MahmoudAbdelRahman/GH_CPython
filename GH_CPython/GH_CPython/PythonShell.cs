@@ -49,8 +49,7 @@ namespace GH_CPython
     public partial class PythonShell : Form
     {
 
-        string lang = "CSharp (custom highlighter)";
-
+      
         //styles
         TextStyle BlueStyle = new TextStyle(Brushes.Blue, null, FontStyle.Regular);
         TextStyle BoldStyle = new TextStyle(null, null, FontStyle.Bold | FontStyle.Underline);
