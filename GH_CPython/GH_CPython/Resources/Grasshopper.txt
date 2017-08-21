@@ -1,0 +1,123 @@
+import sys
+version = sys.version_info[0]
+
+class Point3:
+    """
+    Point3:
+    is a new Point from x, y, z coordinates
+        :param x : is the x coordinate 
+        y : is the y coordinate
+        z : is the z coordinate
+    
+    """
+    def __init__(self, x=0., y=0., z=0):
+        if(version == 2):
+            if isinstance(x, list):
+                self.X = x[0]
+                self.Y = x[1]
+                self.Z = x[2]
+            elif isinstance(x, basestring):
+                newVars = []
+                x = x.replace("gCPy.Point(", "").replace(")", "").lstrip().rstrip()
+                vars = x.split(",")
+                for i in vars:
+                    newVars.append(float(i))
+                self.X = newVars[0]
+                self.Y = newVars[1]
+                self.Z = newVars[2]
+            else:
+                self.X = x
+                self.Y = y
+                self.Z = z
+        elif(version == 3):
+            if isinstance(x, list):
+                self.X = x[0]
+                self.Y = x[1]
+                self.Z = x[2]
+            elif isinstance(x, str):
+                newVars = []
+                x = x.replace("gCPy.Point(", "").replace(")", "").lstrip().rstrip()
+                vars = x.split(",")
+                for i in vars:
+                    newVars.append(float(i))
+                self.X = newVars[0]
+                self.Y = newVars[1]
+                self.Z = newVars[2]
+            else:
+                self.X = x
+                self.Y = y
+                self.Z = z
+        self.addPoint = "gCPy.Point(" + str(x) + "," + str(y) + "," + str(z) + ")"
+
+    def __str__(self):
+        return "gCPy.Point(" + str(self.X) + "," + str(self.Y) + "," + str(self.Z) + ")"
+
+
+def addLine(pointa=Point3(0., 0., 0.), pointb=Point3(1., 1., 1.)):
+    """
+    Add new line using two input points
+    :param pointa:type Point3: Line first point. Add new point using x, y, z coordinates
+    :param pointb:type Point3: Line second point. Add new point using x, y, z coordinates
+    :return:
+    """
+    return "gCPy.Line(" + str(pointa.X) + ", " \
+           + str(pointa.Y) + ", " \
+           + str(pointa.Z) + ", " \
+           + str(pointb.X) + ", " \
+           + str(pointb.Y) + ", " \
+           + str(pointb.Z) + ")"
+
+
+def addLine(pointa=[0., 0., 0.], pointb=[1., 1., 1.]):
+    """
+    Add new line using two input points
+    :param pointa:type Point3: Line first point. Add new point using x, y, z coordinates
+    :param pointb:type Point3: Line second point. Add new point using x, y, z coordinates
+    :return:
+    """
+    return "gCPy.Line(" + str(pointa[0]) + ", " \
+           + str(pointa[1]) + ", " \
+           + str(pointa[2]) + ", " \
+           + str(pointb[0]) + ", " \
+           + str(pointb[1]) + ", " \
+           + str(pointb[2]) + ")"
+
+
+def addLine(firstPoint="gCPy.Point(0.0,0.0,0.0)", secondPoint="gCPy.Point(1.0, 1.0, 0)"):
+    """
+    addNew line using two string definition points
+    :param firstPoint:
+    :param secondPoint:
+    :return:
+    """
+    pointa = Point3(firstPoint)
+    pointb = Point3(secondPoint)
+    return "gCPy.Line(" + str(pointa.X) + ", " \
+           + str(pointa.Y) + ", " \
+           + str(pointa.Z) + ", " \
+           + str(pointb.X) + ", " \
+           + str(pointb.Y) + ", " \
+           + str(pointb.Z) + ")"
+
+
+def addLine6f(ax=0., ay=0., az=0., bx=1., by=1., bz=1.):
+    """
+
+    :param ax:
+    :param ay:
+    :param az:
+    :param bx:
+    :param by:
+    :param bz:
+    :return:
+    """
+    return "gCPy.Line(" + str(ax) + ", " \
+           + str(ay) + ", " \
+           + str(az) + ", " \
+           + str(bx) + ", " \
+           + str(by) + ", " \
+           + str(bz) + ")"
+
+
+if __name__ == '__main__':
+    print __name__

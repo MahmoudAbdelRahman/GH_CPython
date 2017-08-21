@@ -77,18 +77,13 @@ namespace GH_CPython
                                 datahere = recomposeInputString(thisInputString);
                             }
                         }
-                        else if (paramType == "Grasshopper.Kernel.Types.GH_Line" || paramType == "Grasshopper.Kernel.Types.GH_Point")
-                            datahere += doCheckforInputStaff(ThisComponent, DA, i);
-                        else if (paramType == "Grasshopper.Kernel.Types.IGH_Goo")
-                            datahere += doAllOtherTries(ThisComponent, DA, i);
                         else
                         {
-                            datahere += "None";
+                            datahere += getInputs(ThisComponent, DA, i);
                         }
 
                     }catch
                         {
-                            //MessageBox.Show(typeExeption.ToString());
                             datahere += "None";
                         }
                     if (datahere == "") datahere = "None";
@@ -122,71 +117,106 @@ namespace GH_CPython
             System.IO.File.WriteAllText(path + name + ".py", variablesAre + WinForm.PythonCanvas.Text + "\n" + foot);
         }
 
-        private string doAllOtherTries(GH_Component ThisComponent, IGH_DataAccess DA, int i)
+
+        static bool toggleOn = true;
+        private string getInputs(GH_Component ThisComponent, IGH_DataAccess DA, int i)
         {
-            
             string datahere = "";
+            string paramType = "";
 
             try
             {
-               datahere = doCheckforInputStaff(ThisComponent, DA, i);
-            }
-            catch
-            {
+                convetToItem(ThisComponent, i, DA);
+                        IGH_Goo inputObject = null;
+                        DA.GetData(i, ref inputObject);
+                        paramType = inputObject.GetType().ToString();
+
+                if (paramType == "Grasshopper.Kernel.Types.GH_Line")
+                {
+
+                    convetToItem(ThisComponent, i, DA);
+                    Rhino.Geometry.Line inputLine = Rhino.Geometry.Line.Unset;
+                    DA.GetData(i, ref inputLine);
+                    datahere = "\"gCPy.Line(" + inputLine.FromX.ToString() + ", "
+                                               + inputLine.FromY.ToString() + ", "
+                                               + inputLine.FromZ.ToString() + ", "
+                                               + inputLine.ToX.ToString() + ", "
+                                               + inputLine.ToY.ToString() + ", "
+                                               + inputLine.ToZ.ToString() + ")\"";
+                }
+                else if
+                   (paramType == "Grasshopper.Kernel.Types.GH_Point")
+                {
+                    convetToItem(ThisComponent, i, DA);
+                    Rhino.Geometry.Point3d inputPoint = Rhino.Geometry.Point3d.Unset;
+                    DA.GetData(i, ref inputPoint);
+                    datahere = "\"gCPy.Point(" + inputPoint.X.ToString() + ", "
+                                               + inputPoint.Y.ToString() + ", "
+                                               + inputPoint.Z.ToString() + ")\"";
+                }
+                else if (paramType == "Grasshopper.Kernel.Types.GH_Circle")
+                {
+                    convetToItem(ThisComponent, i, DA);
+                    Rhino.Geometry.Circle inputCircle = Rhino.Geometry.Circle.Unset;
+                    DA.GetData(i, ref inputCircle);
+                    datahere = "\"gCPy.Circle(" + inputCircle.Center.X.ToString() + ","         // xpos
+                                                + inputCircle.Center.Y.ToString() + ","         // ypos
+                                                + inputCircle.Center.Z.ToString() + ","         // zpos
+                                                + inputCircle.Radius.ToString() + ","           // radius
+                                                + inputCircle.Plane.XAxis.ToString() + ","      // x axis vector0 , x axis vector1 , x axis vector 2
+                                                + inputCircle.Plane.YAxis.ToString() + ","      // y axis vector
+                                                + inputCircle.Plane.ZAxis.ToString() + ")\"";   // z axis vector
+                }
+                else if (paramType == "Grasshopper.Kernel.Types.GH_String")
+                {
+                    convetToItem(ThisComponent, i, DA);
+                    string inputString = string.Empty;
+                    DA.GetData(i, ref inputString);
+                    datahere = "\""+inputString+"\"";
+                }
+                else if (paramType == "Grasshopper.Kernel.Types.GH_Integer")
+                {
+                    convetToItem(ThisComponent, i, DA);
+                    int inputInt = 0;
+                    DA.GetData(i, ref inputInt);
+                    datahere =  inputInt.ToString() ;
+                }
+                else if (paramType == "Grasshopper.Kernel.Types.GH_Number")
+                {
+                    convetToItem(ThisComponent, i, DA);
+                    double inputNum = 0.0;
+                    DA.GetData(i, ref inputNum);
+                    datahere = inputNum.ToString();
+                }
+                else if (paramType == "Grasshopper.Kernel.Types.GH_Boolean")
+                {
+                    convetToItem(ThisComponent, i, DA);
+                    bool inputBool = false;
+                    DA.GetData(i, ref inputBool);
+                    datahere = inputBool ? "True": "False";
+                }
+                else
+                {
+                    //MessageBox.Show(paramType);
+                    datahere = "None";
+                }
 
             }
-            
-
+            catch{}
 
             return datahere;
         }
 
-        private string doCheckforInputStaff(GH_Component ThisComponent, IGH_DataAccess DA, int i)
+        private void convetToItem(GH_Component ThisComponent, int i, IGH_DataAccess DA)
         {
-            string datahere = "";
-            string paramType;
             if (ThisComponent.Params.Input[i].Access == GH_ParamAccess.list)
             {
                 ThisComponent.Params.Input[i].Access = GH_ParamAccess.item;
                 ThisComponent.ExpireSolution(true);
 
             }
-            try
-            {
-                paramType = ThisComponent.Params.Input[i].Sources[0].Type.ToString();
-            }
-            catch
-            {
-                paramType = ThisComponent.Params.Input[i].Type.ToString();
-            }
-
-            if (paramType == "Grasshopper.Kernel.Types.GH_Line")
-            {
-                Rhino.Geometry.Line inputLine = Rhino.Geometry.Line.Unset;
-                DA.GetData(i, ref inputLine);
-                //MessageBox.Show(.ToString());
-                datahere = "\"gCPy.Line(" + inputLine.FromX.ToString() + ", "
-                                           + inputLine.FromY.ToString() + ", "
-                                           + inputLine.FromZ.ToString() + ", "
-                                           + inputLine.ToX.ToString() + ", "
-                                           + inputLine.ToY.ToString() + ", "
-                                           + inputLine.ToZ.ToString() + ")\"";
-            }else if
-                (paramType == "Grasshopper.Kernel.Types.GH_Point")
-            {
-
-                Rhino.Geometry.Point3d inputPoint = Rhino.Geometry.Point3d.Unset;
-
-                DA.GetData(i, ref inputPoint);
-                //MessageBox.Show(.ToString());
-                datahere = "\"gCPy.Point("+ inputPoint.X.ToString() + ", "
-                                           + inputPoint.Y.ToString() + ", "
-                                           + inputPoint.Z.ToString() + ")\"";
-            }
-            
-
-            return datahere;
         }
+
 
        
         private string recomposeInputString(string thisInputString)

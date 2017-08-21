@@ -120,7 +120,7 @@ namespace GH_CPython
             e.ChangedRange.SetFoldingMarkers("{", "}");//allow to collapse brackets block
             //e.ChangedRange.SetFoldingMarkers(@"#region\b", @"#endregion\b");//allow to collapse #region blocks
             e.ChangedRange.SetFoldingMarkers(@"'''", @"'''");//allow to collapse comment block
-            e.ChangedRange.SetFoldingMarkers(f, f);//allow to collapse comment block
+            e.ChangedRange.SetFoldingMarkers(f, f,RegexOptions.Singleline|RegexOptions.RightToLeft);//allow to collapse comment block
         }
        
     }
