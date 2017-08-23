@@ -1,4 +1,4 @@
-# Grasshopper Module Version 0.0.1.4
+# Grasshopper Module Version 0.0.1.5
 
 """
 This Module is part of GH_CPython
@@ -16,69 +16,17 @@ import sys
 version = sys.version_info[0]
 
 
-class Point:
-    """Adds new point in cartesian coordinates using 3 doubles x, y, z as input
-
-        :param:
-            x (double): is the x coordinate
-            y (double): is the y coordinate
-            z (double): is the z coordinate
-        :return:
-            representation of 3d point
-        :Example:
-            import Grasshopper as gh
-            point1 = gh.Point(0, 0, 0)
-            point2 = gh.Point(1., 1., 0.)
-    """
-
-    def __init__(self, x=0., y=0., z=0.):
-        if version == 2:
-            if isinstance(x, list):
-                self.X = x[0]
-                self.Y = x[1]
-                self.Z = x[2]
-            elif isinstance(x, basestring):
-                new_vars = []
-                x = x.replace("gCPy.Point(", "").replace(")", "").lstrip().rstrip()
-                variables = x.split(",")
-                for i in variables:
-                    new_vars.append(float(i))
-                self.X = new_vars[0]
-                self.Y = new_vars[1]
-                self.Z = new_vars[2]
-            else:
-                self.X = x
-                self.Y = y
-                self.Z = z
-        elif version == 3:
-            if isinstance(x, list):
-                self.X = x[0]
-                self.Y = x[1]
-                self.Z = x[2]
-            elif isinstance(x, str):
-                new_vars = []
-                x = x.replace("gCPy.Point(", "").replace(")", "").lstrip().rstrip()
-                variables = x.split(",")
-                for i in variables:
-                    new_vars.append(float(i))
-                self.X = new_vars[0]
-                self.Y = new_vars[1]
-                self.Z = new_vars[2]
-            else:
-                self.X = x
-                self.Y = y
-                self.Z = z
-        self.addPoint = "gCPy.Point(" + str(x) + "," + str(y) + "," + str(z) + ")"
-
-    def __str__(self):
-        return "gCPy.Point(" + str(self.X) + "," + str(self.Y) + "," + str(self.Z) + ")"
+class Doc:
+    def __init__(self):
+        self.DisplayName = "gCPy.Doc(DocDisplayName)"
+        self.FilePath = "gCPy.Doc(DocFilePath)"
 
 
 class Line:
     def __init__(self, *args):
         """Adds new line using two input points, or two input lists or 6  input doubles
-        
-        :param args: 
+
+        :param args:
         """
         if len(args) == 2:
             if isinstance(args[0], Point) and isinstance(args[1], Point):
@@ -149,7 +97,65 @@ class Line:
                + str(self.Z2) + ")"
 
 
+class Point:
+    """Adds new point in cartesian coordinates using 3 doubles x, y, z as input
 
+        :param:
+            x (double): is the x coordinate
+            y (double): is the y coordinate
+            z (double): is the z coordinate
+        :return:
+            representation of 3d point
+        :Example:
+            import Grasshopper as gh
+            point1 = gh.Point(0, 0, 0)
+            point2 = gh.Point(1., 1., 0.)
+    """
+
+    def __init__(self, x=0., y=0., z=0.):
+        if version == 2:
+            if isinstance(x, list):
+                self.X = x[0]
+                self.Y = x[1]
+                self.Z = x[2]
+            elif isinstance(x, basestring):
+                new_vars = []
+                x = x.replace("gCPy.Point(", "").replace(")", "").lstrip().rstrip()
+                variables = x.split(",")
+                for i in variables:
+                    new_vars.append(float(i))
+                self.X = new_vars[0]
+                self.Y = new_vars[1]
+                self.Z = new_vars[2]
+            else:
+                self.X = x
+                self.Y = y
+                self.Z = z
+        elif version == 3:
+            if isinstance(x, list):
+                self.X = x[0]
+                self.Y = x[1]
+                self.Z = x[2]
+            elif isinstance(x, str):
+                new_vars = []
+                x = x.replace("gCPy.Point(", "").replace(")", "").lstrip().rstrip()
+                variables = x.split(",")
+                for i in variables:
+                    new_vars.append(float(i))
+                self.X = new_vars[0]
+                self.Y = new_vars[1]
+                self.Z = new_vars[2]
+            else:
+                self.X = x
+                self.Y = y
+                self.Z = z
+        self.addPoint = "gCPy.Point(" + str(x) + "," + str(y) + "," + str(z) + ")"
+
+    def __str__(self):
+        return "gCPy.Point(" + str(self.X) + "," + str(self.Y) + "," + str(self.Z) + ")"
+
+
+########################### DEFINE METHODS ################################
 
 def addLine(*args):
     """Adds new line between two points
@@ -177,6 +183,9 @@ def addPoint(*args):
         return Point(args[0], args[1], args[2]).addPoint
 
 
+##################################vars#################################
+
+doc = Doc();
 
 if __name__ == '__main__':
     print __name__
