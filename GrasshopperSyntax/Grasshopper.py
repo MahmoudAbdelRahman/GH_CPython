@@ -1,6 +1,7 @@
 # Grasshopper Module Version 0.0.1.4
 
 """
+This Module is part of GH_CPython
 BSD 2-Clause License
 
 This project has been started by: Mahmoud M. Abdelrahman
