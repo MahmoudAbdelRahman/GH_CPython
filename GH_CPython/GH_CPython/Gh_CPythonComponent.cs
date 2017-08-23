@@ -52,6 +52,7 @@ namespace GH_CPython
 
     public class Gh_CPythonComponent : GH_Component, IGH_VariableParameterComponent
     {
+        string pythonVersion = "# Grasshopper Module Version 0.0.1";
         PythonShell PythonIDE;
 
         PythonFileControl pythonFileControl = new PythonFileControl();
@@ -132,12 +133,18 @@ namespace GH_CPython
             if (!File.Exists(@"C:\GH_CPython\Grasshopper.py"))
             {
                 File.WriteAllText(@"C:\GH_CPython\Grasshopper.py", Resources.RhinoLibs.Grasshopper);
+            }else
+            {
+                string ver = File.ReadAllLines(@"C:\GH_CPython\Grasshopper.py")[0];
+                if (ver != pythonVersion)
+                {
+                    File.WriteAllText(@"C:\GH_CPython\Grasshopper.py", Resources.RhinoLibs.Grasshopper);
+                }
             }
 
 
             PythonIDE = new PythonShell();
             PythonIDE.TopMost = true;
-            //PythonIDE.KeyDown += PythonIDE_KeyDown;
             PreviewExpired += Gh_CPythonComponent_PreviewExpired;
 
             thisIndex = Globals.index;
@@ -552,8 +559,8 @@ namespace GH_CPython
                 for (int i3 = 0; i3 < Params.Output.Count; i3++)
                 {
 
-                    DA.SetData(i3, getOutPutData(doc.DocumentElement.SelectSingleNode("/result/" + Params.Output[i3].NickName).InnerText));
-
+                    //DA.SetData(i3, getOutPutData(doc.DocumentElement.SelectSingleNode("/result/" + Params.Output[i3].NickName).InnerText));
+                    setoutPutData(i3, doc.DocumentElement.SelectSingleNode("/result/" + Params.Output[i3].NickName).InnerText, DA);
                 }
                 RunningPythonProcess.Close();
                 System.IO.File.Delete(path + "_PythonExecutionOrder_" + thisIndex.ToString() + ".xml");
@@ -579,14 +586,12 @@ namespace GH_CPython
         }
 
 
-
-
         Regex matchLine = new Regex(@"(?<=gCPy\.Line\().*(?=\))");
         //Regex matchLineList = new Regex(@"(?<=\[\'gCPy\.Line\().*(?=\)\'\])");
         Regex matchPoint = new Regex(@"(?<=gCPy\.Point\().*(?=\))");
         Regex matchPointList = new Regex(@"(\')");
         Regex matchCircle = new Regex(@"(?<=gCPy\.Circle\().*(?=\))");
-        private object getOutPutData(string p)
+        private void setoutPutData(int i3, string p, IGH_DataAccess DA)
         {
             if (matchLine.Match(p).Value != "")
             {
@@ -594,45 +599,50 @@ namespace GH_CPython
                 var numbers = matchLine.Match(p).Value.Split(',');
                 Line lx = new Line(double.Parse(numbers[0]), double.Parse(numbers[1]), double.Parse(numbers[2]),
                                    double.Parse(numbers[3]), double.Parse(numbers[4]), double.Parse(numbers[5]));
-                return lx;
+                DA.SetData(i3, lx);
             }
             else if (matchPoint.Match(p).Value != "")
             {
-                if(p.Contains(@")', 'gCPy.Point("))
+                if (p.Contains(@")', 'gCPy.Point("))
                 {
-                   p = p.Replace("'gCPy.Point(", "'(").Replace("'", "").Replace("[", "").Replace("]", "").Replace("(", "").Replace("),", "#").Replace(")", "");
-                   string[] points = p.Split('#');
-                   List<Rhino.Geometry.Point3d> pts = new List<Rhino.Geometry.Point3d>();
-                    for (int i=0; i<points.Length; i++)
+                    p = p.Replace("'gCPy.Point(", "'(").Replace("'", "").Replace("[", "").Replace("]", "").Replace("(", "").Replace("),", "#").Replace(")", "");
+                    string[] points = p.Split('#');
+                    List<Rhino.Geometry.Point3d> pts = new List<Rhino.Geometry.Point3d>();
+                    for (int i = 0; i < points.Length; i++)
                     {
                         var thisP = points[i].Split(',');
                         Rhino.Geometry.Point3d px = new Rhino.Geometry.Point3d(new Point3d(double.Parse(thisP[0].Trim()), double.Parse(thisP[1].Trim()), double.Parse(thisP[2].Trim())));
                         pts.Add(px);
                     }
-                    return pts;
-                }else
+                    DA.SetDataList(i3, pts);
+                }
+                else
                 {
                     var numbers = matchPoint.Match(p).Value.Split(',');
                     Rhino.Geometry.Point px = new Rhino.Geometry.Point(new Point3d(double.Parse(numbers[0]), double.Parse(numbers[1]), double.Parse(numbers[2])));
-                    return px;
+                    DA.SetData(i3, px);
                 }
-                
+
             }
             else if (matchCircle.Match(p).Value != "")
             {
 
                 var numbers = matchCircle.Match(p).Value.Split(',');
-                Rhino.Geometry.Plane pl = new Plane(new Point3d(double.Parse(numbers[0]), double.Parse(numbers[1]),double.Parse(numbers[2])),
-                                                    new Vector3d(double.Parse(numbers[4]), double.Parse(numbers[5]),double.Parse(numbers[6])),
-                                                    new Vector3d(double.Parse(numbers[7]), double.Parse(numbers[8]),double.Parse(numbers[9])));
+                Rhino.Geometry.Plane pl = new Plane(new Point3d(double.Parse(numbers[0]), double.Parse(numbers[1]), double.Parse(numbers[2])),
+                                                    new Vector3d(double.Parse(numbers[4]), double.Parse(numbers[5]), double.Parse(numbers[6])),
+                                                    new Vector3d(double.Parse(numbers[7]), double.Parse(numbers[8]), double.Parse(numbers[9])));
                 Rhino.Geometry.Circle cx = new Rhino.Geometry.Circle(pl, double.Parse(numbers[3]));
-                return cx;
+                DA.SetData(i3, cx);
             }
             else
             {
-                return p;
+                DA.SetData(i3, p);
             }
         }
+
+
+        
+
 
 
         /// <summary>
