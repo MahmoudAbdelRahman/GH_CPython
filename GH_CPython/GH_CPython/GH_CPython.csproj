@@ -188,6 +188,8 @@
   <ItemGroup>
     <Content Include="draft.txt" />
     <Content Include="draft2.txt" />
+    <None Include="Resources\initghEnv.txt" />
+    <None Include="Resources\initVars.txt" />
     <None Include="Resources\Grasshopper.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

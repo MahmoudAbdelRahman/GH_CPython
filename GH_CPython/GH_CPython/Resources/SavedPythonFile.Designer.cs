@@ -86,6 +86,29 @@ namespace GH_CPython.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to class ghenv:
+        ///    __init__(self):
+        ///	    self.filePath = ##filePath##
+        ///		self.fileName = ##fileName##
+        ///
+        ///.
+        /// </summary>
+        internal static string initghEnv {
+            get {
+                return ResourceManager.GetString("initghEnv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to exec(&quot;##InitVars##\n##initGHENV##&quot;).
+        /// </summary>
+        internal static string initVars {
+            get {
+                return ResourceManager.GetString("initVars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
         internal static string SavedPythonData {
@@ -132,13 +155,25 @@ namespace GH_CPython.Resources {
         ///[desc]
         ///Description of the plugin Here
         ///Write here any thing... 
-        ///[\desc]
+        ///[/desc]
         ///
         ///ARGUMENTS:
-        ///    _input = descripe your input here, \n this indicates a new line.
+        ///----------
+        ///&lt;inp&gt; 
+        ///	_input :[required] - [type = int] - [default = None] 
+        ///	Descripe your input here 
+        ///	    * bullet point.
+        ///		* bullet point
+        ///&lt;/inp&gt;
+        ///&lt;inp&gt;
+        ///	Other inputs go here ...
+        ///&lt;/inp&gt;
         ///
         ///RETURN:
-        ///    output_ = indicate your output description here. \n refers to a new line.
+        ///----------
+        ///    &lt;out&gt;
+        ///		output_ : indicate your output description here. \n refers to a new line.
+        ///	&lt;/out&gt;
         ///
         ///&quot;&quot;&quot;.
         /// </summary>

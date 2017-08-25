@@ -52,18 +52,16 @@ namespace GH_CPython
 
     public class Gh_CPythonComponent : GH_Component, IGH_VariableParameterComponent
     {
-        string pythonVersion = "# Grasshopper Module Version 0.0.1";
+        string pythonVersion = "# Grasshopper Module Version 0.0.1.5";
+
         PythonShell PythonIDE;
 
         PythonFileControl pythonFileControl = new PythonFileControl();
-
-        GH_Document docUment;
 
         Process RunningPythonProcess = new Process();
 
         XmlDocument doc = new XmlDocument();
         
-
         string path = @"C:\GH_CPython\";
 
         private string at;
@@ -83,19 +81,17 @@ namespace GH_CPython
                 "Maths", "Script")
         {
 
-            docUment = this.OnPingDocument();
-
-
+            
             if (!Directory.Exists(@"C:\GH_CPython\"))
             {
                 Directory.CreateDirectory(@"C:\GH_CPython\");
-                path = @"C:\GH_CPython\";
-                
+                path = @"C:\GH_CPython\";                
             }
             else
             {
                 path = @"C:\GH_CPython\";
             }
+
             if (!File.Exists(@"C:\GH_CPython\interpreter.dat"))
             {
                 if (File.Exists(@"C:\Python27\python.exe")) { defaultFileName = @"C:\Python27\python.exe"; }
@@ -142,7 +138,6 @@ namespace GH_CPython
                 }
             }
 
-
             PythonIDE = new PythonShell();
             PythonIDE.TopMost = true;
             PreviewExpired += Gh_CPythonComponent_PreviewExpired;
@@ -151,12 +146,9 @@ namespace GH_CPython
 
             name = "PythonFileWritten_" + thisIndex.ToString();
 
-
-
             Globals.fileName.Add(thisIndex, "_PythonExecutionOrder_" + thisIndex.ToString());
             Globals.index += 1;
             Globals.OpenThisShell.Add(thisIndex, false);
-
 
             ///Initiate Python process options.
             ///Don't show Shell - Redirect Standard output - Redirect Standard error - Hide Shell
@@ -310,10 +302,6 @@ namespace GH_CPython
             try
             {
                 writer.SetString("allSavedText", PythonIDE.PythonCanvas.Text);
-                /*if (retrievedData != "")
-                    writer.SetString("allSavedText", retrievedData);
-                else
-                    writer.SetString("allSavedText", InitialPythonText);*/
             }
             catch (Exception ex)
             {
@@ -475,7 +463,6 @@ namespace GH_CPython
                     string el2 = pattern4.Match(ouOu[i].Value).Value;
 
                     OutVarsRegx.Add(el1.Trim(), el2.Trim());
-                    //MessageBox.Show("Name: "+el1 + "\n Desc: " + el2);
                 }
                 this.Name = this.NickName;
 
@@ -486,7 +473,6 @@ namespace GH_CPython
                     try
                     {
                         this.Params.Input[i].Description = inVarsRegx[this.Params.Input[i].NickName].Replace(@"\n", Environment.NewLine);
-                        //MessageBox.Show(optional[Params.Input[i].NickName]);
 
                         if (optional[Params.Input[i].NickName] == "required") Params.Input[i].Optional = false;
                         else Params.Input[i].Optional = true;
@@ -518,7 +504,7 @@ namespace GH_CPython
         ///   
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
+           
 
             long t0 = DateTime.Now.Ticks;
             PythonIDE.Text = this.NickName;
@@ -528,11 +514,6 @@ namespace GH_CPython
 
             string output = "";
 
-
-            //writeReadPythonFile(this, DA);
-           
-            
-            //System.IO.File.WriteAllText(@path + @name + @".py", thisPythonString);
             try
             {
 
@@ -559,7 +540,6 @@ namespace GH_CPython
                 for (int i3 = 0; i3 < Params.Output.Count; i3++)
                 {
 
-                    //DA.SetData(i3, getOutPutData(doc.DocumentElement.SelectSingleNode("/result/" + Params.Output[i3].NickName).InnerText));
                     setoutPutData(i3, doc.DocumentElement.SelectSingleNode("/result/" + Params.Output[i3].NickName).InnerText, DA);
                 }
                 RunningPythonProcess.Close();
@@ -587,23 +567,50 @@ namespace GH_CPython
 
 
         Regex matchLine = new Regex(@"(?<=gCPy\.Line\().*(?=\))");
-        //Regex matchLineList = new Regex(@"(?<=\[\'gCPy\.Line\().*(?=\)\'\])");
         Regex matchPoint = new Regex(@"(?<=gCPy\.Point\().*(?=\))");
-        Regex matchPointList = new Regex(@"(\')");
         Regex matchCircle = new Regex(@"(?<=gCPy\.Circle\().*(?=\))");
+
+
+        Regex matchDoc = new Regex(@"(?<=gCPy\.Doc\().*(?=\))");
         private void setoutPutData(int i3, string p, IGH_DataAccess DA)
         {
+            
+                //Line input
             if (matchLine.Match(p).Value != "")
             {
-
-                var numbers = matchLine.Match(p).Value.Split(',');
-                Line lx = new Line(double.Parse(numbers[0]), double.Parse(numbers[1]), double.Parse(numbers[2]),
-                                   double.Parse(numbers[3]), double.Parse(numbers[4]), double.Parse(numbers[5]));
-                DA.SetData(i3, lx);
+                if (p.Contains(@")', 'gCPy.Line("))
+                {
+                    p = p.Replace("'gCPy.Line(", "'(").Replace("'", "").Replace("[", "").Replace("]", "").Replace("(", "").Replace("),", "#").Replace(")", "");
+                    string[] lines = p.Split('#');
+                    List<Rhino.Geometry.Line> lns = new List<Rhino.Geometry.Line>();
+                    for (int i = 0; i < lines.Length; i++)
+                    {
+                        var thisL = lines[i].Split(',');
+                        Rhino.Geometry.Line lx = new Rhino.Geometry.Line(   double.Parse(thisL[0].Trim()),
+                                                                            double.Parse(thisL[1].Trim()), 
+                                                                            double.Parse(thisL[2].Trim()),
+                                                                            double.Parse(thisL[3].Trim()),
+                                                                            double.Parse(thisL[4].Trim()),
+                                                                            double.Parse(thisL[5].Trim()));
+                        lns.Add(lx);
+                    }
+                    DA.SetDataList(i3, lns);
+                }
+                // Single Point input
+                else
+                {
+                    var numbers = matchLine.Match(p).Value.Split(',');
+                    Line lx = new Line(double.Parse(numbers[0]), double.Parse(numbers[1]), double.Parse(numbers[2]),
+                                       double.Parse(numbers[3]), double.Parse(numbers[4]), double.Parse(numbers[5]));
+                    DA.SetData(i3, lx);
+                }
+                
             }
+                //Point input
             else if (matchPoint.Match(p).Value != "")
             {
-                if (p.Contains(@")', 'gCPy.Point("))
+                    // Point List input
+                if (p.Contains(@")', 'gCPy.Point(")) 
                 {
                     p = p.Replace("'gCPy.Point(", "'(").Replace("'", "").Replace("[", "").Replace("]", "").Replace("(", "").Replace("),", "#").Replace(")", "");
                     string[] points = p.Split('#');
@@ -616,6 +623,7 @@ namespace GH_CPython
                     }
                     DA.SetDataList(i3, pts);
                 }
+                    // Single Point input
                 else
                 {
                     var numbers = matchPoint.Match(p).Value.Split(',');
@@ -639,10 +647,6 @@ namespace GH_CPython
                 DA.SetData(i3, p);
             }
         }
-
-
-        
-
 
 
         /// <summary>
@@ -924,6 +928,7 @@ namespace GH_CPython
                 param.Access = GH_ParamAccess.list;
                 param.Optional = true;
                 param.NickName = param.Name;
+                
             }
             else if (side == GH_ParameterSide.Output)
             {

@@ -18,7 +18,7 @@ namespace GH_CPython
         /// gathering all inputs and outputs in a python-syntax form.
         /// </summary>
         /// <param name="WinForm"></param>
-        public void writeReadPythonFile(GH_Component ThisComponent, 
+        public void writeReadPythonFile(GH_Component ThisComponent,
                                         PythonShell WinForm,
                                         IGH_DataAccess DA,
                                         int index,
@@ -40,7 +40,7 @@ namespace GH_CPython
                 /// Add the output variables' names and initiate them as None. 
                 for (int i = 0; i < ThisComponent.Params.Output.Count; i++)
                 {
-                    variablesAre += ThisComponent.Params.Output[i].NickName + " = None\n";
+                    variablesAre += ThisComponent.Params.Output[i].NickName + @" = None\n";
                 }
 
                 /// Section 3. 
@@ -53,16 +53,16 @@ namespace GH_CPython
                     try
                     {
                         paramType = ThisComponent.Params.Input[i].Sources[0].Type.ToString();
-                    }catch
+                    }
+                    catch
                     {
                         paramType = ThisComponent.Params.Input[i].Type.ToString();
                     }
-                    
+
                     // GET input type at first
                     try
                     {
-                        if (paramType == "Grasshopper.Kernel.Types.GH_String" ||
-                            paramType == "Grasshopper.Kernel.Types.GH_Integer" ||
+                        if (paramType == "Grasshopper.Kernel.Types.GH_Integer" ||
                             paramType == "Grasshopper.Kernel.Types.GH_Number" ||
                             paramType == "Grasshopper.Kernel.Types.GH_Boolean")
                         {
@@ -82,30 +82,31 @@ namespace GH_CPython
                             datahere += getInputs(ThisComponent, DA, i);
                         }
 
-                    }catch
-                        {
-                            datahere += "None";
-                        }
-                    if (datahere == "") datahere = "None";
-                        variablesAre += ThisComponent.Params.Input[i].NickName + " = " + datahere + " \n";
-
                     }
-                    foot = Resources.SavedPythonFile.savingFile;
-                    string thisOutputData = "";
-
-
-                    for (int i = 0; i < ThisComponent.Params.Output.Count; i++)
+                    catch
                     {
-                        if (i < ThisComponent.Params.Output.Count - 1)
-                            thisOutputData += "\"" + ThisComponent.Params.Output[i].NickName + "\":" + ThisComponent.Params.Output[i].NickName + ", ";
-                        else
-                            thisOutputData += "\"" + ThisComponent.Params.Output[i].NickName + "\":" + ThisComponent.Params.Output[i].NickName;
-
+                        datahere += "None";
                     }
-                    foot = foot.Replace("##data##", thisOutputData);
-                    foot = foot.Replace("##fileName##", path.Replace(@"\", "/") + @"_PythonExecutionOrder_" + index.ToString() + @".xml");
+                    if (datahere == "") datahere = "None";
+                    variablesAre += ThisComponent.Params.Input[i].NickName + " = " + datahere + @" \n";
 
-                
+                }
+                foot = Resources.SavedPythonFile.savingFile;
+                string thisOutputData = "";
+
+
+                for (int i = 0; i < ThisComponent.Params.Output.Count; i++)
+                {
+                    if (i < ThisComponent.Params.Output.Count - 1)
+                        thisOutputData += "\"" + ThisComponent.Params.Output[i].NickName + "\":" + ThisComponent.Params.Output[i].NickName + ", ";
+                    else
+                        thisOutputData += "\"" + ThisComponent.Params.Output[i].NickName + "\":" + ThisComponent.Params.Output[i].NickName;
+
+                }
+                foot = foot.Replace("##data##", thisOutputData);
+                foot = foot.Replace("##fileName##", path.Replace(@"\", "/") + @"_PythonExecutionOrder_" + index.ToString() + @".xml");
+
+
             }
             catch (Exception exep)
             {
@@ -113,8 +114,25 @@ namespace GH_CPython
             }
 
             /// Section 5.
-            /// Save all data as a python file that will be run when the component is expired. 
-            System.IO.File.WriteAllText(path + name + ".py", variablesAre + WinForm.PythonCanvas.Text + "\n" + foot);
+            /// Save all data as a python file that will be run when the component is expired.
+            string thisfilePath = "None";
+            string thisfileName = "None";
+            if(ThisComponent.OnPingDocument().IsFilePathDefined)
+            {
+                thisfilePath = ThisComponent.OnPingDocument().FilePath;
+                thisfileName = ThisComponent.OnPingDocument().DisplayName;
+            }else
+            {
+                 thisfilePath = "None";
+                 thisfileName = "None";
+            }
+            
+
+
+            string envVars = Resources.SavedPythonFile.initghEnv.Replace(Environment.NewLine, @"\n").Replace("##filePath##", thisfilePath.Replace(@"\", "/"));
+            envVars = envVars.Replace("##fileName##", thisfileName.Replace("*", ""));
+            variablesAre = Resources.SavedPythonFile.initVars.Replace("##InitVars##", variablesAre).Replace("##initGHENV##", envVars);
+            System.IO.File.WriteAllText(path + name + ".py", variablesAre + "\n" + WinForm.PythonCanvas.Text + "\n" + foot);
         }
 
 
@@ -127,9 +145,9 @@ namespace GH_CPython
             try
             {
                 convetToItem(ThisComponent, i, DA);
-                        IGH_Goo inputObject = null;
-                        DA.GetData(i, ref inputObject);
-                        paramType = inputObject.GetType().ToString();
+                IGH_Goo inputObject = null;
+                DA.GetData(i, ref inputObject);
+                paramType = inputObject.GetType().ToString();
 
                 if (paramType == "Grasshopper.Kernel.Types.GH_Line")
                 {
@@ -172,14 +190,14 @@ namespace GH_CPython
                     convetToItem(ThisComponent, i, DA);
                     string inputString = string.Empty;
                     DA.GetData(i, ref inputString);
-                    datahere = "\""+inputString+"\"";
+                    datahere = "\"" + inputString.Replace(Environment.NewLine,"\\n").Replace("'",@"\'").Replace("\"", "\\\\"+"\"").Replace("\\n", "\\\\n") + "\"";
                 }
                 else if (paramType == "Grasshopper.Kernel.Types.GH_Integer")
                 {
                     convetToItem(ThisComponent, i, DA);
                     int inputInt = 0;
                     DA.GetData(i, ref inputInt);
-                    datahere =  inputInt.ToString() ;
+                    datahere = inputInt.ToString();
                 }
                 else if (paramType == "Grasshopper.Kernel.Types.GH_Number")
                 {
@@ -193,16 +211,16 @@ namespace GH_CPython
                     convetToItem(ThisComponent, i, DA);
                     bool inputBool = false;
                     DA.GetData(i, ref inputBool);
-                    datahere = inputBool ? "True": "False";
+                    datahere = inputBool ? "True" : "False";
                 }
                 else
                 {
-                    //MessageBox.Show(paramType);
+                    
                     datahere = "None";
                 }
 
             }
-            catch{}
+            catch { }
 
             return datahere;
         }
@@ -218,7 +236,7 @@ namespace GH_CPython
         }
 
 
-       
+
         private string recomposeInputString(string thisInputString)
         {
             string datahere = "";

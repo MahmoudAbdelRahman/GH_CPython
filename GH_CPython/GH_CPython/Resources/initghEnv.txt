@@ -1,0 +1,2 @@
+class fileInfo:\n    def __init__(self):\n        self.filePath = "##filePath##"\n        self.fileName = "##fileName##"\nghenv = fileInfo()\n
+
