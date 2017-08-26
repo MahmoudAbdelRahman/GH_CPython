@@ -56,12 +56,16 @@ namespace GH_CPython
 
         PythonShell PythonIDE;
 
+        DataManagement DM;
+
+        InitFunctions initfunc;
+
         PythonFileControl pythonFileControl = new PythonFileControl();
 
         Process RunningPythonProcess = new Process();
 
         XmlDocument doc = new XmlDocument();
-        
+
         string path = @"C:\GH_CPython\";
 
         private string at;
@@ -72,6 +76,9 @@ namespace GH_CPython
 
         string StartFileName = "python.exe";
 
+
+       
+
         /// <summary>
         /// Constructor 
         /// </summary>
@@ -81,65 +88,23 @@ namespace GH_CPython
                 "Maths", "Script")
         {
 
-            
-            if (!Directory.Exists(@"C:\GH_CPython\"))
-            {
-                Directory.CreateDirectory(@"C:\GH_CPython\");
-                path = @"C:\GH_CPython\";                
-            }
-            else
-            {
-                path = @"C:\GH_CPython\";
-            }
+            initfunc = new InitFunctions();
 
-            if (!File.Exists(@"C:\GH_CPython\interpreter.dat"))
-            {
-                if (File.Exists(@"C:\Python27\python.exe")) { defaultFileName = @"C:\Python27\python.exe"; }
-                else if (File.Exists(@"C:\Anaconda\python.exe")) { defaultFileName = @"C:\Anaconda\python.exe"; }
-                else if (File.Exists(@"C:\Python34\python.exe")) { defaultFileName = @"C:\Python34\python.exe"; }
-                else if (File.Exists(@"C:\Python35\python.exe")) { defaultFileName = @"C:\Python35\python.exe"; }
-                else if (File.Exists(@"C:\Python36\python.exe")) { defaultFileName = @"C:\Python36\python.exe"; }
+            //1- Look for default GH_CPython path i.e.'C:\GH_CPython\'
+            path = initfunc.isPythonFloderExists(@"C:\GH_CPython\");
 
-                else if (File.Exists(@"C:\Program Files (x86)\Python27\python.exe")) { defaultFileName = @"C:\Program Files (x86)\Python27\python.exe"; }
-                else if (File.Exists(@"C:\Program Files (x86)\Python34\python.exe")) { defaultFileName = @"C:\Program Files (x86)\Python34\python.exe"; }
-                else if (File.Exists(@"C:\Program Files (x86)\Python35\python.exe")) { defaultFileName = @"C:\Program Files (x86)\Python35\python.exe"; }
-                else if (File.Exists(@"C:\Program Files (x86)\Python36\python.exe")) { defaultFileName = @"C:\Program Files (x86)\Python36\python.exe"; }
+            //2- Look for and set Python.exe interpreter if not set
+            initfunc.getPythonInterpretere(@"C:\GH_CPython\interpreter.dat", defaultFileName, StartFileName);
 
-                else if (File.Exists(@"C:\Program Files\Python27\python.exe")) { defaultFileName = @"C:\Program Files\Python27\python.exe"; }
-                else if (File.Exists(@"C:\Program Files\Python34\python.exe")) { defaultFileName = @"C:\Program Files\Python34\python.exe"; }
-                else if (File.Exists(@"C:\Program Files\Python35\python.exe")) { defaultFileName = @"C:\Program Files\Python35\python.exe"; }
-                else if (File.Exists(@"C:\Program Files\Python36\python.exe")) { defaultFileName = @"C:\Program Files\Python36\python.exe"; }
-                File.WriteAllText(@"C:\GH_CPython\interpreter.dat", defaultFileName);
-                locatePython locPy = new locatePython();
-                locPy.ShowDialog();
-            }
-            else
-            {
-                if (File.ReadAllText(@"C:\GH_CPython\interpreter.dat").Trim() != String.Empty)
-                {
-                    StartFileName = File.ReadAllText(@"C:\GH_CPython\interpreter.dat");
-                }
-                else
-                {
-                    MessageBox.Show("Sorry, We can't find Python installed on your machine, If you have already installed it, would you contact Mahmoud Abdlerahman via this e-mail \n arch.mahmoud.ouf111@gmail.com\n Thanks.");
-                }
+            //3- Add latest version of required python modules if not existed
+            initfunc.addGrasshopperPyModule(@"C:\GH_CPython\Grasshopper.py", pythonVersion);
 
-            }
-
-            if (!File.Exists(@"C:\GH_CPython\Grasshopper.py"))
-            {
-                File.WriteAllText(@"C:\GH_CPython\Grasshopper.py", Resources.RhinoLibs.Grasshopper);
-            }else
-            {
-                string ver = File.ReadAllLines(@"C:\GH_CPython\Grasshopper.py")[0];
-                if (ver != pythonVersion)
-                {
-                    File.WriteAllText(@"C:\GH_CPython\Grasshopper.py", Resources.RhinoLibs.Grasshopper);
-                }
-            }
-
+            // initiate python IDE instance
             PythonIDE = new PythonShell();
+
             PythonIDE.TopMost = true;
+
+            
             PreviewExpired += Gh_CPythonComponent_PreviewExpired;
 
             thisIndex = Globals.index;
@@ -176,8 +141,8 @@ namespace GH_CPython
             try
             {
                 /// Initiate Console data as follows
-                /// "Hi UserName, How are you ? Are you ready to Change the world ?"
-                PythonIDE.console.Text = "Hi " + Name + ", How are you ? Are you ready to Change the world ?";
+                /// "Hi UserName, How are you ?"
+                PythonIDE.console.Text = "Hi " + Name + ", How are you ?";
 
 
                 /// retrievedData are the data that are saved just after closing the Form (either by clicking x or close)
@@ -203,11 +168,11 @@ namespace GH_CPython
                 /// This function reads all the input data, then initiates it in python syntax
                 /// this refrers to the present winForm i.e. the python IDE.
                 /// writeReaadPythonFile function needs a lot of work to handle different inputs in a proper way
-                //writeReadPythonFile(this);
 
                 /// EventHandler of the Form Closing
                 PythonIDE.FormClosing += Ps_FormClosing;
 
+                PythonIDE.manageDataItem.Click += manageDataItem_Click;
                 /// Handleing Test button click. 
                 PythonIDE.Test.Click += (se, ev) =>
                 {
@@ -230,25 +195,81 @@ namespace GH_CPython
                 Grasshopper.Instances.RedrawCanvas();
 
             }
-            catch (Exception erx)
-            {
-                //this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, erx.ToString());
-                //MessageBox.Show(erx.ToString());
-            }
+            catch { }
+
             AddNamesAndDescriptions();
+        }
+
+
+
+        void manageDataItem_Click(object sender, EventArgs e)
+        {
+
+            DM = new DataManagement();
+
+            DM.Show();
+
+            DM.cancelButton.Click += (s, ev) => { DM.Close(); };
+
+            DM.applyButton.Click += (se, ev) =>
+            {
+                ExpirePreview(true);
+                ExpireSolution(true);
+            };
+            DM.FormClosing += DM_FormClosing;
+
+            
+            List<string> inputStrings = new List<string>();
+            Dictionary<string, int> dAccess = new Dictionary<string, int>();
+            Dictionary<string, int> dINdex = new Dictionary<string, int>();
+
+            for (int i = 0; i < Params.Input.Count; i++)
+            {
+                int access = Params.Input[i].Access == GH_ParamAccess.item ? 0 : Params.Input[i].Access == GH_ParamAccess.list ? 1 : 2;
+                inputStrings.Add(Params.Input[i].NickName);
+                dAccess.Add(Params.Input[i].NickName, access);
+                dINdex.Add(Params.Input[i].NickName, i);
+            }
+            DM.inputList.DataSource = inputStrings;
+
+            DM.inputList.SetSelected(0, true);
+
+            DM.inputList.SelectedValueChanged += (se, ev) =>
+            {
+                try
+                {
+                    string selItem = DM.inputList.SelectedValue.ToString();
+                    DM.dAccesslist.SetSelected(dAccess[selItem],true);
+                }
+                catch (Exception err)
+                {
+                    MessageBox.Show(err.ToString());
+                }
+            };
+
+            DM.dAccesslist.SelectedIndexChanged += (sen, eve) =>
+            {
+                string selItem = DM.inputList.SelectedValue.ToString();
+                int selectedindex = DM.dAccesslist.SelectedIndex;
+                Params.Input[dINdex[selItem]].Access = selectedindex == 0 ? GH_ParamAccess.item : selectedindex == 1 ? GH_ParamAccess.list : GH_ParamAccess.tree;
+                //MessageBox.Show(dINdex[selItem].ToString() + " -> " + selectedindex.ToString());
+            };
+
+        }
+
+        void DM_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
+        {
+            ExpireSolution(true);
         }
 
         void PythonCanvas_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (e.KeyCode == System.Windows.Forms.Keys.F5)
             {
-                //MessageBox.Show("pressed");
                 AddNamesAndDescriptions();
                 ExpireSolution(true);
             }
         }
-
-
 
 
         /// <summary>
@@ -275,7 +296,6 @@ namespace GH_CPython
             }
             AddNamesAndDescriptions();
             Grasshopper.Instances.RedrawCanvas();
-
         }
 
 
@@ -504,7 +524,7 @@ namespace GH_CPython
         ///   
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-           
+
 
             long t0 = DateTime.Now.Ticks;
             PythonIDE.Text = this.NickName;
@@ -517,11 +537,11 @@ namespace GH_CPython
             try
             {
 
-                    pythonFileControl.writeReadPythonFile(this,
-                                                            PythonIDE,
-                                                            DA,
-                                                            thisIndex,
-                                                            path);
+                pythonFileControl.writeReadPythonFile(this,
+                                                        PythonIDE,
+                                                        DA,
+                                                        thisIndex,
+                                                        path);
 
                 RunningPythonProcess.StartInfo.FileName = @StartFileName;
                 RunningPythonProcess.StartInfo.Arguments = path + name + ".py";
@@ -563,19 +583,21 @@ namespace GH_CPython
                 System.IO.File.Delete(path + "_PythonExecutionOrder_" + thisIndex.ToString() + ".xml");
             }
             catch { }
-        }
 
+
+        }
 
         Regex matchLine = new Regex(@"(?<=gCPy\.Line\().*(?=\))");
         Regex matchPoint = new Regex(@"(?<=gCPy\.Point\().*(?=\))");
         Regex matchCircle = new Regex(@"(?<=gCPy\.Circle\().*(?=\))");
+        Regex matchSurface = new Regex(@"(?<=gCPy\.Surface\().*(?=\))");
 
 
         Regex matchDoc = new Regex(@"(?<=gCPy\.Doc\().*(?=\))");
         private void setoutPutData(int i3, string p, IGH_DataAccess DA)
         {
-            
-                //Line input
+            //Rhino.Geometry.NurbsSurface.CreateFromCorners()
+            //Line input
             if (matchLine.Match(p).Value != "")
             {
                 if (p.Contains(@")', 'gCPy.Line("))
@@ -586,8 +608,8 @@ namespace GH_CPython
                     for (int i = 0; i < lines.Length; i++)
                     {
                         var thisL = lines[i].Split(',');
-                        Rhino.Geometry.Line lx = new Rhino.Geometry.Line(   double.Parse(thisL[0].Trim()),
-                                                                            double.Parse(thisL[1].Trim()), 
+                        Rhino.Geometry.Line lx = new Rhino.Geometry.Line(double.Parse(thisL[0].Trim()),
+                                                                            double.Parse(thisL[1].Trim()),
                                                                             double.Parse(thisL[2].Trim()),
                                                                             double.Parse(thisL[3].Trim()),
                                                                             double.Parse(thisL[4].Trim()),
@@ -604,13 +626,13 @@ namespace GH_CPython
                                        double.Parse(numbers[3]), double.Parse(numbers[4]), double.Parse(numbers[5]));
                     DA.SetData(i3, lx);
                 }
-                
+
             }
-                //Point input
+            //Point input
             else if (matchPoint.Match(p).Value != "")
             {
-                    // Point List input
-                if (p.Contains(@")', 'gCPy.Point(")) 
+                // Point List input
+                if (p.Contains(@")', 'gCPy.Point("))
                 {
                     p = p.Replace("'gCPy.Point(", "'(").Replace("'", "").Replace("[", "").Replace("]", "").Replace("(", "").Replace("),", "#").Replace(")", "");
                     string[] points = p.Split('#');
@@ -623,7 +645,7 @@ namespace GH_CPython
                     }
                     DA.SetDataList(i3, pts);
                 }
-                    // Single Point input
+                // Single Point input
                 else
                 {
                     var numbers = matchPoint.Match(p).Value.Split(',');
@@ -642,10 +664,20 @@ namespace GH_CPython
                 Rhino.Geometry.Circle cx = new Rhino.Geometry.Circle(pl, double.Parse(numbers[3]));
                 DA.SetData(i3, cx);
             }
+            else if (matchSurface.Match(p).Value != "")
+            {
+                var numbers = matchSurface.Match(p).Value.Split(',');
+                NurbsSurface srf = NurbsSurface.CreateFromCorners(new Point3d(double.Parse(numbers[0]), double.Parse(numbers[1]), double.Parse(numbers[2])),
+                                                                    new Point3d(double.Parse(numbers[3]), double.Parse(numbers[4]), double.Parse(numbers[5])),
+                                                                    new Point3d(double.Parse(numbers[6]), double.Parse(numbers[7]), double.Parse(numbers[8])),
+                                                                    new Point3d(double.Parse(numbers[9]), double.Parse(numbers[10]), double.Parse(numbers[11])));
+                DA.SetData(i3, srf);
+            }
             else
             {
                 DA.SetData(i3, p);
             }
+
         }
 
 
@@ -928,7 +960,7 @@ namespace GH_CPython
                 param.Access = GH_ParamAccess.list;
                 param.Optional = true;
                 param.NickName = param.Name;
-                
+
             }
             else if (side == GH_ParameterSide.Output)
             {

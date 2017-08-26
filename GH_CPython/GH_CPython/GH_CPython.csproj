@@ -94,8 +94,15 @@
     <Reference Include="XamlBuildTask" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataManagement.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataManagement.Designer.cs">
+      <DependentUpon>DataManagement.cs</DependentUpon>
+    </Compile>
     <Compile Include="Globals.cs" />
     <Compile Include="Gh_CPythonComponent.cs" />
+    <Compile Include="InitFunctions.cs" />
     <Compile Include="locatePython.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -133,6 +140,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DataManagement.resx">
+      <DependentUpon>DataManagement.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="locatePython.resx">
       <DependentUpon>locatePython.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -188,6 +198,13 @@
   <ItemGroup>
     <Content Include="draft.txt" />
     <Content Include="draft2.txt" />
+    <None Include="Resources\tree12.png" />
+    <None Include="Resources\list12.png" />
+    <None Include="Resources\item12.png" />
+    <None Include="Resources\item24.png" />
+    <None Include="Resources\data-data-configuration-icon.png" />
+    <None Include="Resources\openFile1.png" />
+    <None Include="Resources\openFile.png" />
     <None Include="Resources\initghEnv.txt" />
     <None Include="Resources\initVars.txt" />
     <None Include="Resources\Grasshopper.txt" />

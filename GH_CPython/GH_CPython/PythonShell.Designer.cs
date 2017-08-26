@@ -36,11 +36,17 @@
             this.light = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.PythonCanvas = new FastColoredTextBoxNS.FastColoredTextBox();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openPythonFileItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.manageDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.manageDataItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PythonCanvas)).BeginInit();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // console
@@ -99,6 +105,7 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.PythonCanvas);
+            this.splitContainer1.Panel1.Controls.Add(this.menuStrip1);
             // 
             // splitContainer1.Panel2
             // 
@@ -120,8 +127,7 @@
         '{',
         '}',
         '[',
-        ']'
-            };
+        ']'};
             this.PythonCanvas.AutoIndent = false;
             this.PythonCanvas.AutoIndentChars = false;
             this.PythonCanvas.AutoScrollMinSize = new System.Drawing.Size(27, 14);
@@ -134,11 +140,10 @@
             this.PythonCanvas.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.PythonCanvas.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.PythonCanvas.FindEndOfFoldingBlockStrategy = FastColoredTextBoxNS.FindEndOfFoldingBlockStrategy.Strategy2;
-            this.PythonCanvas.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.PythonCanvas.IsReplaceMode = false;
             this.PythonCanvas.LeftBracket = '(';
             this.PythonCanvas.LeftBracket2 = '[';
-            this.PythonCanvas.Location = new System.Drawing.Point(3, 0);
+            this.PythonCanvas.Location = new System.Drawing.Point(3, 27);
             this.PythonCanvas.Name = "PythonCanvas";
             this.PythonCanvas.Paddings = new System.Windows.Forms.Padding(0);
             this.PythonCanvas.RightBracket = ')';
@@ -146,11 +151,52 @@
             this.PythonCanvas.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.PythonCanvas.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("PythonCanvas.ServiceColors")));
             this.PythonCanvas.ShowFoldingLines = true;
-            this.PythonCanvas.Size = new System.Drawing.Size(366, 220);
+            this.PythonCanvas.Size = new System.Drawing.Size(366, 193);
             this.PythonCanvas.TabIndex = 0;
             this.PythonCanvas.Zoom = 100;
             this.PythonCanvas.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.PythonCanvas_TextChanged);
             this.PythonCanvas.Load += new System.EventHandler(this.PythonCanvas_Load);
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem,
+            this.manageDataToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(369, 24);
+            this.menuStrip1.TabIndex = 1;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openPythonFileItem});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // openPythonFileItem
+            // 
+            this.openPythonFileItem.Image = global::GH_CPython.Properties.Resources.openFile;
+            this.openPythonFileItem.Name = "openPythonFileItem";
+            this.openPythonFileItem.Size = new System.Drawing.Size(165, 22);
+            this.openPythonFileItem.Text = "Open Python File";
+            // 
+            // manageDataToolStripMenuItem
+            // 
+            this.manageDataToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.manageDataItem});
+            this.manageDataToolStripMenuItem.Name = "manageDataToolStripMenuItem";
+            this.manageDataToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
+            this.manageDataToolStripMenuItem.Text = "Data";
+            // 
+            // manageDataItem
+            // 
+            this.manageDataItem.Image = global::GH_CPython.Properties.Resources.data_data_configuration_icon;
+            this.manageDataItem.Name = "manageDataItem";
+            this.manageDataItem.Size = new System.Drawing.Size(152, 22);
+            this.manageDataItem.Text = "Manage Data";
             // 
             // PythonShell
             // 
@@ -163,15 +209,20 @@
             this.Controls.Add(this.close);
             this.Controls.Add(this.Test);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(310, 393);
             this.Name = "PythonShell";
             this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Gh_CPython";
             this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.PythonCanvas)).EndInit();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -187,6 +238,11 @@
         public System.Windows.Forms.TextBox light;
         private System.Windows.Forms.SplitContainer splitContainer1;
         public FastColoredTextBoxNS.FastColoredTextBox PythonCanvas;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem manageDataToolStripMenuItem;
+        public System.Windows.Forms.ToolStripMenuItem openPythonFileItem;
+        public System.Windows.Forms.ToolStripMenuItem manageDataItem;
 
     }
 }

@@ -63,6 +63,16 @@ namespace GH_CPython.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap openFile {
+            get {
+                object obj = ResourceManager.GetObject("openFile", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Python_logo_241 {
             get {
                 object obj = ResourceManager.GetObject("Python_logo_241", resourceCulture);

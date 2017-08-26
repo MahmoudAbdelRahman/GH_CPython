@@ -122,6 +122,8 @@ namespace GH_CPython
             e.ChangedRange.SetFoldingMarkers(@"'''", @"'''");//allow to collapse comment block
             e.ChangedRange.SetFoldingMarkers(f, f,RegexOptions.Singleline|RegexOptions.RightToLeft);//allow to collapse comment block
         }
+
+
        
     }
 

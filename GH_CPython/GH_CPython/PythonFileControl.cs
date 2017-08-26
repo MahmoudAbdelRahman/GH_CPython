@@ -62,20 +62,14 @@ namespace GH_CPython
                     // GET input type at first
                     try
                     {
-                        if (paramType == "Grasshopper.Kernel.Types.GH_Integer" ||
+                        if (ThisComponent.Params.Input[i].Access == GH_ParamAccess.list &&
+                            (paramType == "Grasshopper.Kernel.Types.GH_Integer" ||
                             paramType == "Grasshopper.Kernel.Types.GH_Number" ||
-                            paramType == "Grasshopper.Kernel.Types.GH_Boolean")
+                            paramType == "Grasshopper.Kernel.Types.GH_Boolean"))
                         {
-                            if (ThisComponent.Params.Input[i].Access == GH_ParamAccess.item)
-                            {
-                                ThisComponent.Params.Input[i].Access = GH_ParamAccess.list;
-                                ThisComponent.ExpireSolution(true);
-                            }
-                            else
-                            {
+                            
                                 string thisInputString = ThisComponent.Params.Input[i].VolatileData.DataDescription(false, false).Trim().Replace(System.Environment.NewLine, ",");
                                 datahere = recomposeInputString(thisInputString);
-                            }
                         }
                         else
                         {
@@ -144,6 +138,9 @@ namespace GH_CPython
 
             try
             {
+                if(ThisComponent.Params.Input[i].Access == GH_ParamAccess.item)
+                {
+
                 convetToItem(ThisComponent, i, DA);
                 IGH_Goo inputObject = null;
                 DA.GetData(i, ref inputObject);
@@ -219,20 +216,27 @@ namespace GH_CPython
                     datahere = "None";
                 }
 
+                }else
+                {
+                    string thisInputString = ThisComponent.Params.Input[i].VolatileData.DataDescription(false, false).Trim().Replace(System.Environment.NewLine, ",");
+                    datahere = recomposeInputString(thisInputString);
+                }
+
             }
-            catch { }
+            catch(Exception errf)
+            { MessageBox.Show(errf.ToString()); }
 
             return datahere;
         }
 
         private void convetToItem(GH_Component ThisComponent, int i, IGH_DataAccess DA)
         {
-            if (ThisComponent.Params.Input[i].Access == GH_ParamAccess.list)
+            /*if (ThisComponent.Params.Input[i].Access == GH_ParamAccess.list)
             {
                 ThisComponent.Params.Input[i].Access = GH_ParamAccess.item;
                 ThisComponent.ExpireSolution(true);
 
-            }
+            }*/
         }
 
 
