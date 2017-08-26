@@ -3,7 +3,8 @@
 CPython IDE for grasshopper. 
 
 
-![gowentgone](https://user-images.githubusercontent.com/6969514/28756153-1cd1bc92-7569-11e7-9ce2-75ca52090598.JPG)
+![image](https://user-images.githubusercontent.com/6969514/29739952-a2c2a0fe-8a4b-11e7-8c0e-63b86e836e23.png)
+
 -----------
 
 #### The Idea of this plugin is to provide a component that implements CPython codes inside grasshopper.
