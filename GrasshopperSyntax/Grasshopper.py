@@ -16,12 +16,6 @@ import sys
 version = sys.version_info[0]
 
 
-class Doc:
-    def __init__(self):
-        self.DisplayName = "gCPy.Doc(DocDisplayName)"
-        self.FilePath = "gCPy.Doc(DocFilePath)"
-
-
 class Line:
     def __init__(self, *args):
         """Adds new line using two input points, or two input lists or 6  input doubles
@@ -53,7 +47,6 @@ class Line:
                     self.X2 = pointb.X
                     self.Y2 = pointb.Y
                     self.Z2 = pointb.Z
-
             elif version == 3:
                 if isinstance(args[0], str) and isinstance(args[1], str):
                     pointa = Point(args[0])
@@ -80,6 +73,14 @@ class Line:
                + str(self.Y2) + ", " \
                + str(self.Z2) + ")"
 
+    def __repr__(self):
+        return "gCPy.Line(" + str(self.X1) + ", " \
+               + str(self.Y1) + ", " \
+               + str(self.Z1) + ", " \
+               + str(self.X2) + ", " \
+               + str(self.Y2) + ", " \
+               + str(self.Z2) + ")"
+
     def length(self):
         return ((self.X2 - self.X1) ** 2 + (self.Y2 - self.Y1) ** 2 + (self.Z2 - self.Z1) ** 2) ** 0.5
 
@@ -88,13 +89,7 @@ class Line:
                      (self.Y2 - self.Y1) * parameter + self.Y1, \
                      (self.Z2 - self.Z1) * parameter + self.Z1)
 
-    def __str__(self):
-        return "gCPy.Line(" + str(self.X1) + ", " \
-               + str(self.Y1) + ", " \
-               + str(self.Z1) + ", " \
-               + str(self.X2) + ", " \
-               + str(self.Y2) + ", " \
-               + str(self.Z2) + ")"
+
 
 
 class Point:
@@ -151,8 +146,37 @@ class Point:
                 self.Z = z
         self.addPoint = "gCPy.Point(" + str(x) + "," + str(y) + "," + str(z) + ")"
 
+    def __repr__(self):
+        return "gCPy.Point(" + str(self.X) + "," + str(self.Y) + "," + str(self.Z) + ")"
+
     def __str__(self):
         return "gCPy.Point(" + str(self.X) + "," + str(self.Y) + "," + str(self.Z) + ")"
+
+class Surface:
+    def __init__(self, *args):
+        if len(args) == 4:
+            if isinstance(args[0], Point) and isinstance(args[1], Point) and isinstance(args[2], Point) and isinstance(args[3], Point):
+                self.P1 = args[0]
+                self.P2 = args[1]
+                self.P3 = args[2]
+                self.P4 = args[3]
+                self.addSurface = "gCPy.Surface("+ str(args[0].X) + "," \
+                                    + str(args[0].Y) + "," \
+                                    + str(args[0].Z) + "," \
+                                    + str(args[1].X) + "," \
+                                    + str(args[1].Y) + "," \
+                                    + str(args[1].Z) + "," \
+                                    + str(args[2].X) + "," \
+                                    + str(args[2].Y) + "," \
+                                    + str(args[2].Z) + "," \
+                                    + str(args[3].X) + "," \
+                                    + str(args[3].Y) + "," \
+                                    + str(args[3].Z) + "," \
+                                                     + ")"
+        elif len(args) == 2:
+            pass
+        else:
+            print "you have to create surface from 4 points"
 
 
 ########################### DEFINE METHODS ################################
@@ -173,19 +197,18 @@ def addLine(*args):
 
 def addPoint(*args):
     """
-
     :param args:
     :return:
     """
     if len(args) == 1:
         return Point(args[0])
     elif len(args) == 3:
-        return Point(args[0], args[1], args[2]).addPoint
+        return Point(args[0], args[1], args[2])
 
 
-##################################vars#################################
+def addSurface(*args):
+    return Surface(args[0], args[1], args[2], args[3]).addSurface
 
-doc = Doc();
 
 if __name__ == '__main__':
     print __name__
