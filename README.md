@@ -7,6 +7,8 @@ CPython IDE for grasshopper.
 
 -----------
 
+DOI: 10.13140/RG.2.2.27230.33600/1
+
 #### The Idea of this plugin is to provide a component that implements CPython codes inside grasshopper.
 - It is pereferred that you download one of the bundles that include all the required python scientific libraries such as [Python(x,y)](https://python-xy.github.io/), [Andconda](https://www.continuum.io/downloads) or [Canopy](https://www.enthought.com/products/canopy/)
 - You have to run Rhino as adminstrator at first. 
