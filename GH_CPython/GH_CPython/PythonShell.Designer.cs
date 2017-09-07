@@ -33,14 +33,20 @@
             this.console = new System.Windows.Forms.RichTextBox();
             this.Test = new System.Windows.Forms.Button();
             this.close = new System.Windows.Forms.Button();
-            this.light = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.PythonCanvas = new FastColoredTextBoxNS.FastColoredTextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openPythonFileItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.manageDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.manageDataItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pythonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chooseInterpreterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pipInstallToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pythonShellToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -83,15 +89,6 @@
             this.close.TabIndex = 3;
             this.close.Text = "Close";
             this.close.UseVisualStyleBackColor = true;
-            // 
-            // light
-            // 
-            this.light.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.light.BackColor = System.Drawing.Color.LimeGreen;
-            this.light.Location = new System.Drawing.Point(241, 329);
-            this.light.Name = "light";
-            this.light.Size = new System.Drawing.Size(21, 20);
-            this.light.TabIndex = 4;
             // 
             // splitContainer1
             // 
@@ -161,7 +158,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.manageDataToolStripMenuItem});
+            this.manageDataToolStripMenuItem,
+            this.pythonToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(369, 24);
@@ -171,7 +169,10 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openPythonFileItem});
+            this.openPythonFileItem,
+            this.saveToolStripMenuItem,
+            this.saveAsToolStripMenuItem,
+            this.resetToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -182,6 +183,31 @@
             this.openPythonFileItem.Name = "openPythonFileItem";
             this.openPythonFileItem.Size = new System.Drawing.Size(165, 22);
             this.openPythonFileItem.Text = "Open Python File";
+            this.openPythonFileItem.Click += new System.EventHandler(this.openPythonFileItem_Click);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Image = global::GH_CPython.Properties.Resources.saveIcon24;
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Image = global::GH_CPython.Properties.Resources.save_as_24;
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.saveAsToolStripMenuItem.Text = "Save as";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem1_Click);
+            // 
+            // resetToolStripMenuItem
+            // 
+            this.resetToolStripMenuItem.Image = global::GH_CPython.Properties.Resources.reset24;
+            this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
+            this.resetToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.resetToolStripMenuItem.Text = "Reset";
+            this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
             // 
             // manageDataToolStripMenuItem
             // 
@@ -198,6 +224,41 @@
             this.manageDataItem.Size = new System.Drawing.Size(152, 22);
             this.manageDataItem.Text = "Manage Data";
             // 
+            // pythonToolStripMenuItem
+            // 
+            this.pythonToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.chooseInterpreterToolStripMenuItem,
+            this.pipInstallToolStripMenuItem,
+            this.pythonShellToolStripMenuItem});
+            this.pythonToolStripMenuItem.Name = "pythonToolStripMenuItem";
+            this.pythonToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
+            this.pythonToolStripMenuItem.Text = "Python";
+            // 
+            // chooseInterpreterToolStripMenuItem
+            // 
+            this.chooseInterpreterToolStripMenuItem.Image = global::GH_CPython.Properties.Resources.Python_logo_24;
+            this.chooseInterpreterToolStripMenuItem.Name = "chooseInterpreterToolStripMenuItem";
+            this.chooseInterpreterToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.chooseInterpreterToolStripMenuItem.Text = "Choose Interpreter";
+            this.chooseInterpreterToolStripMenuItem.Click += new System.EventHandler(this.chooseInterpreterToolStripMenuItem_Click);
+            // 
+            // pipInstallToolStripMenuItem
+            // 
+            this.pipInstallToolStripMenuItem.Enabled = false;
+            this.pipInstallToolStripMenuItem.Image = global::GH_CPython.Properties.Resources.pip_icon;
+            this.pipInstallToolStripMenuItem.Name = "pipInstallToolStripMenuItem";
+            this.pipInstallToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.pipInstallToolStripMenuItem.Text = "Pip install";
+            this.pipInstallToolStripMenuItem.Click += new System.EventHandler(this.pipInstallToolStripMenuItem_Click);
+            // 
+            // pythonShellToolStripMenuItem
+            // 
+            this.pythonShellToolStripMenuItem.Enabled = false;
+            this.pythonShellToolStripMenuItem.Name = "pythonShellToolStripMenuItem";
+            this.pythonShellToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.pythonShellToolStripMenuItem.Text = "Python shell";
+            this.pythonShellToolStripMenuItem.Click += new System.EventHandler(this.pythonShellToolStripMenuItem_Click);
+            // 
             // PythonShell
             // 
             this.AcceptButton = this.close;
@@ -205,7 +266,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(371, 354);
             this.Controls.Add(this.splitContainer1);
-            this.Controls.Add(this.light);
             this.Controls.Add(this.close);
             this.Controls.Add(this.Test);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -224,7 +284,6 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -235,7 +294,6 @@
         public System.Windows.Forms.RichTextBox console;
         public System.Windows.Forms.Button Test;
         public System.Windows.Forms.Button close;
-        public System.Windows.Forms.TextBox light;
         private System.Windows.Forms.SplitContainer splitContainer1;
         public FastColoredTextBoxNS.FastColoredTextBox PythonCanvas;
         private System.Windows.Forms.MenuStrip menuStrip1;
@@ -243,6 +301,13 @@
         private System.Windows.Forms.ToolStripMenuItem manageDataToolStripMenuItem;
         public System.Windows.Forms.ToolStripMenuItem openPythonFileItem;
         public System.Windows.Forms.ToolStripMenuItem manageDataItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pythonToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem chooseInterpreterToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pipInstallToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pythonShellToolStripMenuItem;
 
     }
 }

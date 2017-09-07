@@ -14,3 +14,4 @@ C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\R
 C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Release\GH_CPython.locatePython.resources
 C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Release\GH_CPython.Resources.RhinoLibs.resources
 C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Release\GH_CPython.DataManagement.resources
+C:\Users\gamma\documents\visual studio 2013\Projects\GH_CPython\GH_CPython\obj\Release\GH_CPython.csprojResolveAssemblyReference.cache

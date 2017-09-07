@@ -10,7 +10,7 @@ namespace GH_CPython
 {
     class InitFunctions
     {
-
+        public bool recall = false;
         public string isPythonFloderExists(string dir)
         {
             string path = "";
@@ -26,10 +26,12 @@ namespace GH_CPython
             return path;
         }
 
-        public void getPythonInterpretere(string datfile, string defaultFileName, string StartFileName)
+        public string getPythonInterpretere(string datfile)
         {
             if (!File.Exists(@datfile))
             {
+                string defaultFileName = "Python.exe";
+                //MessageBox.Show("Not exists");
                 if (File.Exists(@"C:\Python27\python.exe")) { defaultFileName = @"C:\Python27\python.exe"; }
                 else if (File.Exists(@"C:\Anaconda\python.exe")) { defaultFileName = @"C:\Anaconda\python.exe"; }
                 else if (File.Exists(@"C:\Python34\python.exe")) { defaultFileName = @"C:\Python34\python.exe"; }
@@ -46,18 +48,32 @@ namespace GH_CPython
                 else if (File.Exists(@"C:\Program Files\Python35\python.exe")) { defaultFileName = @"C:\Program Files\Python35\python.exe"; }
                 else if (File.Exists(@"C:\Program Files\Python36\python.exe")) { defaultFileName = @"C:\Program Files\Python36\python.exe"; }
                 File.WriteAllText(@datfile, defaultFileName);
-                locatePython locPy = new locatePython();
-                locPy.ShowDialog();
+                
+                return @defaultFileName;
+                
             }
             else
             {
                 if (File.ReadAllText(@datfile).Trim() != String.Empty)
                 {
-                    StartFileName = File.ReadAllText(@datfile);
+                    
+                    string StartFileName = File.ReadAllText(@datfile);
+                    //MessageBox.Show("Exists at\n"+StartFileName);
+                    return @StartFileName;
                 }
                 else
                 {
-                    MessageBox.Show("Sorry, We can't find Python installed on your machine, If you have already installed it, would you contact Mahmoud Abdlerahman via this e-mail \n arch.mahmoud.ouf111@gmail.com\n Thanks.");
+                    locatePython locPy = new locatePython();
+                    locPy.ShowDialog();
+                    try
+                    {
+                        string StartFileName = File.ReadAllText(@datfile);
+                        return @StartFileName;
+                    }catch
+                    {
+                        MessageBox.Show("Sorry, We can't find Python installed on your machine, If you have already installed it, would you contact Mahmoud Abdlerahman via this e-mail \n arch.mahmoud.ouf111@gmail.com\n Thanks.");
+                        return @"Python.exe";
+                    }
                 }
 
             }

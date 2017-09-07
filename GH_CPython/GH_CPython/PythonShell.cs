@@ -61,6 +61,10 @@ namespace GH_CPython
         MarkerStyle SameWordsStyle = new MarkerStyle(new SolidBrush(Color.FromArgb(40, Color.Gray)));
         TextStyle OrangeStyle = new TextStyle(Brushes.Orange, null, FontStyle.Regular);
 
+        SaveFileDialog saveas = new SaveFileDialog();
+        
+
+        public string currentFileName = string.Empty;
 
 
         //public List<string> PsinputData = new List<string>();
@@ -99,7 +103,7 @@ namespace GH_CPython
             //clear style of changed range
             e.ChangedRange.ClearStyle(BlueStyle, BoldStyle, GrayStyle, MagentaStyle, GreenStyle, BrownStyle, OrangeStyle);
 
-            e.ChangedRange.SetStyle(MagentaStyle, @"(?<=def)(.*)(?=\()");
+            e.ChangedRange.SetStyle(MagentaStyle, @"(?<=def )(.*)(?=\()");
             e.ChangedRange.SetStyle(GrayStyle, @"(\[desc\])(.*?)(\[\/desc\])",RegexOptions.Singleline);
 
             //comment highlighting
@@ -121,6 +125,80 @@ namespace GH_CPython
             //e.ChangedRange.SetFoldingMarkers(@"#region\b", @"#endregion\b");//allow to collapse #region blocks
             e.ChangedRange.SetFoldingMarkers(@"'''", @"'''");//allow to collapse comment block
             e.ChangedRange.SetFoldingMarkers(f, f,RegexOptions.Singleline|RegexOptions.RightToLeft);//allow to collapse comment block
+        }
+
+        string sorry = "Sorry!\nThis plugin is under developement \nThis feature is still in progress, stay tuned\n If you wish to contribute to the developemnt of this component, you are most welcome: \n        https://github.com/MahmoudAbdelRahman/GH_CPython";
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(currentFileName != string.Empty)
+            {
+                File.WriteAllText(currentFileName, PythonCanvas.Text);
+            }else
+            {
+                saveas.Filter = "Python Files (*.py)|*.py| Text File (*.txt)|*.txt ";  //Text Files (*.txt)|*.txt|All Files (*.*)|*.*
+                
+                if(saveas.ShowDialog()== System.Windows.Forms.DialogResult.OK)
+                {
+                    currentFileName = saveas.FileName;
+                    File.WriteAllText(currentFileName, PythonCanvas.Text);
+                }
+            }
+        }
+
+        private void saveAsToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            saveas.Filter = "Python Files (*.py)|*.py| Text File (*.txt)|*.txt ";  //Text Files (*.txt)|*.txt|All Files (*.*)|*.*
+
+            if (saveas.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                currentFileName = saveas.FileName;
+                File.WriteAllText(currentFileName, PythonCanvas.Text);
+            }
+        }
+
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult mm = MessageBox.Show("Are you sure that you would like to reset this file? \nThis will erease everything!","Reset!", MessageBoxButtons.YesNo);
+            if (mm == System.Windows.Forms.DialogResult.Yes)
+            {
+                PythonCanvas.Text = string.Empty;
+            }
+        }
+
+        private void chooseInterpreterToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //MessageBox.Show(sorry);
+            locatePython locPy = new locatePython();
+            locPy.ShowDialog();
+        }
+
+        private void pipInstallToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(sorry);
+        }
+
+        private void pythonShellToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(sorry);
+        }
+
+        private void openPythonFileItem_Click(object sender, EventArgs e)
+        {
+            // Displays an OpenFileDialog so the user can select a Cursor.
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter = "Python file|*.py";
+            openFileDialog1.Title = "Open Python File";
+
+            // Show the Dialog.
+            // If the user clicked OK in the dialog and
+            // a .CUR file was selected, open it.
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                currentFileName = openFileDialog1.FileName;
+                // Assign the cursor in the Stream to the Form's Cursor property.
+                string openedfile = File.ReadAllText(openFileDialog1.FileName).Replace("\t", "    ");
+                PythonCanvas.Text = openedfile;
+            }
         }
 
 

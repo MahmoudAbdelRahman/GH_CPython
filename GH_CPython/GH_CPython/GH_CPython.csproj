@@ -198,6 +198,10 @@
   <ItemGroup>
     <Content Include="draft.txt" />
     <Content Include="draft2.txt" />
+    <None Include="Resources\pip-icon.png" />
+    <None Include="Resources\reset24.png" />
+    <None Include="Resources\save_as_24.png" />
+    <None Include="Resources\saveIcon24.png" />
     <None Include="Resources\tree12.png" />
     <None Include="Resources\list12.png" />
     <None Include="Resources\item12.png" />

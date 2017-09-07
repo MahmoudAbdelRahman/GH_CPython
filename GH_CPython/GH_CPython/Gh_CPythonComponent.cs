@@ -94,7 +94,7 @@ namespace GH_CPython
             path = initfunc.isPythonFloderExists(@"C:\GH_CPython\");
 
             //2- Look for and set Python.exe interpreter if not set
-            initfunc.getPythonInterpretere(@"C:\GH_CPython\interpreter.dat", defaultFileName, StartFileName);
+            StartFileName = initfunc.getPythonInterpretere(@"C:\GH_CPython\interpreter.dat");
 
             //3- Add latest version of required python modules if not existed
             initfunc.addGrasshopperPyModule(@"C:\GH_CPython\Grasshopper.py", pythonVersion);
@@ -207,9 +207,17 @@ namespace GH_CPython
 
             DM = new DataManagement();
 
+            PythonIDE.TopMost = false;
+
+            DM.TopMost = true;
+
             DM.Show();
 
-            DM.cancelButton.Click += (s, ev) => { DM.Close(); };
+            DM.cancelButton.Click += (s, ev) => {
+
+                DM.Close();
+            
+            };
 
             DM.applyButton.Click += (se, ev) =>
             {
@@ -222,6 +230,7 @@ namespace GH_CPython
             List<string> inputStrings = new List<string>();
             Dictionary<string, int> dAccess = new Dictionary<string, int>();
             Dictionary<string, int> dINdex = new Dictionary<string, int>();
+            Dictionary<string, string> dDesc = new Dictionary<string, string>();
 
             for (int i = 0; i < Params.Input.Count; i++)
             {
@@ -229,6 +238,7 @@ namespace GH_CPython
                 inputStrings.Add(Params.Input[i].NickName);
                 dAccess.Add(Params.Input[i].NickName, access);
                 dINdex.Add(Params.Input[i].NickName, i);
+                dDesc.Add(Params.Input[i].NickName, Params.Input[i].Description);
             }
             DM.inputList.DataSource = inputStrings;
 
@@ -240,6 +250,7 @@ namespace GH_CPython
                 {
                     string selItem = DM.inputList.SelectedValue.ToString();
                     DM.dAccesslist.SetSelected(dAccess[selItem],true);
+                    DM.description.Text = dDesc[selItem];
                 }
                 catch (Exception err)
                 {
@@ -252,13 +263,16 @@ namespace GH_CPython
                 string selItem = DM.inputList.SelectedValue.ToString();
                 int selectedindex = DM.dAccesslist.SelectedIndex;
                 Params.Input[dINdex[selItem]].Access = selectedindex == 0 ? GH_ParamAccess.item : selectedindex == 1 ? GH_ParamAccess.list : GH_ParamAccess.tree;
-                //MessageBox.Show(dINdex[selItem].ToString() + " -> " + selectedindex.ToString());
+                dAccess[selItem] = selectedindex;
+                
             };
 
         }
 
         void DM_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
         {
+            PythonIDE.TopMost = true;
+
             ExpireSolution(true);
         }
 
@@ -295,6 +309,7 @@ namespace GH_CPython
                 MessageBox.Show(exc.ToString());
             }
             AddNamesAndDescriptions();
+            StartFileName = initfunc.getPythonInterpretere(@"C:\GH_CPython\interpreter.dat");
             Grasshopper.Instances.RedrawCanvas();
         }
 
@@ -544,6 +559,7 @@ namespace GH_CPython
                                                         path);
 
                 RunningPythonProcess.StartInfo.FileName = @StartFileName;
+                //MessageBox.Show(@StartFileName);
                 RunningPythonProcess.StartInfo.Arguments = path + name + ".py";
                 RunningPythonProcess.Start();
 

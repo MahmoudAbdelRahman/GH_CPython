@@ -104,7 +104,7 @@ namespace GH_CPython
             }
             catch (Exception exep)
             {
-                MessageBox.Show(exep.ToString());
+                //MessageBox.Show(exep.ToString());
             }
 
             /// Section 5.
@@ -117,15 +117,15 @@ namespace GH_CPython
                 thisfileName = ThisComponent.OnPingDocument().DisplayName;
             }else
             {
-                 thisfilePath = "None";
-                 thisfileName = "None";
+                 thisfilePath = @"C:\GH_CPython";
+                 thisfileName = "unname";
             }
             
 
 
             string envVars = Resources.SavedPythonFile.initghEnv.Replace(Environment.NewLine, @"\n").Replace("##filePath##", thisfilePath.Replace(@"\", "/"));
             envVars = envVars.Replace("##fileName##", thisfileName.Replace("*", ""));
-            variablesAre = Resources.SavedPythonFile.initVars.Replace("##InitVars##", variablesAre).Replace("##initGHENV##", envVars);
+            variablesAre = Resources.SavedPythonFile.initVars.Replace("##InitVars##", variablesAre.Replace("'", @"\'")).Replace("##initGHENV##", envVars);
             System.IO.File.WriteAllText(path + name + ".py", variablesAre + "\n" + WinForm.PythonCanvas.Text + "\n" + foot);
         }
 
@@ -140,7 +140,6 @@ namespace GH_CPython
             {
                 if(ThisComponent.Params.Input[i].Access == GH_ParamAccess.item)
                 {
-
                 convetToItem(ThisComponent, i, DA);
                 IGH_Goo inputObject = null;
                 DA.GetData(i, ref inputObject);
@@ -224,7 +223,8 @@ namespace GH_CPython
 
             }
             catch(Exception errf)
-            { MessageBox.Show(errf.ToString()); }
+            { //MessageBox.Show(errf.ToString()); 
+            }
 
             return datahere;
         }
