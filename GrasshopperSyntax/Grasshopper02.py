@@ -163,14 +163,12 @@ class Curve:
     Adds new curve object
     """
     def __init__(self, *args):
-        if args[0] == '<Curve>' and args[-1] == '</Curve>':
+        if len(args)>1 and args[0] == '<Curve>' and args[-1] == '</Curve>':
             if   args[1] == 'AddArc':       self.repr = ['<Curve>', 'AddArc', args[2], args[3], args[4], args[5]]
             elif args[1] == 'AddArc3Pt':    self.repr = ['<Curve>', 'AddArc3Pt', args[2], args[3], args[4], args[5]]
-            elif args[1] == 'AddArcPtTanPt':self.repr = ['<Curve>', 'AddArc3Pt', args[2], args[3], args[4], args[5]]
-            elif args[1] == 'AddBlendCurve':
-                pass
-            elif args[1] == 'AddCircle':
-                pass
+            elif args[1] == 'AddArcPtTanPt':self.repr = ['<Curve>', 'AddArcPtTanPt', args[2], args[3], args[4], args[5]]
+            elif args[1] == 'AddBlendCurve':self.repr = ['<Curve>','AddBlendCurve', args[2], args[3], args[4],  args[5], args[6]]
+            elif args[1] == 'AddCircle':    self.repr = ['<Curve>', '']
             elif args[1] == 'AddCircle3Pt':
                 pass
             elif args[1] == 'AddCurve':
@@ -240,9 +238,9 @@ class Curve:
             elif args[1] == 'TrimCurve':
                 pass
             else:
-                self.text = "Curve of other Type"
+                self.repr = "Curve of other Type"
         else:
-            self.text = "Pring me here" 
+            self.repr = ['<Curve>', 'Ax, By, Cz, D', '</Curve>'] 
     
     def __repr__(self):
         return str(self.repr)

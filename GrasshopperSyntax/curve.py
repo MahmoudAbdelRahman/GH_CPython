@@ -47,8 +47,15 @@ def AddArcPtTanPt(start, direction, end):
     Returns:
       id of the new curve object
     """
-
-    return rc
+    if not (isinstance(start, gh.Point)):
+        raise Exception("start should be an instance of a gh.Point")
+    elif not isinstance(end, gh.Point):
+        raise Exception("end should be an instance of a gh.Point")
+    elif not isinstance(direction, gh.Vector):
+        raise Exception("direction should be an instance of a gh.Vector")
+    else:
+        rc = gh.Curve('<Curve>','AddArcPtTanPt', start, direction, end, '</Curve>')
+        return rc
 
 
 def AddBlendCurve(curves, parameters, reverses, continuities):
@@ -62,8 +69,34 @@ def AddBlendCurve(curves, parameters, reverses, continuities):
     Returns:
       identifier of new curve on success
     """
+    if not isinstance(curves, list) \
+                            or len(curves) != 2 \
+                            or not isinstance(curves[0], gh.Curve) \
+                            or not isinstance(curves[1], gh.Curve):
+        raise Exception("curves should be a list of two curves")
+    elif not isinstance(parameters, list) \
+                            or len(parameters)!=2 \
+                            or not isinstance(parameters[0], float) \
+                            or not isinstance(parameters[1], float):
+        raise Exception("parameters should be a list of two floats defining the blend end points ")
+    elif not isinstance(reverses, list) \
+                            or len(reverses)!= 2 \
+                            or not isinstance(reverses[0], bool) \
+                            or not isinstance(reverses[1], bool):
+        raise Exception("reverses should be a list of two boolean values specifying to use the natural or opposite direction of the curve")
+    elif not isinstance(continuities, list) \
+                            or len(continuities)!= 2 \
+                            or not isinstance(continuities[0],int) \
+                            or not isinstance(continuities[1], int)\
+                            or continuities[0]>2 or continuities[1]>2\
+                            or continuities[0]<0 or continuities[1]<0 :
+        raise Exception("continuities should be a list of two numbers specifying continuity at end points 0 = position, 1 = tangency, 2 = curvature")
+    else:
+        rc = gh.Curve('<Curve>','AddBlendCurve', curves, parameters, reverses, continuities, '</Curve>')
+        return rc
 
-    return rc
+cc = AddBlendCurve([gh.Curve(), gh.Curve()],[1.3, 4.5], [True, False], [1, 0])
+print cc
 
 
 def AddCircle(plane_or_center, radius):
