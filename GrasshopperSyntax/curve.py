@@ -1,3 +1,5 @@
+import Grasshopper02 as gh
+
 def AddArc(plane, radius, angle_degrees):
     """Adds an arc curve to the document
     Parameters:
@@ -9,8 +11,15 @@ def AddArc(plane, radius, angle_degrees):
     Returns:
       id of the new curve object
     """
-
-    return rc
+    if not isinstance(plane, gh.Plane):
+        raise Exception("plane should be an instance of Plane")
+    elif not isinstance(radius, float):
+        raise Exception("radius should be an instance of float")
+    elif not isinstance(angle_degrees, float):
+        raise Exception("angle_degrees should be an instance of float")
+    else:
+        rc = gh.Curve('<Curve>','AddArc', plane, radius, angle_degrees, '</Curve>')
+        return rc
 
 
 def AddArc3Pt(start, end, point_on_arc):
@@ -21,8 +30,15 @@ def AddArc3Pt(start, end, point_on_arc):
     Returns:
       id of the new curve object
     """
-
-    return rc
+    if not (isinstance(start, gh.Point)):
+        raise Exception("start should be an instance of a Point")
+    elif not isinstance(end, gh.Point):
+        raise Exception("end should be an instance of a Point")
+    elif not isinstance(point_on_arc, gh.Point):
+        raise Exception("point_on_arc should be an instance of a Point")
+    else:
+        rc = gh.Curve('<Curve>','AddArc3Pt', start, end, point_on_arc, '</Curve>')
+        return rc
 
 
 def AddArcPtTanPt(start, direction, end):
@@ -323,7 +339,7 @@ def ArcRadius(curve_id, segment_index=-1):
 
     return arc.Radius
 
-
+#Point
 def CircleCenterPoint(curve_id, segment_index=-1, return_plane=False):
     """Returns the center point of a circle curve object
     Parameters:
@@ -414,7 +430,7 @@ def ConvertCurveToPolyline(curve_id, angle_tolerance=5.0, tolerance=0.01, delete
 
     return id
 
-
+#point
 def CurveArcLengthPoint(curve_id, length, from_start=True):
     """Returns the point on the curve that is a specified arc length
     from the start of the curve.
