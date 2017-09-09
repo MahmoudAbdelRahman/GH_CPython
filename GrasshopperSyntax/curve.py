@@ -95,9 +95,6 @@ def AddBlendCurve(curves, parameters, reverses, continuities):
         rc = gh.Curve('<Curve>','AddBlendCurve', curves, parameters, reverses, continuities, '</Curve>')
         return rc
 
-cc = AddBlendCurve([gh.Curve(), gh.Curve()],[1.3, 4.5], [True, False], [1, 0])
-print cc
-
 
 def AddCircle(plane_or_center, radius):
     """Adds a circle curve to the document
@@ -109,8 +106,13 @@ def AddCircle(plane_or_center, radius):
     Returns:
       id of the new curve object
     """
-
-    return rc
+    if not isinstance(plane_or_center, gh.Plane) or not isinstance(plane_or_center, gh.Point):
+        raise Exception("plane_or_center should be an instance of Plane")
+    elif not isinstance(radius, float):
+        raise Exception("radius should be an instance of float")
+    else:
+        rc = gh.Curve('<Curve>','AddCircle', plane_or_center, radius,'</Curve>')
+        return rc
 
 
 def AddCircle3Pt(first, second, third):
@@ -120,8 +122,15 @@ def AddCircle3Pt(first, second, third):
     Returns:
       id of the new curve object
     """
-
-    return rc
+    if not (isinstance(first, gh.Point)):
+        raise Exception("first should be an instance of a Point")
+    elif not isinstance(second, gh.Point):
+        raise Exception("second should be an instance of a Point")
+    elif not isinstance(third, gh.Point):
+        raise Exception("third should be an instance of a Point")
+    else:
+        rc = gh.Curve('<Curve>','AddCircle3Pt', first, second, third, '</Curve>')
+        return rc
 
 
 def AddCurve(points, degree=3):
@@ -132,8 +141,16 @@ def AddCurve(points, degree=3):
     Returns:
       id of the new curve object
     """
-
-    return rc
+    if not isinstance(points, list) or not len(points)>1:
+        raise Exception("points should be a list of more than one point")
+    elif not isinstance(degree, int):
+        raise Exception("degree should be an int representing the degree of the curve")
+    else:
+        for i in points:
+            if not isinstance(i, gh.Point):
+                raise Exception("points should be list of points")
+        rc = gh.Curve('<Curve>','AddCurve', points, degree, '</Curve>')
+        return rc
 
 
 def AddEllipse(plane, radiusX, radiusY):
@@ -145,8 +162,14 @@ def AddEllipse(plane, radiusX, radiusY):
     Returns:
       id of the new curve object if successful
     """
+    if not isinstance(plane, gh.Plane):
+        raise Exception("plane should be an instance of Plane")
+    elif not isinstance(radiusX, float) or not isinstance(radiusY, float):
+        raise Exception("radiusX, radiusY should be floats representing radius in the X and Y axis directions")
+    else:
+        rc = gh.Curve('<Curve>','AddEllipse', plane, radiusX, radiusY, '</Curve>')
+        return rc
 
-    return rc
 
 
 def AddEllipse3Pt(center, second, third):
@@ -158,8 +181,11 @@ def AddEllipse3Pt(center, second, third):
     Returns:
       id of the new curve object if successful
     """
-
-    return rc
+    if not isinstance(center, gh.Point)or not isinstance(second, gh.Point) or not isinstance(third, gh.Point):
+        raise Exception("center, second and third should be instances of gh.Point")
+    else:
+        rc = gh.Curve('<Curve>','AddEllipse3Pt', center, second, third, '</Curve>')
+        return rc
 
 
 def AddFilletCurve(curve0id, curve1id, radius=1.0, base_point0=None, base_point1=None):

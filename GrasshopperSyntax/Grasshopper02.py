@@ -164,19 +164,15 @@ class Curve:
     """
     def __init__(self, *args):
         if len(args)>1 and args[0] == '<Curve>' and args[-1] == '</Curve>':
-            if   args[1] == 'AddArc':       self.repr = ['<Curve>', 'AddArc', args[2], args[3], args[4], args[5]]
-            elif args[1] == 'AddArc3Pt':    self.repr = ['<Curve>', 'AddArc3Pt', args[2], args[3], args[4], args[5]]
-            elif args[1] == 'AddArcPtTanPt':self.repr = ['<Curve>', 'AddArcPtTanPt', args[2], args[3], args[4], args[5]]
-            elif args[1] == 'AddBlendCurve':self.repr = ['<Curve>','AddBlendCurve', args[2], args[3], args[4],  args[5], args[6]]
-            elif args[1] == 'AddCircle':    self.repr = ['<Curve>', '']
-            elif args[1] == 'AddCircle3Pt':
-                pass
-            elif args[1] == 'AddCurve':
-                pass
-            elif args[1] == 'AddEllipse':
-                pass
-            elif args[1] == 'AddEllipse3Pt':
-                pass
+            if   args[1] == 'AddArc':       self.repr = ['<Curve>', 'AddArc'        , args[2], args[3], args[4], args[5]]
+            elif args[1] == 'AddArc3Pt':    self.repr = ['<Curve>', 'AddArc3Pt'     , args[2], args[3], args[4], args[5]]
+            elif args[1] == 'AddArcPtTanPt':self.repr = ['<Curve>', 'AddArcPtTanPt' , args[2], args[3], args[4], args[5]]
+            elif args[1] == 'AddBlendCurve':self.repr = ['<Curve>','AddBlendCurve'  , args[2], args[3], args[4], args[5], args[6]]
+            elif args[1] == 'AddCircle':    self.repr = ['<Curve>', 'AddCircle'     , args[2], args[3], args[4]]
+            elif args[1] == 'AddCircle3Pt': self.repr = ['<Curve>', 'AddCircle3Pt'  , args[2], args[3], args[4], args[5]]
+            elif args[1] == 'AddCurve':     self.repr = ['<Curve>', 'AddCurve'      , args[2], args[3], args[4]]
+            elif args[1] == 'AddEllipse':   self.repr = ['<Curve>', 'AddEllipse'    , args[2], args[3], args[4], args[5]]
+            elif args[1] == 'AddEllipse3Pt':self.repr = ['<Curve>', 'AddEllipse3Pt' , args[2], args[3], args[4], args[5]]
             elif args[1] == 'AddFilletCurve':
                 pass
             elif args[1] == 'AddInterpCrvOnSrf':
@@ -240,7 +236,9 @@ class Curve:
             else:
                 self.repr = "Curve of other Type"
         else:
-            self.repr = ['<Curve>', 'Ax, By, Cz, D', '</Curve>'] 
+            points = [Point(0., 0., 0.), Point(1., 1., 1.)]
+            degree = 3
+            self.repr = ['<Curve>','AddCurve',points, degree, '</Curve>'] 
     
     def __repr__(self):
         return str(self.repr)
