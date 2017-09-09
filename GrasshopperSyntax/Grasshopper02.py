@@ -173,8 +173,7 @@ class Curve:
             elif args[1] == 'AddCurve':     self.repr = ['<Curve>', 'AddCurve'      , args[2], args[3], args[4]]
             elif args[1] == 'AddEllipse':   self.repr = ['<Curve>', 'AddEllipse'    , args[2], args[3], args[4], args[5]]
             elif args[1] == 'AddEllipse3Pt':self.repr = ['<Curve>', 'AddEllipse3Pt' , args[2], args[3], args[4], args[5]]
-            elif args[1] == 'AddFilletCurve':
-                pass
+            elif args[1] == 'AddFilletCurve': self.repr=['<Curve>','AddFilletCurve' , args[2], args[3], args[4], args[5], args[6], args[7]]
             elif args[1] == 'AddInterpCrvOnSrf':
                 pass
             elif args[1] == 'AddInterpCrvOnSrfUV':

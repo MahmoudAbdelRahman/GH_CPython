@@ -201,8 +201,19 @@ def AddFilletCurve(curve0id, curve1id, radius=1.0, base_point0=None, base_point1
     Returns:
       id of the new curve object if successful
     """
-
-    return rc
+    if not isinstance(curve0id, gh.Curve) or not isinstance(curve1id, gh.Curve):
+        raise Exception("curve0id and curve1id should be instances of gh.Curve")
+    elif not isinstance(radius, float):
+        raise Exception("radius should be a float number")
+    elif base_point0 != None:
+        if not isinstance(base_point0, gh.Point):
+            raise Exception("base_point0 should be an instance of gh.Point or None")
+    elif base_point1 != None:
+        if not isinstance(base_point1, gh.Point):
+            raise Exception("base_point1 shoule be an instance of gh.Point or None")
+    else:
+        rc = gh.Curve('<Curve>','AddFilletCurve', curve0id, curve1id, radius, base_point0, base_point1, '</Curve>')
+        return rc
 
 
 def AddInterpCrvOnSrf(surface_id, points):
