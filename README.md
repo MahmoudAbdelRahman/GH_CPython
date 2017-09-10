@@ -1,8 +1,9 @@
-[![DOI](https://zenodo.org/badge/95458635.svg)](https://zenodo.org/badge/latestdoi/95458635)
 
 ![python_logo-100](https://user-images.githubusercontent.com/6969514/28852793-2ad6ac70-772c-11e7-92d1-cd9087e3b661.png)
 # GH_CPython
 CPython plugin for Grasshopper. 
+
+[![DOI](https://zenodo.org/badge/95458635.svg)](https://zenodo.org/badge/latestdoi/95458635)
 
 
 ![image](https://user-images.githubusercontent.com/6969514/29739952-a2c2a0fe-8a4b-11e7-8c0e-63b86e836e23.png)
