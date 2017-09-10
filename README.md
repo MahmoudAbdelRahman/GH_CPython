@@ -1,6 +1,6 @@
 
 [![DOI](https://zenodo.org/badge/95458635.svg)](https://zenodo.org/badge/latestdoi/95458635)
-[![alpha](https://img.shields.io/badge/GH__CPython-Alpha-yellow.svg)](https://github.com/MahmoudAbdelRahman/GH_CPython/blob/master/GH_CPython.zip)
+[![alpha](https://img.shields.io/badge/GH__CPython-Download%20Alpha-yellow.svg)](https://github.com/MahmoudAbdelRahman/GH_CPython/blob/master/GH_CPython.zip)
 
 ![python_logo-100](https://user-images.githubusercontent.com/6969514/28852793-2ad6ac70-772c-11e7-92d1-cd9087e3b661.png)
 
