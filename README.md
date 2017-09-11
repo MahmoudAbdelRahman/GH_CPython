@@ -7,13 +7,14 @@
 # GH_CPython
 CPython plugin for Grasshopper. 
 
+![ghcpythonposter2](https://user-images.githubusercontent.com/6969514/30294594-ecc40112-973d-11e7-84df-0520bc8cb7cc.jpg)
+
 ![image](https://user-images.githubusercontent.com/6969514/29739952-a2c2a0fe-8a4b-11e7-8c0e-63b86e836e23.png)
 
 -----------
 
 [DOI: 10.13140/RG.2.2.27230.33600/1](https://www.researchgate.net/publication/319312347_Enhancing_computational_design_with_Python_high_performance_scientific_libraries_Integration_of_Grasshopper_and_CPython_language)
 
-![poster_small](https://user-images.githubusercontent.com/6969514/30294434-584bf698-973d-11e7-9465-5f6bcb2f1f53.jpg)
 
 #### The Idea of this plugin is to provide a component that implements CPython codes inside grasshopper.
 - It is pereferred that you download one of the bundles that include all the required python scientific libraries such as [Python(x,y)](https://python-xy.github.io/), [Andconda](https://www.continuum.io/downloads) or [Canopy](https://www.enthought.com/products/canopy/)
