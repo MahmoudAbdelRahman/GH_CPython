@@ -96,7 +96,7 @@ for i in range(200):
     l = Line(i, i+1, i+2, i-1, i-2, i-5)
     allLines.append(l)
 
-print allLines[5]
+print(allLines[5])
 
 
 class Point:
