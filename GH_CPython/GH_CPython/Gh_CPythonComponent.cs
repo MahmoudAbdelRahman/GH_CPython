@@ -52,7 +52,7 @@ namespace GH_CPython
 
     public class Gh_CPythonComponent : GH_Component, IGH_VariableParameterComponent
     {
-        string pythonVersion = "# Grasshopper Module Version 0.0.1.5";
+        string pythonVersion = "# Grasshopper Module Version 0.0.1.7";
 
         PythonShell PythonIDE;
 
@@ -575,8 +575,8 @@ namespace GH_CPython
 
                 for (int i3 = 0; i3 < Params.Output.Count; i3++)
                 {
-
-                    setoutPutData(i3, doc.DocumentElement.SelectSingleNode("/result/" + Params.Output[i3].NickName).InnerText, DA);
+                    string outputType = doc.DocumentElement.SelectSingleNode("/result/" + Params.Output[i3].NickName).Attributes["type"].Value;
+                    setoutPutData(i3, doc.DocumentElement.SelectSingleNode("/result/" + Params.Output[i3].NickName).InnerText, DA, outputType);
                 }
                 RunningPythonProcess.Close();
                 System.IO.File.Delete(path + "_PythonExecutionOrder_" + thisIndex.ToString() + ".xml");
@@ -610,10 +610,12 @@ namespace GH_CPython
 
 
         Regex matchDoc = new Regex(@"(?<=gCPy\.Doc\().*(?=\))");
-        private void setoutPutData(int i3, string p, IGH_DataAccess DA)
+        private void setoutPutData(int i3, string p, IGH_DataAccess DA, string outputType)
         {
+            //MessageBox.Show(outputType);
             //Rhino.Geometry.NurbsSurface.CreateFromCorners()
             //Line input
+
             if (matchLine.Match(p).Value != "")
             {
                 if (p.Contains(@")', 'gCPy.Line("))
@@ -691,7 +693,16 @@ namespace GH_CPython
             }
             else
             {
-                DA.SetData(i3, p);
+                if(outputType == "Item")
+                {
+                    DA.SetData(i3, p);
+                }else
+                {
+                    string[] all = p.Replace("[", "").Replace("]", "").Split(new string[] { @"," }, StringSplitOptions.RemoveEmptyEntries);
+                    DA.SetDataList(i3, all);
+
+                }
+                
             }
 
         }

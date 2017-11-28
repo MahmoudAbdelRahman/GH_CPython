@@ -62,14 +62,27 @@ namespace GH_CPython
                     // GET input type at first
                     try
                     {
-                        if (ThisComponent.Params.Input[i].Access == GH_ParamAccess.list &&
+                        if (ThisComponent.Params.Input[i].Access == GH_ParamAccess.list/* &&
                             (paramType == "Grasshopper.Kernel.Types.GH_Integer" ||
                             paramType == "Grasshopper.Kernel.Types.GH_Number" ||
-                            paramType == "Grasshopper.Kernel.Types.GH_Boolean"))
+                            paramType == "Grasshopper.Kernel.Types.GH_Boolean")*/)
                         {
-                            
-                                string thisInputString = ThisComponent.Params.Input[i].VolatileData.DataDescription(false, false).Trim().Replace(System.Environment.NewLine, ",");
-                                datahere = recomposeInputString(thisInputString);
+                            //MessageBox.Show(ThisComponent.Params.Input[i].VolatileData.DataDescription(false, false));
+                            string thisInputString = ThisComponent.Params.Input[i].VolatileData.DataDescription(false, false).
+                                Trim().Replace(System.Environment.NewLine + System.Environment.NewLine, "],[").Replace(System.Environment.NewLine, ",");
+
+                            datahere = recomposeInputString(thisInputString);
+                                /*string thisInputString = ThisComponent.Params.Input[i].VolatileData.DataDescription(false, false).Trim().Replace(System.Environment.NewLine, ",");
+                                datahere = recomposeInputString(thisInputString);*/
+                        }
+                        else if (ThisComponent.Params.Input[i].Access == GH_ParamAccess.tree)
+                        {
+                            string thisInputString = ThisComponent.Params.Input[i].VolatileData.DataDescription(false, false).
+                                Trim().Replace(System.Environment.NewLine + System.Environment.NewLine, "],[").Replace(System.Environment.NewLine, ",");
+                            thisInputString = "[" + thisInputString + "]";
+
+                            datahere = recomposeInputStringTree(thisInputString);
+                            //MessageBox.Show(ThisComponent.Params.Input[i].VolatileData.DataDescription(false, false));
                         }
                         else
                         {
@@ -130,7 +143,10 @@ namespace GH_CPython
         }
 
 
+
+
         static bool toggleOn = true;
+
         private string getInputs(GH_Component ThisComponent, IGH_DataAccess DA, int i)
         {
             string datahere = "";
@@ -181,6 +197,10 @@ namespace GH_CPython
                                                 + inputCircle.Plane.YAxis.ToString() + ","      // y axis vector
                                                 + inputCircle.Plane.ZAxis.ToString() + ")\"";   // z axis vector
                 }
+                else if (paramType == "Grasshopper.Kernel.Types.GH_Curve")
+                {
+                    datahere += "\"Ok This is a curve ... Take Care .. add all your things here\"";
+                }
                 else if (paramType == "Grasshopper.Kernel.Types.GH_String")
                 {
                     convetToItem(ThisComponent, i, DA);
@@ -229,6 +249,7 @@ namespace GH_CPython
             return datahere;
         }
 
+
         private void convetToItem(GH_Component ThisComponent, int i, IGH_DataAccess DA)
         {
             /*if (ThisComponent.Params.Input[i].Access == GH_ParamAccess.list)
@@ -238,7 +259,6 @@ namespace GH_CPython
 
             }*/
         }
-
 
 
         private string recomposeInputString(string thisInputString)
@@ -252,6 +272,70 @@ namespace GH_CPython
 
 
             string[] newstr = thisInputString.Split(',');
+
+            if (float.TryParse(newstr[0], out f) || double.TryParse(newstr[0], out d) || int.TryParse(newstr[0], out into) || newstr[0] == "True" || newstr[0] == "False")
+            {
+                if (newstr.Length == 1)
+                    datahere += thisInputString;
+
+                else
+                    datahere += "[" + thisInputString + "]";
+            }
+            else if (thisInputString.Contains("{") && thisInputString.Contains("}"))
+            {
+                datahere += thisInputString.Replace("{", "[").Replace("}", "]");
+            }
+            else if (thisInputString.Contains("{") && thisInputString.Contains("}") && thisInputString.Contains("\""))
+            {
+                datahere += thisInputString.Replace("{", "[").Replace("}", "]").Replace("\"", "'");
+            }
+            else if (thisInputString.Contains("[") && thisInputString.Contains("]"))
+            {
+                datahere += thisInputString.Replace("[", "[").Replace("]", "]");
+            }
+            else if (thisInputString.Contains("(") && thisInputString.Contains(")"))
+            {
+                datahere += thisInputString.Replace("(", "(").Replace(")", ")");
+            }
+            else
+            {
+                if (newstr.Length == 1)
+                {
+                    if (thisInputString == "True" || thisInputString == "False" || thisInputString == "None")
+                    {
+                        datahere += thisInputString;
+                    }
+                    else if (thisInputString == "")
+                    {
+                        datahere += "None";
+                    }
+                    else
+                    {
+                        datahere += "\"" + thisInputString + "\"";
+                    }
+                }
+                else
+                {
+                    datahere += "[\"" + thisInputString.Replace(",", "\",\"") + "\"]";
+                }
+            }
+
+            return datahere;
+        }
+
+
+        private string recomposeInputStringTree(string thisInputString)
+        {
+            string datahere = "";
+
+            // These temporary variables  are used for parsing input data into float, double or int. 
+            float f;
+            double d;
+            int into;
+
+
+            string[] newstr = thisInputString.Split(',');
+            newstr[0] = newstr[0].Replace("[", "");
 
             if (float.TryParse(newstr[0], out f) || double.TryParse(newstr[0], out d) || int.TryParse(newstr[0], out into) || newstr[0] == "True" || newstr[0] == "False")
             {
@@ -301,8 +385,5 @@ namespace GH_CPython
 
             return datahere;
         }
-
-
-
     }
 }
