@@ -8,13 +8,20 @@ data = {##data##}
 
 root = ET.Element("result")
 
-if(sys.version_info[0]==2):
+if sys.version_info[0]==2:
     for k, val in data.iteritems():
-        ET.SubElement(root,k).text = str(val)
+        if isinstance(val, (list, tuple)):
+            ET.SubElement(root, k, type="List").text = str(val)
+        else:
+            ET.SubElement(root, k, type="Item").text = str(val)
 
-elif(sys.version_info[0]==3):
+
+elif sys.version_info[0]==3 :
     for k, val in data.items():
-        ET.SubElement(root,k).text = str(val)
+        if isinstance(val, (list,tuple)):
+            ET.SubElement(root, k, type="List").text = str(val)
+        else:
+            ET.SubElement(root, k, type="Item").text = str(val)
 
 tree = ET.ElementTree(root)
 tree.write(r"##fileName##")
