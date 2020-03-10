@@ -155,7 +155,7 @@ class Surface:
             if isinstance(args[0],Line) and isinstance(args[1], Line):
                 pass
         else:
-            print "you have to create surface from 4 points"
+            print("you have to create surface from 4 points")
 
 
 class Curve:
@@ -259,4 +259,4 @@ class Mesh:
 
 
 if __name__ == '__main__':
-    print __name__
+    print(__name__)
