@@ -1,3 +1,15 @@
+Please cite as : 
+```bib
+@misc{AbdelRahman2017,
+abstract = {CPython plugin for Rhino-Grasshopper},
+author = {AbdelRahman, Mahmoud},
+doi = {10.5281/ZENODO.888148},
+title = {{GH{\_}CPython: CPython plugin for grasshopper}},
+url = {https://doi.org/10.5281/zenodo.888148},
+year = {2017}
+}
+```
+`Mahmoud Mohamed Abdelrahman. (2017). Gh_CPython: CPython plugin for grasshopper. https://doi.org/10.5281/zenodo.888148`
 
 [![DOI](https://zenodo.org/badge/95458635.svg)](https://zenodo.org/badge/latestdoi/95458635)
 [![alpha](https://img.shields.io/badge/GH__CPython-Download%20Alpha-yellow.svg)](https://github.com/MahmoudAbdelRahman/GH_CPython/blob/master/GH_CPython.zip)
