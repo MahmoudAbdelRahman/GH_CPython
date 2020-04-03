@@ -10,7 +10,7 @@ CPython plugin for Grasshopper.
 Please cite as : 
 ```bib
 @misc{AbdelRahman2017,
-abstract = {CPython plugin for Rhino-Grasshopper},
+abstract = {CPython plugin for grasshopper},
 author = {AbdelRahman, Mahmoud},
 doi = {10.5281/ZENODO.888148},
 title = {{GH{\_}CPython: CPython plugin for grasshopper}},
