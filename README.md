@@ -1,3 +1,12 @@
+
+[![DOI](https://zenodo.org/badge/95458635.svg)](https://zenodo.org/badge/latestdoi/95458635)
+[![alpha](https://img.shields.io/badge/GH__CPython-Download%20Alpha-yellow.svg)](https://github.com/MahmoudAbdelRahman/GH_CPython/blob/master/GH_CPython.zip)
+
+![python_logo-100](https://user-images.githubusercontent.com/6969514/28852793-2ad6ac70-772c-11e7-92d1-cd9087e3b661.png)
+
+# GH_CPython
+CPython plugin for Grasshopper. 
+
 Please cite as : 
 ```bib
 @misc{AbdelRahman2017,
@@ -10,14 +19,6 @@ year = {2017}
 }
 ```
 `Mahmoud Mohamed Abdelrahman. (2017). Gh_CPython: CPython plugin for grasshopper. https://doi.org/10.5281/zenodo.888148`
-
-[![DOI](https://zenodo.org/badge/95458635.svg)](https://zenodo.org/badge/latestdoi/95458635)
-[![alpha](https://img.shields.io/badge/GH__CPython-Download%20Alpha-yellow.svg)](https://github.com/MahmoudAbdelRahman/GH_CPython/blob/master/GH_CPython.zip)
-
-![python_logo-100](https://user-images.githubusercontent.com/6969514/28852793-2ad6ac70-772c-11e7-92d1-cd9087e3b661.png)
-
-# GH_CPython
-CPython plugin for Grasshopper. 
 
 ![ghcpythonposter2](https://user-images.githubusercontent.com/6969514/30294594-ecc40112-973d-11e7-84df-0520bc8cb7cc.jpg)
 
