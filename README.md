@@ -30,7 +30,7 @@ year = {2017}
 
 
 #### The Idea of this plugin is to provide a component that implements CPython codes inside grasshopper.
-- It is pereferred that you download one of the bundles that include all the required python scientific libraries such as [Python(x,y)](https://python-xy.github.io/), [Andconda](https://www.continuum.io/downloads) or [Canopy](https://www.enthought.com/products/canopy/)
+- It is pereferred that you download one of the bundles that include all the required python scientific libraries such as [Python(x,y)](https://python-xy.github.io/), [Andconda](https://docs.anaconda.com/anaconda/install/) or [Canopy](https://www.enthought.com/products/canopy/)
 - You have to run Rhino as adminstrator at first. 
 
 The following image shows CPython plugin(down right) , and the first implemented plugin (top right) and the code ide (left)
